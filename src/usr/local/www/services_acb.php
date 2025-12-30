@@ -119,7 +119,7 @@ EOF;
 				$errormsg = gettext('Unable to revert to the selected configuration backup revision.');
 			}
 		} else {
-			log_error(gettext('There was an error while restoring the AutoConfigBackup entry'));
+			logger(LOG_ERR, localize_text('There was an error while restoring the entry'), LOG_PREFIX_ACB);
 		}
 		unlink_if_exists($config_restore_path);
 	}

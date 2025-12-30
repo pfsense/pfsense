@@ -9,11 +9,11 @@
 	/* MiniUPnPd */
 
 	function upnp_notice($msg) {
-		log_error("miniupnpd: {$msg}");
+		logger(LOG_NOTICE, localize_text("miniupnpd: %s", $msg));
 	}
 
 	function upnp_warn($msg) {
-		log_error("miniupnpd: {$msg}");
+		logger(LOG_WARNING, localize_text("miniupnpd: %s", $msg));
 	}
 
 	function upnp_running () {
@@ -33,9 +33,13 @@
 		fclose($handle);
 	}
 
-	function upnp_uuid() {
-		/* md5 hash of wan mac */
-		$uuid = md5(get_interface_mac(get_real_interface("wan")));
+	function upnp_uuid($interface) {
+		$mac = get_interface_mac($interface);
+		if (empty($mac)) {
+			$mac = generate_random_mac_address();
+		}
+		/* md5 hash of external inteface mac */
+		$uuid = md5($mac);
 		/* put uuid in correct format 8-4-4-4-12 */
 		return substr($uuid, 0, 8) . '-' . substr($uuid, 9, 4) . '-' . substr($uuid, 13, 4) . '-' . substr($uuid, 17, 4) . '-' . substr($uuid, 21, 12);
 	}
@@ -177,7 +181,7 @@
 		$ifaces_active = '';
 
 		/* since config is written before this file is invoked we don't need to read post data */
-		if ($upnp_config['enable'] && !empty($upnp_config['iface_array'])) {
+		if ($upnp_config['enable'] == 'on' && !empty($upnp_config['iface_array'])) {
 			$iface_array = explode(',', $upnp_config['iface_array']);
 
 			foreach ($iface_array as $iface) {
@@ -223,12 +227,12 @@
 				}
 
 				/* enable logging of packets handled by miniupnpd rules */
-				if ($upnp_config['logpackets']) {
+				if ($upnp_config['logpackets'] == 'on') {
 					$config_text .= "packet_log=yes\n";
 				}
 
 				/* enable system uptime instead of miniupnpd uptime */
-				if ($upnp_config['sysuptime']) {
+				if ($upnp_config['sysuptime'] == 'on') {
 					$config_text .= "system_uptime=yes\n";
 				}
 
@@ -248,8 +252,9 @@
 				}
 
 				/* set uuid and serial */
-				$config_text .= "uuid=".upnp_uuid()."\n";
-				$config_text .= "serial=".strtoupper(substr(upnp_uuid(), 0, 8))."\n";
+				$uuid = upnp_uuid($ext_ifname);
+				$config_text .= "uuid={$uuid}\n";
+				$config_text .= "serial=".strtoupper(substr($uuid, 0, 8))."\n";
 
 				/* set model number */
 				if (!empty($upnp_config['modelnumber'])){
@@ -266,7 +271,7 @@
 					}
 				}
 
-				if ($upnp_config['permdefault']) {
+				if ($upnp_config['permdefault'] == 'on') {
 					$config_text .= "deny 1-65535 0.0.0.0/0 1-65535\n";
 				}
 
@@ -281,11 +286,11 @@
 				}
 
 				/* Allow UPnP IGD or PCP/NAT-PMP as requested */
-				$config_text .= "enable_upnp="   . ($upnp_config['enable_upnp']   ? "yes\n" : "no\n");
-				$config_text .= "enable_pcp_pmp=" . ($upnp_config['enable_natpmp'] ? "yes\n" : "no\n");
+				$config_text .= "enable_upnp="   . ($upnp_config['enable_upnp'] == 'on' ? "yes\n" : "no\n");
+				$config_text .= "enable_pcp_pmp=" . ($upnp_config['enable_natpmp'] == 'on' ? "yes\n" : "no\n");
 
 				/* STUN configuration */
-				if ($upnp_config['enable_stun']) {
+				if ($upnp_config['enable_stun'] == 'on') {
 					$config_text .= "ext_perform_stun=yes\n";
 					$config_text .= "ext_stun_host={$upnp_config['stun_host']}\n";
 					if ($upnp_config['stun_port']){
@@ -311,7 +316,7 @@
 			/* lets stop the service and remove the rc file */
 
 			if (file_exists($config_file)) {
-				if (!$upnp_config['enable']) {
+				if ($upnp_config['enable'] != 'on') {
 					upnp_notice('Stopping service: miniupnpd disabled');
 				} else {
 					upnp_notice('Stopping service: no interfaces selected');

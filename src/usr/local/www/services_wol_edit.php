@@ -70,6 +70,10 @@ if ($_POST['save']) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
+	if (!$_POST['interface'] || !array_key_exists($_POST['interface'], get_configured_interface_with_descr())) {
+		$input_errors[] = gettext("A valid interface must be specified.");
+	}
+
 	/* normalize MAC addresses - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
 	$_POST['mac'] = trim(strtolower(str_replace("-", ":", $_POST['mac'])));
 

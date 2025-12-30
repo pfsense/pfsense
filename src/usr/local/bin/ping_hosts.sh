@@ -111,7 +111,7 @@ for TOPING in $PINGHOSTS ; do
 			echo "UP" > /var/db/pingstatus/$DSTIP
 			if [ "$SERVICERESTOREDSCRIPT" != "" ]; then
 				echo "$DSTIP is UP, previous state was DOWN .. Running $SERVICERESTOREDSCRIPT"
-				echo "$DSTIP is UP, previous state was DOWN .. Running $SERVICERESTOREDSCRIPT" | logger -p daemon.info -i -t PingMonitor
+				echo "INFO $DSTIP is UP, previous state was DOWN .. Running $SERVICERESTOREDSCRIPT" | logger -p daemon.info -i -t PingMonitor
 				sh -c $SERVICERESTOREDSCRIPT
 			fi
 		fi
@@ -122,7 +122,7 @@ for TOPING in $PINGHOSTS ; do
 			echo "DOWN" > /var/db/pingstatus/$DSTIP
 			if [ "$FAILURESCRIPT" != "" ]; then
 				echo "$DSTIP is DOWN, previous state was UP ..  Running $FAILURESCRIPT"
-				echo "$DSTIP is DOWN, previous state was UP ..  Running $FAILURESCRIPT" | logger -p daemon.info -i -t PingMonitor
+				echo "INFO $DSTIP is DOWN, previous state was UP ..  Running $FAILURESCRIPT" | logger -p daemon.info -i -t PingMonitor
 				sh -c $FAILURESCRIPT
 			fi
 		fi
@@ -135,7 +135,7 @@ for TOPING in $PINGHOSTS ; do
 	if [ "$THRESHOLD" != "" ]; then
 		if [ $(echo "${PINGTIME} > ${THRESHOLD}" | /usr/bin/bc) -eq 1 ]; then
 			echo "$DSTIP has exceeded ping threshold $PINGTIME / $THRESHOLD .. Running $FAILURESCRIPT"
-			echo "$DSTIP has exceeded ping threshold $PINGTIME / $THRESHOLD .. Running $FAILURESCRIPT" | logger -p daemon.info -i -t PingMonitor
+			echo "INFO $DSTIP has exceeded ping threshold $PINGTIME / $THRESHOLD .. Running $FAILURESCRIPT" | logger -p daemon.info -i -t PingMonitor
 			sh -c $FAILURESCRIPT
 		fi
 	fi
@@ -146,7 +146,7 @@ for TOPING in $PINGHOSTS ; do
 	if [ "$WANTHRESHOLD" != "" -a "$WANTIME" != "" ]; then
 		if [ $(echo "${WANTIME} > ${WANTHRESHOLD}" | /usr/bin/bc) -eq 1 ]; then
 			echo "$DSTIP has exceeded wan ping threshold $WANTIME / $WANTHRESHOLD .. Running $FAILURESCRIPT"
-			echo "$DSTIP has exceeded wan ping threshold $WANTIME / $WANTHRESHOLD .. Running $FAILURESCRIPT" | logger -p daemon.info -i -t PingMonitor
+			echo "INFO $DSTIP has exceeded wan ping threshold $WANTIME / $WANTHRESHOLD .. Running $FAILURESCRIPT" | logger -p daemon.info -i -t PingMonitor
 			sh -c $FAILURESCRIPT
 		fi
 	fi

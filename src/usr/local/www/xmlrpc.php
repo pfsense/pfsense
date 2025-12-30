@@ -65,9 +65,7 @@ class pfsense_xmlrpc_server {
 		}
 
 		if (!$login_ok) {
-			log_auth(sprintf(gettext("webConfigurator authentication error for user '%1\$s' from: %2\$s"),
-			    $username,
-			    $this->remote_addr));
+			log_auth_event(LOG_AUTH_EVENT_ERROR, cleanup_invalid_username($username), $this->remote_addr);
 
 			require_once("XML/RPC2/Exception.php");
 			throw new XML_RPC2_FaultException(gettext(
@@ -83,9 +81,7 @@ class pfsense_xmlrpc_server {
 		 */
 		if (isset($user_entry['uid']) && $user_entry['uid'] != '0' &&
 		    !userHasPrivilege($user_entry, 'system-xmlrpc-ha-sync')) {
-			log_auth("webConfigurator authentication error for '" .
-			    $username . "' from " . $this->remote_addr .
-			    " not enough privileges");
+			log_auth_event(LOG_AUTH_EVENT_ERROR, $username, $this->remote_addr, 'not enough privileges');
 
 			require_once("XML/RPC2/Exception.php");
 			throw new XML_RPC2_FaultException(gettext(
@@ -192,7 +188,7 @@ class pfsense_xmlrpc_server {
 		$old_config = config_get_path('');
 
 		if ($this->loop_detected) {
-			log_error("Disallowing CARP sync loop");
+			logger(LOG_ERR, localize_text("Disallowing CARP sync loop"), LOG_PREFIX_HA);
 			return true;
 		}
 
@@ -212,6 +208,8 @@ class pfsense_xmlrpc_server {
 			'dnsmasq',
 			'filter',
 			'ipsec',
+			'kea',
+			'kea6',
 			'nat',
 			'openvpn',
 			'schedules',
@@ -269,7 +267,7 @@ class pfsense_xmlrpc_server {
 					if ($idx === false) {
 						// section config group not found in local config
 						$g2add[] = $group;
-					} else if ($group['gid'] < 2000) {
+					} else if ($group['gid'] < 1999) {
 						// section config group found in local config and is a special group
 						$g2keep[] = $idx;
 					} else if ($group != $local_groups[$idx]) {
@@ -574,14 +572,19 @@ class pfsense_xmlrpc_server {
 
 		/* xmlrpc_recv plugin expects path => value pairs of changed nodes, not an associative tree */
 		$pkg_merged_paths = pkg_call_plugins("plugin_xmlrpc_recv", $pkg_sections);
-		foreach ($pkg_merged_paths as $pkg => $sections) {
-			if (!is_array($sections)) {
-				log_error('Package {$pkg} xmlrpc_recv plugin returned invalid value.');
+		foreach ($pkg_merged_paths as $pkg => $pkg_merged_sections) {
+			if (!is_array($pkg_merged_sections)) {
+				logger(LOG_ERR, localize_text("Package %s plugin returned invalid value.", "{$pkg} xmlrpc_recv"), LOG_PREFIX_HA);
 				continue;
 			}
-			foreach ($sections as $path => $section) {
+			foreach ($pkg_merged_sections as $path => $section) {
+				if ($path == 'xmlrpc_recv_result') {
+					continue;
+				}
 				if (is_null(config_set_path($path, $section))) {
-					log_error('Could not write section {$path} supplied by package {$pkg} xmlrpc_recv plugin');
+					logger(LOG_ERR, localize_text("Could not write section %s supplied by package %s plugin", $path, "{$pkg} xmlrpc_recv"), LOG_PREFIX_HA);
+				} else {
+					array_set_path($sections, $path, $section);
 				}
 			}
 		}
@@ -709,7 +712,7 @@ class pfsense_xmlrpc_server {
 		$this->filter_configure(false, $force_filterconfigure);
 		unset($old_config);
 
-		pkg_call_plugins('plugin_xmlrpc_recv_done', []);
+		pkg_call_plugins('plugin_xmlrpc_recv_done', $pkg_merged_paths);
 		return true;
 	}
 
@@ -725,7 +728,7 @@ class pfsense_xmlrpc_server {
 		$this->auth();
 
 		if ($this->loop_detected) {
-			log_error("Disallowing CARP sync loop");
+			logger(LOG_ERR, localize_text("Disallowing CARP sync loop"), LOG_PREFIX_HA);
 			return true;
 		}
 
@@ -751,7 +754,7 @@ class pfsense_xmlrpc_server {
 		$this->auth();
 
 		if ($this->loop_detected) {
-			log_error("Disallowing CARP sync loop");
+			logger(LOG_ERR, localize_text("Disallowing CARP sync loop"), LOG_PREFIX_HA);
 			return true;
 		}
 
@@ -1003,7 +1006,7 @@ class pfsense_xmlrpc_server {
 		$this->auth();
 
 		if ($this->loop_detected) {
-			log_error("Disallowing CARP sync loop");
+			logger(LOG_ERR, localize_text("Disallowing CARP sync loop"), LOG_PREFIX_HA);
 			return true;
 		}
 

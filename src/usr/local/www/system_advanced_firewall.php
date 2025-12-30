@@ -259,7 +259,7 @@ $section->addInput(new Form_Select(
 ))->setHelp(
 	'%1$sInterface Bound States are more strict and secure. States '.
 	'are bound to specific interfaces by their OS/driver name (e.g. '.
-	'igcX). If a packet attempts to takes an path through a different '.
+	'igcX). If a packet attempts to takes a path through a different '.
 	'interface than the one to which it is bound, the packet is '.
 	'dropped. This policy is less likely to allow VPN or other '.
 	'traffic to egress via unexpected paths (e.g. during interface '.
@@ -285,7 +285,7 @@ $section->addInput(new Form_Checkbox(
 	'Bound States%2$s, unchecking this option allows IPsec rules to '.
 	'automatically use floating states where needed. This option is '.
 	'ignored when %3$sIPsec Filter Mode%4$s is set to assigned '.
-	'interfaces.', '<b>', '</b>','<a href="firewall_nat_out.php">', '</a>'
+	'interfaces.', '<b>', '</b>','<a href="vpn_ipsec_settings.php">', '</a>'
 );
 
 $section->addInput(new Form_Checkbox(
@@ -367,9 +367,22 @@ $section->addInput(new Form_Select(
 
 $form->add($section);
 
-if (count(config_get_path('interfaces', [])) > 1) {
-	$section = new Form_Section('Network Address Translation');
+$section = new Form_Section('Network Address Translation');
 
+$section->addInput(new Form_Checkbox(
+	'allow_nat64_prefix_override',
+	'NAT64 Prefix Override',
+	'Allow overriding the NAT64 prefix used in rules and services',
+	$pconfig['allow_nat64_prefix_override']
+))->addClass('autotrim')->setHelp(
+	'WARNING: Overriding the prefix can violate RFCs and break general ' .
+	'NAT64 functionality.%sEnables the ability to override the well-known ' .
+	'NAT64 prefix used in NAT64 rules, DNS64, and PREF64. Enabling this ' .
+	'option also disables the default rules which block NAT64 translation ' .
+	'for non-global IPv4 addresses.', '<br/>'
+);
+
+if (count(config_get_path('interfaces', [])) > 1) {
 	if (isset($system_config['disablenatreflection'])) {
 		$value = 'disable';
 	} elseif (!isset($system_config['enablenatreflectionpurenat'])) {
@@ -441,9 +454,9 @@ if (count(config_get_path('interfaces', [])) > 1) {
 		get_configured_interface_with_descr(),
 		true
 	))->setHelp('Choose the interfaces on which to enable TFTP proxy helper.');
-
-	$form->add($section);
 }
+
+$form->add($section);
 
 $section = new Form_Section('State Timeouts (seconds - blank for default)');
 

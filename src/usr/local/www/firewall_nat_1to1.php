@@ -115,7 +115,7 @@ $system_alias_specialnet = get_specialnet('', [SPECIALNET_IFNET, SPECIALNET_GROU
 				<tbody class="user-entries">
 <?php
 		$i = 0;
-		foreach (config_get_path('nat/onetoone', []) as $natent):
+		foreach (get_anynat_rules_list('binat') as $natent):
 			if (isset($natent['disabled'])) {
 				$iconfn = "pass_d";
 			} else {

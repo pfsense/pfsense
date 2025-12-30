@@ -47,12 +47,12 @@ foreach ($aliases as $alias) {
 }
 
 if (count($todo) > 0) {
-	log_error("{$argv[0]}: Starting up.");
+	logger(LOG_INFO, localize_text("%s Starting up.", "{$argv[0]}:"));
 
 	if ($argv[1] != "now") {
 		// Wait a little before updating.
 		$wait = mt_rand(5, 60);
-		log_error("{$argv[0]}: Sleeping for {$wait} seconds.");
+		logger(LOG_INFO, localize_text("%s Sleeping for %d seconds.", "{$argv[0]}:", $wait));
 		sleep($wait);
 	}
 
@@ -63,7 +63,7 @@ if (count($todo) > 0) {
 		$forceupdate = false;
 	}
 
-	log_error("{$argv[0]}: Starting URL table alias updates");
+	logger(LOG_INFO, localize_text("%s Starting URL table alias updates", "{$argv[0]}:"));
 
 	$filter_reload = false;
 	foreach ($todo as $t) {
@@ -82,11 +82,11 @@ if (count($todo) > 0) {
 			} else {
 				$filter_reload = true;
 			}
-			log_error("{$argv[0]}: Updated {$t['name']} content from {$t['url']}: {$result[0]}");
+			logger(LOG_NOTICE, localize_text("%s Updated %s content from %s: %s", "{$argv[0]}:", $t['name'], $t['url'], $result[0]));
 		} elseif ($r == -1) {
-			log_error("{$argv[0]}: {$t['name']} does not need updating.");
+			logger(LOG_INFO, localize_text("%s %s does not need updating.", "{$argv[0]}:", $t['name']));
 		} else {
-			log_error("{$argv[0]}: ERROR: could not update {$t['name']} content from {$t['url']}");
+			logger(LOG_ERR, localize_text("%s could not update %s content from %s", "{$argv[0]}:", $t['name'], $t['url']));
 		}
 	}
 

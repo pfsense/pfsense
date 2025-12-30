@@ -86,7 +86,7 @@ if (is_subsystem_dirty('captiveportal')) {
 		}
 ?>
 					<tr>
-						<td><?=htmlspecialchars($cpitem['zone']);?></td>
+						<td><?=htmlspecialchars($cpzone);?></td>
 						<td>
 <?php
 		$cpifaces = array_filter(explode(",", $cpitem['interface']));

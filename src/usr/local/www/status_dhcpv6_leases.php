@@ -98,6 +98,11 @@ if ($_POST['deleteip'] && is_ipaddrv6($_POST['deleteip'])) {
 	header("Location: status_dhcpv6_leases.php?all={$_REQUEST['all']}");
 }
 
+if ($_POST['deletepd']) {
+	system_del_kea6lease($_POST['deletepd'], 'IA_PD');
+	header("Location: status_dhcpv6_leases.php?all={$_REQUEST['all']}");
+}
+
 if ($_POST['cleardhcpleases']) {
 	system_clear_all_kea6leases();
 	header("Location: status_dhcpv6_leases.php?all={$_REQUEST['all']}");
@@ -300,7 +305,7 @@ endif; /* dhcp_is_backend('kea') */
 </div>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Leases')?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Address Leases')?></h2></div>
 	<div class="panel-body table-responsive">
 		<table class="table statusdhcpv6leases table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
@@ -391,7 +396,11 @@ foreach ($leases as $data):
 					</td>
 					<td><?=$data['ip']?></td>
 					<td style="cursor: context-menu;" data-toggle="popover" data-container="body" data-trigger="hover focus" data-content="<?=gettext('DUID')?>: <span class=&quot;duid&quot;><?=$data['duid']?></span><?php if ($data['iaid']): ?><br /><?=gettext('IAID')?>: <span class=&quot;iaid&quot;><?=$data['iaid']?></span><?php endif; if ($mac): ?><br /><?=gettext('MAC Address')?>: <span class=&quot;mac&quot;><?=$mac?><?php if (isset($mac_man[$mac_hi])):?><br /><small>(<?=$mac_man[$mac_hi]?>)</small><?php endif; ?></span><?php endif; ?>" data-html="true" data-original-title="<?=gettext('DHCPv6 Client Information')?>"><?=$data['duid']?></td>
-					<td><?=htmlentities($data['hostname'])?></td>
+					<td>
+<?php if ($data['hostname'] && $data['dnsreg']): ?>
+						<i class="fa-solid fa-globe" title="<?=gettext('Registered with the DNS Resolver')?>"></i>
+<?php endif; ?>
+						<?=htmlentities(explode('.', $data['hostname'])[0])?></td>
 					<td><?=htmlspecialchars($data['descr'])?></td>
 <?php if (dhcp_is_backend('isc') && ($data['type'] != $static_string)):?>
 					<td><?=adjust_gmt($data['start'])?></td>
@@ -411,10 +420,10 @@ foreach ($leases as $data):
 						<a class="fa-solid fa-plus-square" title="<?=gettext('Add WOL mapping')?>" href="services_wol_edit.php?if=<?=$data['if']?>&amp;mac=<?=$mac?>&amp;descr=<?=htmlentities($data['hostname'])?>"></a>
 <?php endif; ?>
 <?php if ($data['type'] == $static_string): ?>
-						<a class="fa-solid fa-pencil"	title="<?=gettext('Edit static mapping')?>" href="services_dhcpv6_edit.php?if=<?=htmlspecialchars($data['if'])?>&amp;id=<?=htmlspecialchars($data['staticmap_array_index'])?>"></a>
+						<a class="fa-solid fa-pencil" title="<?=gettext('Edit static mapping')?>" href="services_dhcpv6_edit.php?if=<?=htmlspecialchars($data['if'])?>&amp;id=<?=htmlspecialchars($data['staticmap_array_index'])?>"></a>
 <?php endif; ?>
 <?php if ($data['type'] == $dynamic_string && $data['online'] != $online_string):?>
-						<a class="fa-solid fa-trash-can" title="<?=gettext('Delete lease')?>"	href="status_dhcpv6_leases.php?deleteip=<?=$data['ip']?>&amp;all=<?=intval($_REQUEST['all'])?>" usepost></a>
+						<a class="fa-solid fa-trash-can" title="<?=gettext('Delete lease')?>" href="status_dhcpv6_leases.php?deleteip=<?=$data['ip']?>&amp;all=<?=intval($_REQUEST['all'])?>" usepost></a>
 <?php endif; ?>
 					</td>
 				</tr>
@@ -423,7 +432,7 @@ foreach ($leases as $data):
 <?php if ($no_leases_displayed): ?>
 				<tr>
 					<td><!-- icon --></td>
-					<td colspan="8"><?=gettext('No leases to display')?></td>
+					<td colspan="8"><?=gettext('No address leases to display')?></td>
 				</tr>
 <?php
 endif;
@@ -433,31 +442,37 @@ endif;
 	</div>
 </div>
 
-<?php
-if (dhcp_is_backend('isc')):
-?>
+<?php $prefix_col = 6; ?>
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Delegated Prefixes')?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Prefix Delegation Leases')?></h2></div>
 	<div class="panel-body table-responsive">
 		<table class="table statusdhcpv6prefixes table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 		<thead>
 			<tr>
-				<th><!-- icon --></th>
+				<th data-sortable="false"><!-- status icons --></th>
 				<th><?=gettext("IPv6 Prefix")?></th>
+				<th><?=gettext('DHCP Unique Identifier (DUID)')?></th>
 				<th><?=gettext("Routed To")?></th>
-				<th><?=gettext("IAID")?></th>
-				<th><?=gettext("DUID")?></th>
+<?php if (dhcp_is_backend('kea')): $prefix_col++;?>
+				<th><?=gettext('Description')?></th>
+<?php endif; ?>
 				<th><?=gettext("Start")?></th>
 				<th><?=gettext("End")?></th>
-				<th><?=gettext("State")?></th>
+<?php if (dhcp_is_backend('kea')): $prefix_col++;?>
+				<th data-sortable="false"><?=gettext('Actions')?></th>
+<?php endif; ?>
 			</tr>
 		</thead>
 		<tbody>
 <?php
+$no_prefixes_displayed = true;
+if (dhcp_is_backend('isc')):
 foreach ($prefixes as $data):
 	if ($data['act'] != $active_string && $data['act'] != $static_string && $_REQUEST['all'] != 1) {
 		continue;
 	}
+
+	$no_prefixes_displayed = false;
 
 	if ($data['act'] == $active_string) {
 		$icon = 'fa-regular fa-circle-check';
@@ -490,31 +505,89 @@ foreach ($prefixes as $data):
 	}
 ?>
 			<tr>
-				<td><i class="<?=$icon?>"></i></td>
+				<td><i class="<?=$icon?> act" title="<?=htmlspecialchars($data['act'])?>"></i></td>
 				<td><?=$data['prefix']?></td>
-				<td><?php foreach ($mappings[$data['duid']] as $iaid => $iproute):?><?=$iproute?><br />IAID: <?=$iaid?><br /><?php endforeach; ?></td>
-				<td><?=$data['iaid']?></td>
 				<td><?=$data['duid']?></td>
+				<td><?php foreach ($mappings[$data['duid']] as $iaid => $iproute):?><?=$iproute?><br />IAID: <?=$iaid?><br /><?php endforeach; ?></td>
 <?php if ($data['type'] != $static_string):?>
 				<td><?=adjust_gmt($data['start'])?></td>
 				<td><?=adjust_gmt($data['end'])?></td>
 <?php else: ?>
-				<td>n/a</td>
-				<td>n/a</td>
+				<td><?=gettext('n/a')?></td>
+				<td><?=gettext('n/a')?></td>
 <?php endif; ?>
-				<td><?=$data['act']?></td>
 			</tr>
-<?php endforeach; ?>
+<?php
+endforeach;
+else:
+$prefixes = system_get_kea6prefixes();
+foreach ($prefixes as $data):
+	if ($data['act'] != $active_string && $data['act'] != $static_string && $_REQUEST['all'] != 1) {
+		continue;
+	}
+
+	$no_prefixes_displayed = false;
+
+	if ($data['act'] == $active_string) {
+		$icon = 'fa-regular fa-circle-check';
+	} elseif ($data['act'] == $expired_string) {
+		$icon = 'fa-solid fa-ban';
+	} else {
+		$icon = 'fa-solid fa-user';
+	}
+
+	$mac = trim($ndpdata[$data['routed-to']]['mac']);
+	$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
+?>
+			<tr>
+				<td>
+					<i class="<?=$icon?> act" title="<?=htmlspecialchars($data['act'])?>"></i>
+<?php if ($data['online'] === $online_string): ?>
+					<i class="fa-solid fa-arrow-up text-success online" title="<?=htmlspecialchars($data['online'])?>"></i>
+<?php else: ?>
+					<i class="fa-solid fa-arrow-down online" title="<?=htmlspecialchars($data['online'])?>"></i>
+<?php endif; ?>
+				</td>
+				<td><?=$data['ip']?></td>
+				<td style="cursor: context-menu;" data-toggle="popover" data-container="body" data-trigger="hover focus" data-content="<?=gettext('DUID')?>: <span class=&quot;duid&quot;><?=$data['duid']?></span><?php if ($data['iaid']): ?><br /><?=gettext('IAID')?>: <span class=&quot;iaid&quot;><?=$data['iaid']?></span><?php endif; if ($mac): ?><br /><?=gettext('MAC Address')?>: <span class=&quot;mac&quot;><?=$mac?><?php if (isset($mac_man[$mac_hi])):?><br /><small>(<?=$mac_man[$mac_hi]?>)</small><?php endif; ?></span><?php endif; ?>" data-html="true" data-original-title="<?=gettext('DHCPv6 Client Information')?>"><?=$data['duid']?></td>
+				<td><?=$data['routed-to']?></td>
+				<td><?=htmlspecialchars($data['descr'])?></td>
+<?php if ($data['type'] != $static_string):?>
+				<td><?=adjust_gmt($data['starts'])?></td>
+				<td><?=adjust_gmt($data['ends'])?></td>
+<?php else: ?>
+				<td><?=gettext('n/a')?></td>
+				<td><?=gettext('n/a')?></td>
+<?php endif; ?>
+				<td>
+<?php if ($data['type'] == $dynamic_string): ?>
+					<a class="fa-regular fa-square-plus" title="<?=gettext('Add static mapping')?>" href="services_dhcpv6_edit.php?if=<?=$data['if']?>&amp;duid=<?=$data['duid']?>&amp;hostname=<?=htmlspecialchars($data['hostname'])?>"></a>
+<?php endif; ?>
+<?php if ($data['type'] == $static_string): ?>
+					<a class="fa-solid fa-pencil" title="<?=gettext('Edit static mapping')?>" href="services_dhcpv6_edit.php?if=<?=htmlspecialchars($data['if'])?>&amp;id=<?=htmlspecialchars($data['staticmap_array_index'])?>"></a>
+<?php endif; ?>
+<?php if ($data['type'] == $dynamic_string && $data['online'] != $online_string):?>
+					<a class="fa-solid fa-trash-can" title="<?=gettext('Delete lease')?>" href="status_dhcpv6_leases.php?deletepd=<?=$data['ip']?>&amp;all=<?=intval($_REQUEST['all'])?>" usepost></a>
+<?php endif; ?>
+				</td>
+			</tr>
+<?php
+endforeach;
+endif;
+if ($no_prefixes_displayed):
+?>
+			<tr>
+				<td><!-- icon --></td>
+				<td colspan="<?=$prefix_col;?>"><?=gettext('No prefix delegation leases to display')?></td>
+			</tr>
+<?php endif; ?>
 		</tbody>
 		</table>
 	</div>
 </div>
-<?php
-endif; /* dhcp_is_backend('isc') */
-?>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Lease Utilization')?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Address Lease Utilization')?></h2></div>
 	<div class="panel-body table-responsive">
 		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>

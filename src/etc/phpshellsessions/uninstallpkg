@@ -36,7 +36,10 @@ pkg_remove_prefix($pkg_name);
 
 echo "Removing package \"{$pkg_name}\"... ";
 
-if (mwexec("/usr/local/sbin/{$g['product_name']}-upgrade -y -r {$g['pkg_prefix']}{$pkg_name}") == 0) {
+if (is_vital_system_default_package($args[1])) {
+	echo "Cannot remove vital package.\n";
+	return false;
+} elseif (mwexec("/usr/local/sbin/{$g['product_name']}-upgrade -y -r {$g['pkg_prefix']}{$pkg_name}") == 0) {
 	echo "Done.\n";
 	return true;
 } else {

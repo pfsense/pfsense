@@ -32,9 +32,6 @@
 ##|*MATCH=diag_reboot.php*
 ##|-PRIV
 
-// Set DEBUG to true to prevent the system_reboot() function from being called
-define("DEBUG", false);
-
 global $g;
 
 require_once("guiconfig.inc");
@@ -50,7 +47,7 @@ $platform = system_identify_specific_platform();
 include("head.inc");
 
 if (isset($_POST['rebootmode'])):
-	if (DEBUG) {
+	if (g_get('debug')) {
 		print_info_box(gettext("Not actually rebooting (DEBUG is set true)."), 'success');
 	} else {
 		print('<div><pre>');

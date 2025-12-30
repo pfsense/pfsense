@@ -37,19 +37,19 @@ if (file_exists("{$g['tmp_path']}/.rc.start_packages.running")) {
 	if (time() - $stat['mtime'] >= 90) {
 		@unlink("{$g['tmp_path']}/.rc.start_packages.running");
 	} else {
-		log_error("Skipping STARTing packages process because previous/another instance is already running");
+		logger(LOG_NOTICE, localize_text("Skipping STARTing packages process because previous/another instance is already running"));
 		return;
 	}
 }
 
 if (file_exists("{$g['conf_path']}/needs_package_sync")) {
-	log_error("Skipping STARTing packages process because package reinstallation is pending.");
+	logger(LOG_NOTICE, localize_text("Skipping STARTing packages process because package reinstallation is pending."));
 	return;
 }
 
 @file_put_contents("{$g['tmp_path']}/.rc.start_packages.running", "");
 
-log_error("Restarting/Starting all packages.");
+logger(LOG_INFO, localize_text("Restarting/Starting all packages."));
 
 $rcfiles = glob(RCFILEPREFIX . "*.sh");
 if (!$rcfiles) {

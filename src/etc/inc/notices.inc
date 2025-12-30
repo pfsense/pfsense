@@ -134,12 +134,12 @@ function file_notice($id, $notice, $category = "General", $url = "", $priority =
 	$queue[$queuekey] = $toqueue;
 	$queueout = fopen($notice_path, "w");
 	if (!$queueout) {
-		log_error(sprintf(gettext("Could not open %s for writing"), $notice_path));
+		logger(LOG_ERR, localize_text("Could not open %s for writing", $notice_path), LOG_PREFIX_NOTICE);
 		return;
 	}
 	fwrite($queueout, serialize($queue));
 	fclose($queueout);
-	log_error(sprintf(gettext("New alert found: %s"), $notice));
+	logger(LOG_INFO, localize_text("New alert found: %s", $notice), LOG_PREFIX_NOTICE);
 	/* soekris */
 	if (file_exists("/dev/led/error")) {
 		exec("/bin/echo 1 > /dev/led/error");
@@ -275,7 +275,7 @@ function notices_sendqueue() {
 				$messages = ['mails' => ['item' => []]];
 				$ret = @file_put_contents($notice_queue, serialize($messages));
 				if ($ret === false) {
-					log_error("ERROR: Failed to write notify message queue!");
+					logger(LOG_ERR, localize_text("Failed to write notify message queue!"), LOG_PREFIX_NOTICE);
 					return;
 				}
 			} else {
@@ -287,7 +287,7 @@ function notices_sendqueue() {
 			/* Queue does not exist or is not writable, so no action can be taken
 			 * https://redmine.pfsense.org/issues/14031
 			 */
-			log_error("SMTP queue does not exist or is not writable.");
+			logger(LOG_ERR, localize_text("SMTP queue does not exist or is not writable."), LOG_PREFIX_NOTICE);
 			return;
 		}
 		// clear lock before trying to send messages, so new one's can be added
@@ -338,7 +338,7 @@ function notify_via_queue_add($message, $type='mail') {
 			/* Cannot write to notify queue, so exit early
 			 * https://redmine.pfsense.org/issues/14031
 			 */
-			log_error("Cannot write to the notify queue.");
+			logger(LOG_ERR, localize_text("Cannot write to the notify queue."), LOG_PREFIX_NOTICE);
 			return;
 		}
 		$queue = unserialize(file_get_contents($notice_queue));
@@ -352,7 +352,7 @@ function notify_via_queue_add($message, $type='mail') {
 		array_set_path($messages, 'mails/item', $msg);
 		$ret = @file_put_contents($notice_queue, serialize($messages));
 		if ($ret === false) {
-			log_error("ERROR: Failed to write notify message queue!");
+			logger(LOG_ERR, localize_text("Failed to write notify message queue!"), LOG_PREFIX_NOTICE);
 			return;
 		}
 	}
@@ -415,7 +415,7 @@ function notify_via_smtp($message, $force = false, $header = "") {
 	 * TODO: Maybe track repeats and send every X times.
 	 */
 	if ($repeat) {
-		log_error(gettext("Suppressing repeat e-mail notification message."));
+		logger(LOG_NOTICE, localize_text("Suppressing repeat e-mail notification message."), LOG_PREFIX_NOTICE);
 		return;
 	}
 
@@ -508,11 +508,11 @@ function send_smtp_message($message, $subject = "(no subject)", $force = false) 
 	}
 
 	if (!empty($err_msg)) {
-		log_error($err_msg);
+		logger(LOG_ERR, $err_msg);
 		return($err_msg);
 	}
 
-	log_error(sprintf(gettext("Message sent to %s OK"), $to));
+	logger(LOG_INFO, localize_text("Message sent to %s OK", $to), LOG_PREFIX_NOTICE);
 	return;
 }
 /****f* notices/notify_via_telegram
@@ -545,11 +545,11 @@ function notify_via_telegram($message, $force = false) {
 			unset($err_msg);
 		} else {
 			$err_msg = sprintf(gettext("Failed to send Telegram notification. Error received was :{$result['error_code']}: {$result['description']}"));
-			log_error($err_msg);
+			logger(LOG_ERR, $err_msg, LOG_PREFIX_NOTICE);
 		}
 	} else {
 		$err_msg = gettext("API to Telegram did not return data in expected format!");
-		log_error($err_msg);
+		logger(LOG_ERR, $err_msg, LOG_PREFIX_NOTICE);
 	}
 	return $err_msg;
 }
@@ -593,11 +593,11 @@ function notify_via_pushover($message, $force = false) {
 			unset($err_msg);
 		} else {
 			$err_msg = sprintf(gettext("Failed to send Pushover notification. Error received was: %s"), $result['errors']['0']);
-			log_error($err_msg);
+			logger(LOG_ERR, $err_msg, LOG_PREFIX_NOTICE);
 		}
 	} else {
 		$err_msg = gettext("Pushover API server did not return data in expected format!");
-		log_error($err_msg);
+		logger(LOG_ERR, $err_msg, LOG_PREFIX_NOTICE);
 	}
 	return $err_msg;
 }
@@ -634,11 +634,11 @@ function notify_via_slack($message, $force = false) {
 			unset($err_msg);
 		} else {
 			$err_msg = sprintf(gettext("Failed to send Slack notification. Error received was: %s"), $result['error']);
-			log_error($err_msg);
+			logger(LOG_ERR, $err_msg, LOG_PREFIX_NOTICE);
 		}
 	} else {
 		$err_msg = gettext("Slack API server did not return data in expected format!");
-		log_error($err_msg);
+		logger(LOG_ERR, $err_msg, LOG_PREFIX_NOTICE);
 	}
 	return $err_msg;
 }

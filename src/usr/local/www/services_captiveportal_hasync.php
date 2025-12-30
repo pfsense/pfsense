@@ -45,12 +45,12 @@ if (empty($cpzone)) {
 }
 
 if (empty(config_get_path("captiveportal/{$cpzone}"))) {
-	log_error(sprintf(gettext("Submission on captiveportal page with unknown zone parameter: %s"), htmlspecialchars($cpzone)));
+	logger(LOG_WARNING, localize_text("Submission on captiveportal page with unknown zone parameter: %s", htmlspecialchars($cpzone)), LOG_PREFIX_CAPTIVEPORTAL);
 	header("Location: services_captiveportal_zones.php");
 	exit();
 }
 
-$pgtitle = array(gettext("Services"), gettext("Captive Portal"), config_get_path("captiveportal/{$cpzone}/zone"), gettext("High Availability"));
+$pgtitle = array(gettext("Services"), gettext("Captive Portal"), htmlspecialchars($cpzone), gettext("High Availability"));
 $pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "@self");
 
 $pconfig['enablebackwardsync'] = config_path_enabled("captiveportal/{$cpzone}", 'enablebackwardsync');

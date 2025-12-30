@@ -228,11 +228,11 @@ function captiveportal_configure_zone($cpcfg, $reload_rules = false) {
 	$captiveportallck = lock("captiveportal{$cpzone}", LOCK_EX);
 
 	if (isset($cpcfg['enable'])) {
-
+		$zone_description = $cpzone . ($cpcfg['descr'] ? " ({$cpcfg['descr']})" : '');
 		if (is_platform_booting()) {
-			echo "Starting captive portal({$cpcfg['zone']})... ";
+			echo "Starting captive portal zone {$zone_description}... ";
 		} else {
-			captiveportal_syslog("Reconfiguring captive portal({$cpcfg['zone']}).");
+			captiveportal_syslog("Reconfiguring captive portal zone {$zone_description}.");
 		}
 
 		/* init captive portal pipes and anchors */
@@ -386,7 +386,7 @@ EOD;
 
 				$connected_users = captiveportal_read_db();
 				if (!empty($connected_users)) {
-					echo "Reconnecting users to captive portal {$cpcfg['zone']}... ";
+					echo "Reconnecting users to captive portal zone {$zone_description}... ";
 					foreach ($connected_users as $user) {
 						captiveportal_reserve_ruleno($user['pipeno']);
 						captiveportal_ether_configure_entry($user, 'auth', true);
@@ -954,7 +954,7 @@ function captiveportal_disconnect_all($term_cause = 6, $logoutReason = "DISCONNE
 
 	/* if we still don't have the lock, unlock forcefully and take it */
 	if (!$rcprunelock) {
-		log_error("CP zone {$cpzone}: could not obtain the lock for more than 15 seconds, lock taken forcefully to disconnect all users");
+		logger(LOG_WARNING, localize_text("CP zone %s: could not obtain the lock for more than 15 seconds, lock taken forcefully to disconnect all users", $cpzone), LOG_PREFIX_CAPTIVEPORTAL);
 		unlock_force("rcprunecaptiveportal{$cpzone}");
 		$rcprunelock = lock("rcprunecaptiveportal{$cpzone}", LOCK_EX);
 	}
@@ -1020,6 +1020,7 @@ function captiveportal_passthrumac_delete_entry($macent) {
 	if ($macent['action'] == 'pass') {
 		$pipes = captiveportal_get_dn_passthru_pipes($macent['mac']);
 		if (!empty($pipes)) {
+			// passthrumac should always have 2 pipes, one each for 'ether in' and 'ether out'.
 			captiveportal_pipes_delete($pipes);
 		}
 	} else {
@@ -1088,6 +1089,14 @@ function captiveportal_ether_delete_entry($hostent, $anchor = 'allowedhosts') {
 
 	$pipes = pfSense_pf_cp_get_eth_pipes("{$cpzoneprefix}_{$anchor}/{$host}");
 	if (!empty($pipes)) {
+		// 2 pipes are reserved per entry; keep the reservation list aligned when a rule is created for a single direction.
+		if (count($pipes) == 1) {
+			if ($hostent['dir'] == 'to') {
+				$pipes[array_key_last($pipes) + 1] = $pipes[array_key_last($pipes)] + 1;
+			} elseif ($hostent['dir'] == 'from') {
+				$pipes[array_key_last($pipes) + 1] = $pipes[array_key_last($pipes)] - 1;
+			}
+		}
 		captiveportal_pipes_delete($pipes);
 	}
 	/* flush anchor rules */
@@ -1189,12 +1198,8 @@ function captiveportal_logportalauth($user, $mac, $ip, $status, $message = null)
 function captiveportal_syslog($message) {
 	global $cpzone;
 
-	$message = trim($message);
-	$message = "Zone: {$cpzone} - {$message}";
-	openlog("logportalauth", LOG_PID, LOG_LOCAL4);
 	// Log it
-	syslog(LOG_INFO, $message);
-	closelog();
+	logger(LOG_INFO, localize_text("logportalauth: Zone: %s - %s", $cpzone, trim($message)), LOG_PREFIX_CAPTIVEPORTAL, LOG_LOCAL4);
 }
 
 /* Authenticate users using Authentication Backend */
@@ -1251,7 +1256,7 @@ function captiveportal_authenticate_user(&$login = '', $password = '', $clientma
 				if (auth_get_authserver($authserver) !== null) {
 					$auth_servers[] = auth_get_authserver($authserver);
 				} else {
-					log_error("Zone: {$cpzone} - Captive portal was unable to find the settings of the server '{$authserver}' used for authentication !");
+					logger(LOG_ERR, localize_text("Zone: %s - unable to find the settings of the server '%s' used for authentication!", $cpzone, $authserver), LOG_PREFIX_CAPTIVEPORTAL);
 				}
 			}
 		}
@@ -1259,7 +1264,7 @@ function captiveportal_authenticate_user(&$login = '', $password = '', $clientma
 
 	/* Unable to find the any authentication server config - shouldn't happen! - bail out */
 	if (count($auth_servers) === 0) {
-		log_error("Zone: {$cpzone} - No valid server could be used for authentication.");
+		logger(LOG_ERR, localize_text("Zone: %s - No valid server could be used for authentication.", $cpzone), LOG_PREFIX_CAPTIVEPORTAL);
 		$login_msg = gettext("Internal Error");
 	} else {
 		foreach ($auth_servers as $authcfg) {
@@ -1285,7 +1290,7 @@ function captiveportal_authenticate_user(&$login = '', $password = '', $clientma
 					} else {
 						/* Trying to perform a Radius MAC authentication on a non-radius server - shouldn't happen! - bail out */
 						$msg = gettext("Internal Error");
-						log_error("Zone: {$cpzone} - Trying to perform RADIUS MAC authentication on a non-RADIUS server !");
+						logger(LOG_ERR, localize_text("Zone: %s - Trying to perform RADIUS MAC authentication on a non-RADIUS server!", $cpzone), LOG_PREFIX_CAPTIVEPORTAL);
 						$radmac_error = true;
 						$result = null;
 					}
@@ -2590,6 +2595,14 @@ function captiveportal_allowedhostname_cleanup() {
 		$pipes = pfSense_pf_cp_get_eth_pipes("{$cpzoneprefix}_allowedhosts/hostname_{$id}");
 		pfSense_pf_cp_flush("{$cpzoneprefix}_allowedhosts/hostname_{$id}", "ether");
 		if (!empty($pipes)) {
+			// 2 pipes are reserved per entry; keep the reservation list aligned when a rule is created for a single direction.
+			if (count($pipes) == 1) {
+				if ($hostnameent['dir'] == 'to') {
+					$pipes[array_key_last($pipes) + 1] = $pipes[array_key_last($pipes)] + 1;
+				} elseif ($hostnameent['dir'] == 'from') {
+					$pipes[array_key_last($pipes) + 1] = $pipes[array_key_last($pipes)] - 1;
+				}
+			}
 			captiveportal_pipes_delete($pipes);
 		}
 	}
@@ -2658,7 +2671,7 @@ function filter_captiveportal_tables() {
 }
 
 function filter_captiveportal_ether() {
-	global $g;
+	global $PFConfig, $g;
 
 	$rules = '';
 	foreach (config_get_path('captiveportal', []) as $cpzone => $cpcfg) {
@@ -2672,7 +2685,8 @@ function filter_captiveportal_ether() {
 
 		if (!empty($interfaces)) {
 			/* set 'rdr' tag for further captive portal web portal redirection */
-			$rules .= "ether pass on { {$interfaces} } tag \"{$rdrtag}\"\n";
+			$rules .= "ether pass in on { {$interfaces} } tag \"{$rdrtag}\"\n";
+			$rules .= "ether pass out on { {$interfaces} }\n";
 			/* anchor to set the PASS tag for authenticated clients */
 			$rules .= "ether anchor \"{$cpzoneprefix}_auth/*\" on { {$interfaces} }\n";
 			/* anchor for Services / Captive Portal / CPZONE / MACs */
@@ -2682,15 +2696,13 @@ function filter_captiveportal_ether() {
 		}
 	}
 
-	if (!empty($rules)) {
-		$rules = "\n# Captive Portal\n" . $rules . "\n";
-	}
-
-	return $rules;
+	$PFConfig->set_config(PFCONFIG_ETHERNET_CAPTIVE_PORTAL['id'],
+		array_from_filter_lines($rules)
+	);
 }
 
 function filter_captiveportal_rdr() {
-	global $g, $FilterIflist;
+	global $PFConfig, $g, $FilterIflist;
 
 	$rules = '';
 	foreach (config_get_path('captiveportal', []) as $cpzone => $cpcfg) {
@@ -2717,11 +2729,11 @@ function filter_captiveportal_rdr() {
 		}
 	}
 
-	if (!empty($rules)) {
-		$rules = "\n# Captive Portal\n" . $rules . "\n";
-	}
-
-	return $rules;
+	$PFConfig->set_config(PFCONFIG_ALL_NAT_RULES['id'],
+		array_from_filter_lines($rules),
+		null,
+		PFCONFIG_NAT_CAPTIVE_PORTAL['id']
+	);
 }
 
 function filter_captiveportal_pass() {
@@ -2848,8 +2860,11 @@ function captiveportal_ether_configure_entry($hostent, $anchor, $user_auth = fal
 		}
 	}
 
-	$rules = "ether pass in quick {$macfrom} {$l3from} tag {$tag} dnpipe {$pipeup}\n";
-	$rules .= "ether pass out quick {$macto} {$l3to} tag {$tag} dnpipe {$pipedown}\n";
+	// prevent ARP from being sent to dummynet, pass the rest
+	$rules = "ether pass in quick proto 0x0806 {$macfrom} tag {$tag}\n";
+	$rules .= "ether pass out quick proto 0x0806 {$macto}\n";
+	$rules .= "ether pass in quick {$macfrom} {$l3from} tag {$tag} dnpipe {$pipeup}\n";
+	$rules .= "ether pass out quick {$macto} {$l3to} dnpipe {$pipedown}\n";
 
 	captiveportal_load_pfctl("{$cpzoneprefix}_{$anchor}", $host, $rules);
 }
@@ -2945,7 +2960,7 @@ function captiveportal_load_pfctl($anchor, $host, $rules) {
 	if (!empty($rules)) {
 		mwexec("/usr/bin/printf \"{$rules}\" | /sbin/pfctl -a {$anchor}/{$host} -f-");
 	} else {
-		log_error("CP zone {$cpzone}: {$anchor} rules are empty for {$host}");
+		logger(LOG_INFO, localize_text("CP zone %s: %s rules are empty for %s", $cpzone, $anchor, $host), LOG_PREFIX_CAPTIVEPORTAL);
 	}
 }
 

@@ -148,13 +148,17 @@ function stop_service($name) {
 	}
 }
 
-function restart_service($name) {
+function restart_service($name, string $pid = '', int $timeout = 1) {
 	if (empty($name)) {
 		return;
 	}
 
 	if (is_service_running($name)) {
 		stop_service($name);
+	}
+
+	if (strlen($pid) > 0) {
+		sigkillbypid($pid, "TERM", $timeout);
 	}
 	start_service($name);
 
@@ -368,7 +372,7 @@ function get_services() {
 			$pconfig['name'] = "captiveportal";
 			$pconfig['zone'] = $zone;
 			$pconfig['enabled'] = true;
-			$pconfig['description'] = gettext("Captive Portal") . ": " . htmlspecialchars($setting['zone']);
+			$pconfig['description'] = gettext("Captive Portal") . ": " . htmlspecialchars($zone . ($setting['descr'] ? " ({$setting['descr']})" : ''));
 			$services[] = $pconfig;
 		}
 	}

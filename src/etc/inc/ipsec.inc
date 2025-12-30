@@ -1008,7 +1008,7 @@ function ipsec_dump_mobile() {
 	$_gb = exec("/usr/local/sbin/swanctl --list-pools --leases 2>/dev/null", $output, $rc);
 
 	if ($rc != 0) {
-		log_error(gettext("Unable to find IPsec daemon leases file. Could not display mobile user stats!"));
+		logger(LOG_ERR, localize_text("Unable to find IPsec daemon leases file. Could not display mobile user stats!"), LOG_PREFIX_IPSEC);
 		return array();
 	}
 
@@ -1336,13 +1336,13 @@ function ipsec_force_reload($interface = "", $protocol = "") {
 			}
 		}
 		if (!$found) {
-			log_error(sprintf(gettext("Ignoring IPsec reload since there are no tunnels on interface %s"), $interface));
+			logger(LOG_INFO, localize_text("Ignoring IPsec reload since there are no tunnels on interface %s", $interface), LOG_PREFIX_IPSEC);
 			return;
 		}
 	}
 
 	/* If we get this far then we need to take action. */
-	log_error(gettext("Forcefully reloading IPsec"));
+	logger(LOG_INFO, localize_text("Forcefully reloading IPsec"), LOG_PREFIX_IPSEC);
 	ipsec_configure();
 }
 
@@ -1490,7 +1490,7 @@ function ipsec_setup_gwifs() {
 		$local_spec  = explode(',', $local_spec);
 		$local_spec  = $local_spec[0];
 		if (!is_ipaddr($local_spec)) {
-			log_error(sprintf(gettext("IPsec ERROR: Could not find phase 1 source for connection %s. Omitting from configuration file."), $ph1ent['descr']));
+			logger(LOG_ERR, localize_text("Could not find phase 1 source for connection %s. Omitting from configuration file.", $ph1ent['descr']), LOG_PREFIX_IPSEC);
 			continue;
 		}
 
@@ -1512,7 +1512,7 @@ function ipsec_setup_gwifs() {
 			}
 		}
 		if (!isset($ph1ent['gw_duplicates']) && array_search($rg, $rgmap)) {
-			log_error(sprintf(gettext("The remote gateway %s already exists on another phase 1 entry"), $rg));
+			logger(LOG_ERR, localize_text("The remote gateway %s already exists on another phase 1 entry", $rg), LOG_PREFIX_IPSEC);
 			continue;
 		}
 		$rgmap[$ph1ent['remote-gateway']] = $rg;
@@ -1646,7 +1646,7 @@ function ipsec_setup_strongswan() {
 		if (file_exists("{$g['varetc_path']}/ipsec/strongswan.conf")) {
 			$stronconf = file_get_contents("{$g['varetc_path']}/ipsec/strongswan.conf");
 		}
-		log_error("WARNING: Setting i_dont_care_about_security_and_use_aggressive_mode_psk option because a phase 1 is configured using aggressive mode with pre-shared keys. This is not a secure configuration.");
+		logger(LOG_WARNING, localize_text("Setting i_dont_care_about_security_and_use_aggressive_mode_psk option because a phase 1 is configured using aggressive mode with pre-shared keys. This is not a secure configuration."), LOG_PREFIX_IPSEC);
 		$restart = (!empty($stronconf) && strpos($stronconf, 'i_dont_care_about_security_and_use_aggressive_mode_psk') === FALSE);
 		unset($stronconf);
 		$ssconf['charon']['i_dont_care_about_security_and_use_aggressive_mode_psk'] = "yes";
@@ -2610,7 +2610,7 @@ function ipsec_setup_tunnels() {
 					}
 					// Don't let an empty subnet into config, it can cause parse errors. Ticket #2201.
 					if (!is_ipaddr($localsubnet_data) && !is_subnet($localsubnet_data) && ($localsubnet_data != "0.0.0.0/0")) {
-						log_error("Invalid IPsec Phase 2 \"{$ph2ent['descr']}\" - {$ph2ent['localid']['type']} has no subnet.");
+						logger(LOG_ERR, localize_text("Invalid IPsec Phase 2 \"%s\" - %s has no subnet.", $ph2ent['descr'], $ph2ent['localid']['type']), LOG_PREFIX_IPSEC);
 						continue;
 					}
 					if (!empty($ph2ent['natlocalid'])) {
@@ -2767,7 +2767,7 @@ function ipsec_setup_tunnels() {
 						$children[$subconname][$ph2ent['protocol'] . '_proposals'] = implode(',', $proposal);
 					}
 				} else {
-					log_error(sprintf(gettext("No phase2 specifications for tunnel with ikeid = %s"), $ikeid));
+					logger(LOG_ERR, localize_text("No phase2 specifications for tunnel with ikeid = %s", $ikeid), LOG_PREFIX_IPSEC);
 				}
 			} else {
 				/* TODO: Fix this to nicely merge all P2 params for single child case */
@@ -2894,7 +2894,7 @@ function ipsec_setup_secrets() {
 			$cert = $cert['item'];
 
 			if (!$cert) {
-				log_error(sprintf(gettext("Error: Invalid phase1 certificate reference for %s"), $ph1ent['name']));
+				logger(LOG_ERR, localize_text("Invalid phase1 certificate reference for %s", $ph1ent['name']), LOG_PREFIX_IPSEC);
 				continue;
 			}
 
@@ -2912,14 +2912,14 @@ function ipsec_setup_secrets() {
 
 			$ph1keyfile = "{$ipsec_swanctl_dirs['keypath']}/cert-{$ikeid}.key";
 			if (!file_put_contents($ph1keyfile, base64_decode($cert['prv']))) {
-				log_error(sprintf(gettext("Error: Cannot write phase1 key file for %s"), $ph1ent['name']));
+				logger(LOG_ERR, localize_text("Cannot write phase1 key file for %s", $ph1ent['name']), LOG_PREFIX_IPSEC);
 				continue;
 			}
 			@chmod($ph1keyfile, 0600);
 
 			$ph1certfile = "{$ipsec_swanctl_dirs['certpath']}/cert-{$ikeid}.crt";
 			if (!file_put_contents($ph1certfile, base64_decode($cert['crt']))) {
-				log_error(sprintf(gettext("Error: Cannot write phase1 certificate file for %s"), $ph1ent['name']));
+				logger(LOG_ERR, localize_text("Cannot write phase1 certificate file for %s", $ph1ent['name']), LOG_PREFIX_IPSEC);
 				@unlink($ph1keyfile);
 				continue;
 			}
@@ -2936,7 +2936,7 @@ function ipsec_setup_secrets() {
 					'pin' => $ph1ent['pkcs11pin'],
 				);
 			} else {
-				log_error(sprintf(gettext("Error: Invalid phase1 PKCS#11 certificate reference or PKCS#11 is not present for %s"), $ph1ent['name']));
+				logger(LOG_ERR, localize_text("Invalid phase1 PKCS#11 certificate reference or PKCS#11 is not present for %s", $ph1ent['name']), LOG_PREFIX_IPSEC);
 				continue;
 			}
 		} else {
@@ -2996,12 +2996,12 @@ function ipsec_setup_secrets() {
 		$cacrt = base64_decode($cadata['crt']);
 		$cacrtattrs = openssl_x509_parse($cacrt);
 		if (!is_array($cacrtattrs) || !isset($cacrtattrs['hash'])) {
-			log_error(sprintf(gettext("Error: Invalid certificate hash info for %s"), $cadata['descr']));
+			logger(LOG_ERR, localize_text("Invalid certificate hash info for %s", $cadata['descr']), LOG_PREFIX_IPSEC);
 			continue;
 		}
 		$cafilename = "{$ipsec_swanctl_dirs['capath']}/{$cacrtattrs['hash']}.0";
 		if (!@file_put_contents($cafilename, $cacrt)) {
-				log_error(sprintf(gettext("Error: Cannot write IPsec CA file for %s"), $cadata['descr']));
+				logger(LOG_ERR, localize_text("Cannot write IPsec CA file for %s", $cadata['descr']), LOG_PREFIX_IPSEC);
 				continue;
 		}
 	}
@@ -3010,12 +3010,12 @@ function ipsec_setup_secrets() {
 	if (!empty($vpncas)) {
 		foreach (config_get_path('crl', []) as $crl) {
 			if (!isset($crl['text'])) {
-				log_error(sprintf(gettext("Warning: Missing CRL data for %s"), $crl['descr']));
+				logger(LOG_WARNING, localize_text("Missing CRL data for %s", $crl['descr']), LOG_PREFIX_IPSEC);
 				continue;
 			}
 			$fpath = "{$ipsec_swanctl_dirs['crlpath']}/{$crl['refid']}.crl";
 			if (!@file_put_contents($fpath, base64_decode($crl['text']))) {
-				log_error(sprintf(gettext("Error: Cannot write IPsec CRL file for %s"), $crl['descr']));
+				logger(LOG_ERR, localize_text("Cannot write IPsec CRL file for %s", $crl['descr']), LOG_PREFIX_IPSEC);
 				continue;
 			}
 		}

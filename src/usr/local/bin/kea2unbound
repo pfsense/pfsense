@@ -1,0 +1,800 @@
+#!/usr/bin/env php
+<?php
+/*
+ * kea2unbound
+ *
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2024-2025 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
+ *
+ */
+
+declare(strict_types=1);
+
+namespace kea2unbound;
+
+require_once 'vendor/autoload.php';
+
+use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
+
+\define('BUFSIZ', 16 * 1024);
+\define('HASHALGO', 'xxh3');
+\define('LOGFLAGS', LOG_NDELAY | LOG_PID);
+\define('RETRIES', 5);
+\define('UBCTRLBIN', '/usr/local/sbin/unbound-control');
+
+final class FileLockException extends \Exception {}
+final class KeaConfigException extends \Exception {}
+final class KeaException extends \Exception {}
+
+enum DnsRecordType
+{
+    case A;
+    case AAAA;
+    case PTR;
+}
+
+enum AddressFamily: string
+{
+    case INET   = '4';
+    case INET6  = '6';
+    case ANY    = 'any';
+
+    public function is(AddressFamily $family): bool
+    {
+        return ($this === $family);
+    }
+
+    public function getDNSRecordType(): DnsRecordType
+    {
+        return (match($this) {
+            self::INET  => DnsRecordType::A,
+            self::INET6 => DnsRecordType::AAAA
+        });
+    }
+}
+
+class DnsRecordSet
+{
+    private $hash = null;
+    private $records = [];
+
+    public function __construct(
+        private string $hashAlgo = 'xxh3'
+    ) {}
+
+    public function add(string $record): self
+    {
+        if (!isset($this->records[$record])) {
+            $this->records[$record] = true;
+            $this->hash = null; /* trigger rehash */
+        }
+
+        return ($this);
+    }
+
+    public function toArray(): array
+    {
+        return (array_keys($this->records));
+    }
+
+    public function getHash(): string
+    {
+        if ($this->hash === null) {
+            $sortedRecords = $this->records;
+            ksort($sortedRecords);
+            $this->hash = hash($this->hashAlgo, serialize($sortedRecords));
+        }
+        return ($this->hash);
+    }
+}
+
+abstract class Singleton
+{
+    private static array $instances = [];
+
+    protected function __construct() {}
+
+    protected function __clone() {}
+
+    public function __wakeup()
+    {
+        throw new Exception(
+            \gettext('Cannot unserialize a singleton')
+        );
+    }
+
+    public static function getInstance(mixed ...$args): static
+    {
+        $class = static::class;
+        if (!isset(self::$instances[$class])) {
+            self::$instances[$class] = new static(...$args);
+        }
+
+        return (self::$instances[$class]);
+    }
+}
+
+final class KeaConfig extends Singleton
+{
+    private AddressFamily $addressFamily;
+    private array $config;
+    private string $socketPath;
+
+    protected function __construct(private string $confPath, AddressFamily $familyHint = AddressFamily::ANY)
+    {
+        $configJson = \file_get_contents($confPath);
+        if ($configJson === false) {
+            throw new KeaConfigException(
+                \sprintf(
+                    \gettext('Unable to read Kea configuration file: %s'),
+                    $confPath
+                )
+            );
+        }
+
+        $tmpConfig = \json_decode($configJson, true);
+        if (!is_array($tmpConfig) || (\json_last_error() !== JSON_ERROR_NONE)) {
+            throw new KeaConfigException(
+                \sprintf(
+                    \gettext('Unable to parse Kea configuration file: %s'),
+                    $confPath
+                )
+            );
+        }
+        $this->config = $tmpConfig;
+
+        if (isset($this->config['Dhcp4'])) {
+            $this->addressFamily = AddressFamily::INET;
+            $this->socketPath = $this->config['Dhcp4']['control-socket']['socket-name'] ?? '/var/kea/dhcp4.sock';
+        } elseif (isset($this->config['Dhcp6'])) {
+            $this->addressFamily = AddressFamily::INET6;
+            $this->socketPath = $this->config['Dhcp6']['control-socket']['socket-name'] ?? '/var/kea/dhcp6.sock';
+        } else {
+            throw new KeaConfigException(
+                \sprintf(
+                    \gettext('Unable to determine address family from Kea configuration: %s'),
+                    $confPath
+                )
+            );
+        }
+
+        /* Apply family constaint if provided */
+        if (!$familyHint->is(AddressFamily::ANY) &&
+            !$this->addressFamily->is($familyHint)) {
+                throw new KeaConfigException(
+                    \sprintf(
+                        \gettext("Address family mismatch: expected '%s', found '%s' in '%s'."),
+                        $familyHint,
+                        $this->addressFamily,
+                        $this->confPath
+                    )
+                );
+        }
+    }
+
+    public function getAddressFamily(): AddressFamily
+    {
+        return ($this->addressFamily);
+    }
+
+    public function getConfPath(): string
+    {
+        return ($this->confPath);
+    }
+
+    public function getSocketAddress(): string
+    {
+        return ("unix://{$this->socketPath}");
+    }
+
+    public function getSocketPath(): string
+    {
+        return ($this->socketPath);
+    }
+}
+
+class FileLock
+{
+    private bool $removeFile = false;
+    private $fd = null;
+
+    public function __construct(private string $lockFile = __FILE__)
+    {
+        if (!\file_exists($lockFile) && @\touch($lockFile)) {
+            /* We created it, so mark for cleanup */
+            $this->removeFile = true;
+        }
+    }
+
+    public function __destruct()
+    {
+        $this->release();
+
+        if ($this->removeFile && \file_exists($this->lockFile)) {
+            /* We created it, so clean it up */
+            @\unlink($this->lockFile);
+        }
+    }
+
+    public function isLocked(): bool
+    {
+        return (\is_resource($this->fd));
+    }
+
+    public function tryAquire(): bool
+    {
+        if ($this->isLocked()) {
+            throw new FileLockException(
+                \sprintf(
+                    \gettext('Lock already acquired: %s'),
+                    $this->lockFile
+                )
+            );
+        }
+
+        $this->fd = \fopen($this->lockFile, 'c+');
+        if (!$this->fd) {
+            return (false);
+        }
+
+        if (!\flock($this->fd, LOCK_EX | LOCK_NB)) {
+            \fclose($this->fd);
+            $this->fd = null;
+            return (false);
+        }
+
+        return (true);
+    }
+
+    public function aquire(int $timeout = 5): self
+    {
+        $startTime = \time();
+
+        while (!$this->tryAquire()) {
+            if ((\time() - $startTime) >= $timeout) {
+                throw new FileLockException(
+                    \sprintf(
+                        \gettext('Unable to obtain lock after %d seconds: %s'),
+                        $timeout,
+                        $this->lockFile
+                    )
+                );
+            }
+            \usleep(100000); // Sleep for 100ms before retrying
+        }
+
+        return ($this);
+    }
+
+    public function release(): void
+    {
+        if (\is_resource($this->fd)) {
+            \flock($this->fd, LOCK_UN);
+            \fclose($this->fd);
+            $this->fd = null;
+        }
+    }
+}
+
+function syslogf(int $priority, string $format, mixed ...$values): true
+{
+    return (\syslog($priority, \sprintf($format, ...$values)));
+}
+
+function mkdir_safe(string $directory, int $permissions = 0777, bool $recursive = false): bool
+{
+    if (!\is_dir($directory)) {
+        try {
+            return (\mkdir($directory, $permissions, $recursive));
+        } catch (\Exception $e) {
+            syslogf(LOG_NOTICE, \gettext('Unable to mkdir directory: %s'), $directory);
+        }
+    }
+
+    return (false);
+}
+
+function first_of(mixed ...$inputs): mixed
+{
+    foreach ($inputs as $input) {
+        if (!\is_null($input)) {
+            if (is_string($input) && (strlen($input) < 1)) {
+                continue;
+            }
+            break;
+        }
+    }
+
+    return ($input);
+}
+
+function ipv6_to_ptr(string $ip): string|false
+{
+    if (\filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+        $unpacked = \unpack('H*', \inet_pton($ip))[1];
+        return \implode('.', \array_reverse(\str_split($unpacked))) . '.ip6.arpa.';
+    }
+
+    return (false);
+}
+
+function ipv4_to_ptr(string $ip): string|false
+{
+    if (\filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+        return (\implode('.', \array_reverse(\explode('.', $ip))) . '.in-addr.arpa.');
+    }
+
+    return (false);
+}
+
+function ip_to_ptr(string $ip): string|false
+{
+    return (ipv4_to_ptr($ip) ?: ipv6_to_ptr($ip));
+}
+
+function kea_leases_records(KeaConfig $config, ?string $fallbackDomain = null, array $subnetIds = [], bool $exclude = false): DnsRecordSet
+{
+    $family = $config->getAddressFamily();
+
+    /* Initialize and connect to Kea control socket */
+    $socket = \stream_socket_client($config->getSocketAddress(), $errno, $errstr);
+    if (!$socket) {
+        throw new KeaException(
+            \sprintf(
+                \gettext('Unable to connect to Kea control socket: %s. Error %d: %s'),
+                $config->getSocketPath(),
+                $errno,
+                $errstr
+            )
+        );
+    }
+
+    /* Craft the request payload */
+    $reqCommand = \sprintf('lease%s-get-all', $family->value);
+    $reqJson = \json_encode(['command' => $reqCommand]);
+    $reqLength = \strlen($reqJson);
+
+    /* Send request payload, handling partial writes as needed */
+    $reqWritten = 0;
+    while ($reqWritten < $reqLength) {
+        $wrote = \fwrite($socket, \substr($reqJson, $reqWritten), $reqLength - $reqWritten);
+        if ($wrote === false) {
+            \fclose($socket);
+            throw new KeaException(
+                \sprintf(
+                    \gettext('Failed to send \'%s\' command to Kea control socket: %s'),
+                    $reqCommand,
+                    $config->getSocketPath()
+                )
+            );
+        }
+        $reqWritten += $wrote;
+    }
+
+    /* Receive the response payload */
+    $resJson = '';
+    while (!\feof($socket)) {
+        $read = \fread($socket, BUFSIZ);
+        if ($read === false) {
+            \fclose($socket);
+            throw new KeaException(
+                \sprintf(
+                    \gettext('Error decoding response from Kea control socket: %s'),
+                    $config->getSocketPath()
+                )
+            );
+        }
+        $resJson .= $read;
+    }
+
+    /* All done with the socket */
+    \fclose($socket);
+
+    /* Decode and parse response payload */
+    $response = \json_decode($resJson, true);
+    if (\json_last_error() !== JSON_ERROR_NONE) {
+        throw new KeaException(
+            \sprintf(
+                \gettext('Error decoding response from Kea control socket: %s'),
+                $config->getSocketPath()
+            )
+        );
+    }
+
+    /* Transform Kea leases into a DNSRecordSet */
+    $recordSet = new DnsRecordSet(HASHALGO);
+    $subnetIds = \array_flip($subnetIds); /* For O(1) lookups */
+    foreach ($response['arguments']['leases'] as $lease) {
+        /* Apply the filtering logic */
+        $inList = isset($subnetIds[$lease['subnet-id']]);
+        if (($exclude && $inList) || (!$exclude && !$inList)) {
+            continue;
+        }
+
+        /* General lease sanity checking */
+        if (($lease['state'] !== 0) || empty($lease['hostname'])) {
+            continue;
+        }
+
+        /* IPv6 specific lease sanity checking */
+        if ($family->is(AddressFamily::INET6)) {
+            if ($lease['type'] !== 'IA_NA') {
+                continue;
+            }
+        }
+
+        /* Determine the domain name or search domain to use for the record */
+        $binding_variables = &$lease['user-context']['ISC']['binding-variables'];
+        $domain = \rtrim(
+            first_of(
+                $binding_variables['domain-name'] ?? null,
+                // "domain-search" is only populated for IPv6 leases; see services_kea6_configure().
+                $binding_variables['domain-search'] ?? null,
+                $fallbackDomain,
+                'unknown.home.arpa'
+            ),
+            '.' /* Remove trailing dot if present */
+        );
+
+        /* Ensure hostname is not already a fqdn */
+        $hostname = \strtok($lease['hostname'], '.');
+
+        /* RFC 4702, Section 5.1 */
+        $ttl = ($lease['valid-lft'] / 3);
+
+        /* Add address record */
+        $fqdn = "{$hostname}.{$domain}.";
+        $recordSet->add(\implode(' ', [
+            $fqdn,
+            $ttl,
+            'IN',
+            $family->getDNSRecordType()->name,
+            $lease['ip-address']
+        ]));
+
+        /* Add pointer record */
+        $ptr_fqdn = ip_to_ptr($lease['ip-address']);
+        $recordSet->add(\implode(' ', [
+            $ptr_fqdn,
+            $ttl,
+            'IN',
+            'PTR',
+            $fqdn
+        ]));
+    }
+
+    return ($recordSet);
+}
+
+function unbound_read_include_hash(string $unboundIncludeFile): string|false
+{
+    $hash = false;
+    $fd = \fopen($unboundIncludeFile, 'r');
+    if ($fd) {
+        $firstLine = \fgets($fd);
+        /* Don't crash if the file is empty */
+        if (is_string($firstLine)) {
+            $hash = \trim(\substr($firstLine, 1));
+        }
+        fclose($fd);
+    }
+
+    return ($hash);
+}
+
+function unbound_write_include(string $unboundConfFile, string $unboundIncludeFile, DnsRecordSet $recordSet, bool $force = false): bool
+{
+    /* Gather the hashes */
+    $oldHash = unbound_read_include_hash($unboundIncludeFile);
+    $newHash = \hash(HASHALGO, (string) unbound_get_pid($unboundConfFile) . $recordSet->getHash());
+
+    /* Determine if there is something to update on disk */
+    if ($force || ($oldHash !== $newHash)) {
+        mkdir_safe(\dirname($unboundIncludeFile), recursive: true);
+        $fd = \fopen($unboundIncludeFile, 'w');
+        if ($fd) {
+            \fprintf($fd, "# %s\n", $newHash);
+            \fprintf($fd, "# Automatically generated! DO NOT EDIT!\n");
+            \fprintf($fd, "# Last updated: %s\n", \date('Y-m-d H:i:s'));
+            foreach ($recordSet->toArray() as $record) {
+                \fprintf($fd, "local-data: \"%s\"\n", $record);
+            }
+            \fclose($fd);
+            syslogf(LOG_NOTICE, \gettext('Include updated: %s (%s)'), $unboundIncludeFile, $newHash);
+            return (true);
+        }
+    }
+
+    /* Nothing updated on disk */
+    return (false);
+}
+
+function unbound_slow_reload(string $unboundConfFile): bool
+{
+    \exec(\implode(' ', [
+        UBCTRLBIN,
+        '-c', \escapeshellarg($unboundConfFile),
+        'reload'
+    ]), $_lines, $rc);
+    if ($rc === 0) {
+        syslogf(LOG_NOTICE, \gettext('Unbound slow reloaded: %s'), $unboundConfFile);
+        return (true);
+    }
+
+    return (false);
+}
+
+function unbound_fast_reload(string $unboundConfFile, bool $dropQueries = false, bool $noPause = false): bool
+{
+    $args = []; 
+
+    /* Drop queries that Unbound worker threads are already working on */
+    if ($dropQueries) {
+        $args[] = '+d';
+    }
+
+    /* Keep Unbound worker threads running during the fast(er) reload */
+    if ($noPause) {
+        $args[] = '+p';
+    }
+    
+    \exec(\implode(' ', [
+        UBCTRLBIN,
+        '-c', \escapeshellarg($unboundConfFile),
+        'fast_reload',
+        ...$args
+    ]), $_lines, $rc);
+    if ($rc === 0) {
+        syslogf(LOG_NOTICE, \gettext('Unbound fast reloaded: %s'), $unboundConfFile);
+        return (true);
+    }
+
+    syslogf(LOG_ERR, \gettext('Unbound fast reload not available: %s'), $unboundConfFile);
+
+    /* try again using the old (slow) reload command */
+    return (unbound_slow_reload($unboundConfFile));
+}
+
+function pid_is_running(int $pid): bool
+{
+    return (\posix_kill($pid, 0) && (\posix_get_last_error() === 0));
+}
+
+function pid_file_read(string $pidFilePath): int|false
+{
+    $ret = false;
+
+    if (\is_readable($pidFilePath)) {
+        $pid = \trim(\file_get_contents($pidFilePath));
+        if ($pid !== false && \is_numeric($pid)) {
+            $ret = (int) $pid;
+        }
+    }
+
+    return ($ret);
+}
+
+function unbound_get_pid(string $unboundConfFile, bool $flush = false): int|false
+{
+    static $pidCache = [];
+
+    if (!$flush && isset($pidCache[$unboundConfFile]) && pid_is_running($pidCache[$unboundConfFile])) {
+        return ($pidCache[$unboundConfFile]);
+    }
+
+    unset($pidCache[$unboundConfFile]);
+
+    \exec(\implode(' ', [
+        UBCTRLBIN,
+        '-c', \escapeshellarg($unboundConfFile),
+        'get_option', 'pidfile'
+    ]), $lines, $rc);
+    if (($rc === 0)) {
+        $pid = pid_file_read($lines[0]);
+        if (($pid !== false) && pid_is_running($pid)) {
+            $pidCache[$unboundConfFile] = $pid;
+            return ($pid);
+        }
+    }
+
+    return (false);
+}
+
+function unbound_is_running(string $unboundConfFile): bool
+{
+    return (unbound_get_pid($unboundConfFile) !== false);
+}
+
+class FlushCommand extends Command
+{
+    protected function configure(): void
+    {
+        $this
+            ->setName('flush')
+            ->setDescription(\gettext('Flush Kea lease records from Unbound'))
+        ;
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
+        $startTime = \microtime(true);
+        $flushHappened = false;
+
+        $lock = new FileLock(__FILE__);
+        $logFlags = LOGFLAGS;
+        $ret = Command::SUCCESS;
+
+        if (!$input->getOption('quiet')) {
+            $logFlags |= LOG_PERROR;
+        }
+
+        \openlog(\basename(__FILE__), $logFlags, LOG_USER);
+
+        try {
+            $lock->aquire();
+
+            /* Parse Kea configuration */
+            $keaConfFile = $input->getOption('kea-conf');
+            $keaConfig = KeaConfig::getInstance($keaConfFile);
+            $family = $keaConfig->getAddressFamily();
+
+            /* Parse Unbound configuration */
+            $unboundConfFile = $input->getOption('unbound-conf');
+            $unboundIncludeFile = $input->getOption('include-file');
+
+            /* Writing an empty record set is a flush */
+            $leaseRecordSet = new DnsRecordSet(HASHALGO);
+
+            /* Write out include as necessary and reload Unbound accordingly */
+            if (unbound_write_include($unboundConfFile, $unboundIncludeFile, $leaseRecordSet, true)) {
+                $flushHappened = true;
+                if (unbound_is_running($unboundConfFile)) {
+                    unbound_fast_reload($unboundConfFile);
+                }
+            }
+        } catch (Exception $e) {
+            syslogf(LOG_ERR, $e->getMessage());
+            $ret = Command::FAILURE;
+        } finally {
+            $lock->release();
+        }
+
+        if ($flushHappened) {
+            syslogf(LOG_NOTICE, \gettext('Flush completed: %.4fms'), (\microtime(true) - $startTime) * 1000);
+        }
+
+        \closelog();
+
+        return ($ret);
+    }
+}
+
+class SyncCommand extends Command
+{
+    protected function configure(): void
+    {
+        $this
+            ->setName('sync')
+            ->setDescription(\gettext('Sync Kea lease records with Unbound (fast)'))
+            ->addOption(
+                'exclude',
+                'x',
+                InputOption::VALUE_NONE,
+                \gettext('Exclude specified subnet IDs')
+            )
+            ->addOption(
+                'fallback-domain',
+                'd',
+                InputOption::VALUE_REQUIRED,
+                \gettext('Fallback domain name'),
+                'unknown.home.arpa'
+            )
+            ->addOption(
+                'subnet-id',
+                's',
+                InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
+                \gettext('Subnet IDs to process')
+            )
+        ;
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
+        $startTime = \microtime(true);
+        $syncHappened = false;
+
+        $lock = new FileLock(__FILE__);
+        $logFlags = LOGFLAGS;
+        $ret = Command::SUCCESS;
+
+        if (!$input->getOption('quiet')) {
+            $logFlags |= LOG_PERROR;
+        }
+
+        \openlog(\basename(__FILE__), $logFlags, LOG_USER);
+
+        try {
+            $lock->aquire();
+
+            /* Parse Kea configuration */
+            $keaConfFile = $input->getOption('kea-conf');
+            $keaConfig = KeaConfig::getInstance($keaConfFile);
+            $family = $keaConfig->getAddressFamily();
+
+            /* Grab lease records from Kea */
+            $leaseRecordSet = kea_leases_records(
+                $keaConfig,
+                $input->getOption('fallback-domain'),
+                $input->getOption('subnet-id'),
+                $input->getOption('exclude')
+            );
+
+            /* Parse Unbound configuration */
+            $unboundConfFile = $input->getOption('unbound-conf');
+            $unboundIncludeFile = $input->getOption('include-file');
+
+            /* Write out include as necessary and reload Unbound accordingly */
+            if (unbound_write_include($unboundConfFile, $unboundIncludeFile, $leaseRecordSet)) {
+                $syncHappened = true;
+                if (unbound_is_running($unboundConfFile)) {
+                    unbound_fast_reload($unboundConfFile);
+                }
+            }
+        } catch (Exception $e) {
+            syslogf(LOG_ERR, $e->getMessage());
+            $ret = Command::FAILURE;
+        } finally {
+            $lock->release();
+        }
+
+        if ($syncHappened) {
+            syslogf(LOG_NOTICE, \gettext('Synchronization completed: %.4fms'), (\microtime(true) - $startTime) * 1000);
+        }
+
+        \closelog();
+
+        return ($ret);
+    }
+}
+
+$app = new Application(\basename(__FILE__));
+
+$app->getDefinition()->addOptions([
+    new InputOption(
+        'include-file',
+        'i',
+        InputOption::VALUE_REQUIRED,
+        \gettext('Unbound include file'),
+        '/var/unbound/leases/leases4.conf'
+    ),
+    new InputOption(
+        'kea-conf',
+        'k',
+        InputOption::VALUE_REQUIRED,
+        \gettext('Path to Kea configuration file'),
+        '/usr/local/etc/kea/kea-dhcp4.conf'
+    ),
+    new InputOption(
+        'quiet',
+        'q',
+        InputOption::VALUE_NONE,
+        \gettext('Quiet mode')
+    ),
+    new InputOption(
+        'unbound-conf',
+        'u',
+        InputOption::VALUE_REQUIRED,
+        \gettext('Path to Unbound configuration file'),
+        '/var/unbound/unbound.conf'
+    )
+]);
+
+$app->add(new FlushCommand());
+$app->add(new SyncCommand());
+
+$app->run();

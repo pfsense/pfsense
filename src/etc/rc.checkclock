@@ -23,9 +23,9 @@
 # limitations under the License.
 
 get_best_time() {
-  if [ -e ${2} ]; then
-    FILETIME=`/usr/bin/stat -t "%Y%m%d%H%M" -f '%Sm' ${2}`
-    if [ ${1} -lt ${FILETIME} ]; then
+  if [ -e "${2}" ]; then
+    FILETIME=$( /usr/bin/stat -t "%Y%m%d%H%M" -f '%Sm' "${2}" )
+    if [ "${1}" -lt "${FILETIME}" ]; then
       echo "${FILETIME}"
       return 0
     fi
@@ -39,12 +39,12 @@ BESTTIME=0
 FILELIST="/conf/config.xml /conf.default/config.xml /var/log/system.log /conf/rules.debug.old /cf/conf/RAM_Disk_Store /var/db/ntpd.drift /conf/upgrade_log.txt"
 for filename in ${FILELIST}
 do
-  BESTTIME=$( get_best_time ${BESTTIME} ${filename} )
+  BESTTIME=$( get_best_time "${BESTTIME}" "${filename}" )
 done
 
-CURRENTTIME=`/bin/date "+%Y%m%d%H%M"`
+CURRENTTIME=$( /bin/date "+%Y%m%d%H%M" )
 
-if [ ${CURRENTTIME} -lt ${BESTTIME} ]; then
+if [ "${CURRENTTIME}" -lt "${BESTTIME}" ]; then
   echo "Current time is older than key file time, using file time instead."
-  /bin/date ${BESTTIME} 2>/dev/null >/dev/null
+  /bin/date "${BESTTIME}" 2>/dev/null >/dev/null
 fi

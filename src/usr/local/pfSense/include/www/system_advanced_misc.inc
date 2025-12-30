@@ -140,8 +140,7 @@ function getSystemAdvancedMiscCryptoModules() {
 			$crypto_modules = array(
 				'aesni' => gettext("AES-NI CPU-based Acceleration"),
 				'aesni_cryptodev' => gettext("AES-NI and BSD Crypto Device (aesni, cryptodev)"),
-				'cryptodev' => gettext("BSD Crypto Device (cryptodev)"),
-				'qat' => gettext("Intel QuickAssist (QAT)"),
+				'cryptodev' => gettext("BSD Crypto Device (cryptodev)")
 			);
 	}
 

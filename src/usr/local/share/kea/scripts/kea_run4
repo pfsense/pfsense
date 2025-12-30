@@ -1,0 +1,20 @@
+#!/bin/sh
+#
+# kea_run4
+#
+# part of pfSense (https://www.pfsense.org)
+# Copyright (c) 2024-2025 Rubicon Communications, LLC (Netgate)
+# All rights reserved.
+#
+SCRIPT_BASES="/conf/kea4_scripts.d /cf/conf/kea4_scripts.d"
+
+for _base in ${SCRIPT_BASES}; do
+	if [ -d "${_base}" ]; then
+		for _script in ${_base}/*; do
+			if [ -f "${_script}" -a -x "${_script}" ]; then
+				/bin/sh ${_script} $@
+			fi
+		done
+		break # first base match wins
+	fi
+done

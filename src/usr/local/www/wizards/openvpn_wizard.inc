@@ -26,6 +26,7 @@ require_once("certs.inc");
 require_once("config.inc");
 require_once("openvpn.inc");
 require_once("util.inc");
+require_once("filter.inc");
 
 // Load valid country codes
 $dn_cc = get_cert_country_codes();
@@ -711,7 +712,7 @@ function step12_submitphpaction() {
 		$rule['tracker'] = $tracker++;
 		$rule['created'] = make_config_revision_entry(null, gettext("OpenVPN Wizard"));
 
-		config_set_path('filter/rule/', $rule);
+		add_filter_rules([$rule]);
 	}
 	if (isset($pconfig['step11']['ovpnallow'])) {
 		$rule = array();
@@ -727,7 +728,7 @@ function step12_submitphpaction() {
 		$rule['enabled'] = "on";
 		$rule['tracker'] = $tracker++;
 		$rule['created'] = make_config_revision_entry(null, gettext("OpenVPN Wizard"));
-		config_set_path('filter/rule/', $rule);
+		add_filter_rules([$rule]);
 	}
 
 	config_set_path('openvpn/openvpn-server/', $server);

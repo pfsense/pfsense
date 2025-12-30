@@ -238,7 +238,7 @@ foreach (config_get_path('staticroutes/route', []) as $i => $route):
 						<?=htmlentities($a_gateways[$route['gateway']]['name']) . " - " . htmlentities($a_gateways[$route['gateway']]['gateway'])?>
 					</td>
 					<td>
-						<?=convert_friendly_interface_to_friendly_descr($a_gateways[$route['gateway']]['friendlyiface'])?>
+						<?=isset($a_gateways[$route['gateway']]['friendlyiface']) ? convert_friendly_interface_to_friendly_descr($a_gateways[$route['gateway']]['friendlyiface']) : ''?>
 					</td>
 					<td>
 						<?=htmlspecialchars($route['descr'])?>

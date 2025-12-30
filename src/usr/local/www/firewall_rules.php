@@ -125,29 +125,6 @@ function print_states($tracker_start, $tracker_end = -1) {
 	printf("%s/%s</a><br />", format_number($states), format_bytes($bytes));
 }
 
-function delete_nat_association(array $associations_to_remove = []) {
-	if (empty($associations_to_remove)) {
-		return;
-	}
-
-	$nat_rules = config_get_path('nat/rule', []);
-	if (empty($nat_rules)) {
-		return;
-	}
-
-	$update_config = false;
-	foreach ($nat_rules as &$natent) {
-		if (in_array($natent['associated-rule-id'], $associations_to_remove)) {
-			$natent['associated-rule-id'] = '';
-			$update_config = true;
-		}
-	}
-
-	if ($update_config) {
-		config_set_path('nat/rule', $nat_rules);
-	}
-}
-
 filter_rules_sort();
 
 if ($_REQUEST['if']) {
@@ -178,16 +155,7 @@ if ($_POST['apply']) {
 if ($_POST['act'] == "del") {
 	$rule = is_numericint($_POST['id']) ? config_get_path("filter/rule/{$_POST['id']}") : null;
 	if (isset($rule)) {
-		// separators must be updated before the rule is removed
-		$ridx = get_interface_ruleindex($if, $_POST['id']);
-		$a_separators = config_get_path('filter/separator/' . strtolower($if), []);
-		shift_separators($a_separators, $ridx['index'], true);
-		config_set_path('filter/separator/' . strtolower($if), $a_separators);
-
-		if (!empty($rule['associated-rule-id'])) {
-			delete_nat_association([$rule['associated-rule-id']]);
-		}
-		config_del_path("filter/rule/{$_POST['id']}");
+		remove_filter_rules($_POST['id'], $if);
 
 		if (write_config(gettext("Firewall: Rules - deleted a firewall rule."))) {
 			mark_subsystem_dirty('filter');
@@ -201,7 +169,7 @@ if ($_POST['act'] == "del") {
 if (($_POST['act'] == 'killid') &&
     (!empty($_POST['tracker'])) &&
     (!empty($if))) {
-	mwexec("/sbin/pfctl -k label -k " . escapeshellarg("id:{$_POST['tracker']}"));
+	mwexec("/sbin/pfctl -k label -k " . escapeshellarg(make_rule_label_string($_POST['tracker'], RULE_LABEL_KEY_IDENTIFIER, false)));
 	header("Location: firewall_rules.php?if=" . htmlspecialchars($if));
 	exit;
 }
@@ -213,35 +181,10 @@ if ($_REQUEST['savemsg']) {
 
 if (isset($_POST['del_x'])) {
 	if (is_array($_POST['rule']) && count($_POST['rule'])) {
-		$removed = false;
-		$a_separators = config_get_path('filter/separator/' . strtolower($if), []);
-		$a_rules = config_get_path('filter/rule', []);
-		$associations_to_remove = [];
-		foreach ($_POST['rule'] as $rulei) {
-			if (!isset($a_rules[$rulei])) {
-				continue;
-			}
-
-			// separators must be updated before the rule is removed
-			$ridx = get_interface_ruleindex($if, $rulei, $a_rules);
-			shift_separators($a_separators, $ridx['index'], true);
-
-			if (!empty($a_rules[$rulei]['associated-rule-id'])) {
-				$associations_to_remove[] = $a_rules[$rulei]['associated-rule-id'];
-			}
-
-			unset($a_rules[$rulei]);
-			$removed = true;
-		}
-
-		if ($removed) {
-			delete_nat_association($associations_to_remove);
-			config_set_path('filter/separator/' . strtolower($if), $a_separators);
-			config_set_path('filter/rule', $a_rules);
-			filter_rules_sort();
-			if (write_config(gettext("Firewall: Rules - deleted selected firewall rules."))) {
-				mark_subsystem_dirty('filter');
-			}
+		$changes = [];
+		remove_filter_rules($_POST['rule'], $if, true, $changes);
+		if (isset($changes['filter_rules']) && write_config(gettext("Firewall: Rules - deleted selected firewall rules."))) {
+			mark_subsystem_dirty('filter');
 		}
 
 		header("Location: firewall_rules.php?if=" . htmlspecialchars($if));
@@ -284,42 +227,7 @@ if (isset($_POST['del_x'])) {
 	$dirty = false;
 	/* update rule order, POST[rule] is an array of ordered IDs */
 	if (is_array($_POST['rule']) && !empty($_POST['rule'])) {
-		$a_filter_new = array();
-
-		// Include the rules of other interfaces listed in config before this (the selected) interface.
-		$filteri_before = null;
-		foreach (config_get_path('filter/rule', []) as $idx => $filterent) {
-			if (($filterent['interface'] == $if && !isset($filterent['floating'])) || (isset($filterent['floating']) && "FloatingRules" == $if)) {
-				$filteri_before = $idx;
-				break;
-			} else {
-				$a_filter_new[] = $filterent;
-			}
-		}
-
-		// Include the rules of this (the selected) interface.
-		// If a rule is not in POST[rule], it has been deleted by the user
-		foreach ($_POST['rule'] as $id) {
-			$a_filter_new[] = config_get_path("filter/rule/{$id}");
-		}
-
-		// Include the rules of other interfaces listed in config after this (the selected) interface.
-		foreach (config_get_path('filter/rule', []) as $filteri_after => $filterent) {
-			if ($filteri_before > $filteri_after) {
-				continue;
-			}
-			if (($filterent['interface'] == $if && !isset($filterent['floating'])) || (isset($filterent['floating']) && "FloatingRules" == $if)) {
-				continue;
-			} else {
-				$a_filter_new[] = $filterent;
-			}
-		}
-
-		if (config_get_path('filter/rule') !== $a_filter_new) {
-			config_set_path('filter/rule', $a_filter_new);
-			filter_rules_sort();
-			$dirty = true;
-		}
+		$dirty = set_filter_rules_order($_POST['rule']);
 	}
 
 	$a_separators = config_get_path('filter/separator/' . strtolower($if), []);
@@ -361,6 +269,7 @@ if (isset($_POST['del_x'])) {
 	 * loop runs fast there can be duplicates.
 	 * https://redmine.pfsense.org/issues/13507 */
 	$tracker = (int)microtime(true);
+	$new_rules = [];
 	foreach ($_POST['rule'] as $rulei) {
 		$filterent = config_get_path("filter/rule/{$rulei}");
 		$filterent['tracker'] = $tracker++;
@@ -384,8 +293,9 @@ if (isset($_POST['del_x'])) {
 				$filterent['destination']['network'] = $_POST['dstif'] . 'ip';
 			}
 		}
-		config_set_path('filter/rule/', $filterent);
+		$new_rules[] = $filterent;
 	}
+	add_filter_rules([$new_rules]);
 	if (write_config(gettext("Firewall: Rules - copying selected firewall rules."))) {
 		mark_subsystem_dirty('filter');
 	}
@@ -592,7 +502,7 @@ $system_aliases_ports = get_reserved_table_names('', 'port,url_ports,urltable_po
 $system_aliases_hosts = get_reserved_table_names('', 'host,network,url,urltable');
 $a_schedules = config_get_path('schedules/schedule');
 $if_config = config_get_path('interfaces', []);
-foreach (config_get_path('filter/rule', []) as $filteri => $filterent):
+foreach (get_filter_rules_list() as $filteri => $filterent):
 
 	if (($filterent['interface'] == $if && !isset($filterent['floating'])) ||
 	    (isset($filterent['floating']) && $if === 'FloatingRules')) {

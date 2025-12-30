@@ -48,7 +48,7 @@ if (empty($cpzone)) {
 	exit;
 }
 
-$pgtitle = array(gettext("Status"), gettext("Captive Portal"), htmlspecialchars(config_get_path("captiveportal/{$cpzone}/zone")), gettext("Expire Vouchers"));
+$pgtitle = array(gettext("Status"), gettext("Captive Portal"), htmlspecialchars($cpzone), gettext("Expire Vouchers"));
 $pglinks = array("", "status_captiveportal.php", "status_captiveportal.php?zone=" . $cpzone, "@self");
 
 include("head.inc");

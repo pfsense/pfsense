@@ -153,7 +153,7 @@ $pglinks = array("", "status_captiveportal.php");
 if (!empty($cpzone)) {
 	$cpdb = captiveportal_read_db();
 
-	$pgtitle[] = htmlspecialchars(config_get_path("captiveportal/{$cpzone}/zone"));
+	$pgtitle[] = htmlspecialchars($cpzone);
 	$pglinks[] = "status_captiveportal.php?zone=" . $cpzone;
 
 	if (config_path_enabled("voucher/{$cpzone}")) {
@@ -186,7 +186,7 @@ if (count(config_get_path('captiveportal', [])) > 1) {
 	$zonelist = array("" => 'None');
 
 	foreach (config_get_path('captiveportal', []) as $cpkey => $cp) {
-		$zonelist[$cpkey] = $cp['zone'];
+		$zonelist[$cpkey] = "{$cpkey} ({$cp['descr']})";
 	}
 
 	$section->addInput(new Form_Select(

@@ -38,26 +38,11 @@ require_once("gwlb.inc");
 $simplefields = array('defaultgw4', 'defaultgw6');
 
 refresh_gateways(); // make sure we're working on a current gateway list
+unset($input_errors);
 
 $pconfig = $_REQUEST;
 
-if ($_POST['order-store']) {
-	// Include the rules of this (the selected) interface.
-	// If a rule is not in POST[rule], it has been deleted by the user
-	$a_gateway_item_new = array();
-	//print "<pre>";
-	foreach ($_POST['row'] as $id) {
-		//print " $id";
-		$a_gateway_item_new[] = config_get_path("gateways/gateway_item/{$id}");
-	}
-	//print_r($a_gateway_item);
-	//print_r($a_gateway_item_new);
-	//print "</pre>";
-	config_set_path('gateways/gateway_item', $a_gateway_item_new);
-	//mark_subsystem_dirty('staticroutes');
-	write_config("System - Gateways: save default gateway");
-} else if ($_POST['save']) {
-	unset($input_errors);
+if ($_POST['save']) {
 	$pconfig = $_POST;
 	foreach($simplefields as $field) {
 		config_set_path("gateways/{$field}", $pconfig[$field]);
@@ -177,7 +162,6 @@ function delete_gateway_item($id) {
 	config_del_path("gateways/gateway_item/{$a_gateways[$id]['attribute']}");
 }
 
-unset($input_errors);
 if ($_REQUEST['act'] == "del") {
 	if (can_delete_disable_gateway_item($_REQUEST['id'])) {
 		$realid = $a_gateways[$_REQUEST['id']]['attribute'];
@@ -273,7 +257,6 @@ display_top_tabs($tab_array);
 				<thead>
 					<tr>
 						<th></th>
-						<th></th>
 						<th><?=gettext("Name")?></th>
 						<th><?=gettext("Default")?></th>
 						<th><?=gettext("Interface")?></th>
@@ -305,13 +288,6 @@ foreach ($a_gateways as $i => $gateway):
 	$id = $gateway['attribute'];
 ?>
 					<tr<?=($icon != 'fa-regular fa-circle-check')? ' class="disabled"' : ''?> onClick="fr_toggle(<?=$id;?>)" id="fr<?=$id;?>">
-						<td style="white-space: nowrap;">
-							<?php 
-							if (is_numeric($id)) :?>
-								<input type='checkbox' id='frc<?=$id?>' onClick='fr_toggle(<?=$id?>)' name='row[]' value='<?=$id?>'/>
-								<a class='fa-solid fa-anchor' id='Xmove_<?=$id?>' title='"<?=gettext("Move checked entries to here")?>"'></a>
-							<?php endif; ?>
-						</td>
 						<td title="<?=$title?>"><i class="<?=$icon?>"></i></td>
 						<td title="<?=$gtitle?>">
 						<?=htmlspecialchars($gateway['name'])?>
@@ -362,10 +338,6 @@ foreach ($a_gateways as $i => $gateway):
 </div>
 
 <nav class="action-buttons">
-	<button type="submit" id="order-store" name="order-store" class="btn btn-sm btn-primary" value="store changes" disabled title="<?=gettext('Save rule order')?>">
-		<i class="fa-solid fa-save icon-embed-btn"></i>
-		<?=gettext("Save")?>
-	</button>
 	<a href="system_gateways_edit.php" role="button" class="btn btn-success">
 		<i class="fa-solid fa-plus icon-embed-btn"></i>
 		<?=gettext("Add");?>
@@ -407,38 +379,5 @@ print_info_box(
 	);
 ?>
 </div>
-<script type="text/javascript">
-//<![CDATA[
-events.push(function() {
-	$('#order-store').click(function () {
-		// Check all of the rule checkboxes so that their values are posted
-	   $('[id^=frc]').prop('checked', true);
-	});
-
-	$('[id^=Xmove_]').click(function (event) {
-		// anchor click to move gateways around..
-		moveRowUpAboveAnchor(event.target.id.slice(6),"gateways");
-		return false;
-	});
-	$('[id^=Xmove_]').css('cursor', 'pointer');
-});
-	function moveRowUpAboveAnchor(rowId, tableId) {
-		var table = $('#'+tableId);
-		var viewcheckboxes = $('[id^=frc]input:checked', table);
-		var rowview = $("#fr" + rowId, table);
-		var moveabove = rowview;
-		//var parent = moveabove[0].parentNode;
-		
-		viewcheckboxes.each(function( index ) {
-			var moveid = this.value;
-			console.log( index + ": " + this.id );
-
-			var prevrowview = $("#fr" + moveid, table);
-			prevrowview.insertBefore(moveabove);
-			$('#order-store').removeAttr('disabled');
-		});
-	}
-//]]>
-</script>
 
 <?php include("foot.inc");

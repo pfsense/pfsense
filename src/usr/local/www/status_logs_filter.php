@@ -79,11 +79,13 @@ if ($view == 'normal')  { $view_title = gettext("Normal View"); }
 if ($view == 'dynamic') { $view_title = gettext("Dynamic View"); }
 if ($view == 'summary') { $view_title = gettext("Summary View"); }
 
+// Used for the firewall log widget and the firewall logs dynamic view.
 $rulenum = getGETPOSTsettingvalue('getrulenum', null);
 
 if ($rulenum) {
 	list($rulenum, $tracker, $type) = explode(',', $rulenum);
 	$rule = find_rule_by_number($rulenum, $tracker, $type);
+	$rule = $rule['match'] ?? 'unavailable';
 	echo gettext("The rule that triggered this action is") . ":\n\n{$rule}";
 	exit;
 }
@@ -175,21 +177,7 @@ if (!$rawfilter) {
 	foreach ($filterlog as $filterent) {
 ?>
 				<tr class="text-nowrap">
-					<td>
-<?php
-		if ($filterent['act'] == "block") {
-			$icon_act = "fa-solid fa-times text-danger";
-		} else {
-			$icon_act = "fa-solid fa-check text-success";
-		}
-
-		if ($filterent['count']) {
-			$margin_left = '0em';
-		} else {
-			$margin_left = '0.4em';
-		}
-?>
-						<i style="margin-left:<?=$margin_left;?>" class="<?=$icon_act;?> icon-pointer" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" onclick="javascript:getURL('status_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"></i>
+					<td><?=print_syslog_rule_action($filterent)?>
 <?php
 		if ($filterent['count']) {
 			echo $filterent['count'];
@@ -235,19 +223,19 @@ if (!$rawfilter) {
 		$dst_htmlclass = str_replace(array('.', ':'), '-', $rawdstip);
 ?>
 					<td class="text-nowrap">
-						<i class="fa-solid fa-info icon-pointer icon-primary" onclick="javascript:resolve_with_ajax('<?="{$rawsrcip}"; ?>');" title="<?=gettext("Click to resolve")?>">
+						<i class="fa-solid fa-info icon-pointer" onclick="javascript:resolve_with_ajax('<?="{$rawsrcip}"; ?>');" title="<?=gettext("Click to resolve")?>">
 						</i>
 
-						<a class="fa-regular fa-square-minus icon-pointer icon-primary" href="easyrule.php?<?="action=block&amp;int={$int}&amp;src={$filterent['srcip']}&amp;ipproto={$ipproto}"; ?>" title="<?=gettext("EasyRule: Add to Block List")?>">
+						<a class="fa-regular fa-square-minus icon-pointer" href="easyrule.php?<?="action=block&amp;int={$int}&amp;src={$filterent['srcip']}&amp;ipproto={$ipproto}"; ?>" title="<?=gettext("EasyRule: Add to Block List")?>">
 						</a>
 
 						<?=$srcstr . '<span class="RESOLVE-' . $src_htmlclass . '"></span>'?>
 					</td>
 					<td class="text-nowrap">
-						<i class="fa-solid fa-info icon-pointer icon-primary; ICON-<?= $dst_htmlclass; ?>" onclick="javascript:resolve_with_ajax('<?="{$rawdstip}"; ?>');" title="<?=gettext("Click to resolve")?>">
+						<i class="fa-solid fa-info icon-pointer; ICON-<?= $dst_htmlclass; ?>" onclick="javascript:resolve_with_ajax('<?="{$rawdstip}"; ?>');" title="<?=gettext("Click to resolve")?>">
 						</i>
 
-						<a class="fa-regular fa-square-plus icon-pointer icon-primary" href="easyrule.php?<?="action=pass&amp;int={$int}&amp;proto={$proto}&amp;src={$filterent['srcip']}&amp;dst={$filterent['dstip']}&amp;dstport={$filterent['dstport']}&amp;ipproto={$ipproto}"; ?>" title="<?=gettext("EasyRule: Pass this traffic")?>">
+						<a class="fa-regular fa-square-plus icon-pointer" href="easyrule.php?<?="action=pass&amp;int={$int}&amp;proto={$proto}&amp;src={$filterent['srcip']}&amp;dst={$filterent['dstip']}&amp;dstport={$filterent['dstport']}&amp;ipproto={$ipproto}"; ?>" title="<?=gettext("EasyRule: Pass this traffic")?>">
 						</a>
 						<?=$dststr . '<span class="RESOLVE-' . $dst_htmlclass . '"></span>'?>
 					</td>
@@ -346,7 +334,7 @@ events.push(function() {
 <?php
 print_info_box('<a href="https://docs.netgate.com/pfsense/en/latest/firewall/configure.html#tcp-flags">' .
 	gettext("TCP Flags") . '</a>: F - FIN, S - SYN, A or . - ACK, R - RST, P - PSH, U - URG, E - ECE, C - CWR.' . '<br />' .
-	'<i class="fa-regular fa-square-minus icon-primary"></i> = ' . gettext('Add to block list') . ', <i class="fa-regular fa-square-plus icon-primary"></i> = ' . gettext('Pass traffic') . ', <i class="fa-solid fa-info icon-primary"></i> = ' . gettext('Resolve'), 'info', false);
+	'<i class="fa-regular fa-square-minus"></i> = ' . gettext('Add to block list') . ', <i class="fa-regular fa-square-plus"></i> = ' . gettext('Pass traffic') . ', <i class="fa-solid fa-info"></i> = ' . gettext('Resolve'), 'info', false);
 ?>
 </div>
 

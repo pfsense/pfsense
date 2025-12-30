@@ -40,6 +40,7 @@ function getAdvancedNetwork($json = false) {
 	$pconfig['sharednet'] = config_path_enabled('system', 'sharednet') ? config_get_path('system/sharednet') : null;
 	$pconfig['disablechecksumoffloading'] = config_path_enabled('system', 'disablechecksumoffloading');
 	$pconfig['ip_change_kill_states'] = config_path_enabled('system', 'ip_change_kill_states') ? config_get_path('system/ip_change_kill_states') : null;
+	$pconfig['use_if_pppoe'] = config_path_enabled('system', 'use_if_pppoe');
 	$pconfig['hnaltqenable'] = config_path_enabled('system', 'hn_altq_enable');
 	$pconfig['disablechecksumoffloading'] = config_path_enabled('system', 'disablechecksumoffloading');
 	$pconfig['disablesegmentationoffloading'] = config_path_enabled('system', 'disablesegmentationoffloading');
@@ -59,6 +60,7 @@ function saveAdvancedNetworking($post, $json = false) {
 	$input_errors = array();
 	$rv = array();
 	$show_reboot_msg = false;
+	$reboot_cause = "offload";
 
 	if ($post['ipv6nat_enable'] && !is_ipaddr($post['ipv6nat_ipaddr'])) {
 		$input_errors[] = gettext("An IP address to NAT IPv6 packets must be specified.");
@@ -221,6 +223,24 @@ function saveAdvancedNetworking($post, $json = false) {
 			config_del_path('system/ip_change_kill_states');
 		}
 
+		if (($post['use_if_pppoe'] == "yes") xor config_path_enabled('system', 'use_if_pppoe')) {
+			$if_config = config_get_path('interfaces', []);
+			foreach ($if_config as $ifn => $ifc) {
+				if (!isset($ifc['enable']) || $ifc['ipaddr'] != "pppoe") {
+					continue;
+				}
+				interface_bring_down($ifn, true);
+			}
+			$show_reboot_msg = true;
+			$reboot_cause = "pppoe";
+		}
+		if ($post['use_if_pppoe'] == "yes") {
+			config_set_path('system/use_if_pppoe', true);
+			remove_pppoe_cron_items();
+		} else {
+			config_del_path('system/use_if_pppoe');
+		}
+
 		setup_microcode();
 
 		// Write out configuration (config.xml)
@@ -259,6 +279,7 @@ function saveAdvancedNetworking($post, $json = false) {
 		$rv['retval'] = $retval;
 		$rv['changes_applied'] = $changes_applied;
 		$rv['show_reboot_msg'] = $show_reboot_msg;
+		$rv['reboot_cause'] = $reboot_cause;
 		$rv['pconfig'] = $post;
 
 		return $json ? json_encode($rv) : $rv;

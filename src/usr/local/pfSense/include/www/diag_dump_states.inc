@@ -24,7 +24,7 @@
 
 require_once("interfaces.inc");
 require_once("config.gui.inc");
-
+require_once('/etc/inc/interfaces_fast.inc');
 
 function get_ip($addr) {
 	$parts = explode(":", $addr);
@@ -53,8 +53,10 @@ function process_state_req($post, $request, $json = false) {
 	}
 
 	/* Interface filter. */
+	$interface_selected = null;
 	if (isset($post['interface']) && $post['interface'] != "all") {
-		$arr[] = array("interface" => get_real_interface($post['interface']));
+		$interface_selected = get_real_interface($post['interface']);
+		$arr[] = array("interface" => $interface_selected);
 	}
 
 	if (isset($post['filter']) && strlen($post['filter']) > 0) {
@@ -72,39 +74,32 @@ function process_state_req($post, $request, $json = false) {
 		$res = NULL;
 	}
 
-	$states = 0;
-	if ($res != NULL && is_array($res)) {
-		$states = count($res);
-	}
-
 	$statedisp = array();
 
-	for ($i = 0; $i < $states; $i++):
-		$info = $res[$i]['src'];
-		$srcip = get_ip($res[$i]['src']);
-		$dstip = get_ip($res[$i]['dst']);
-		if ($res[$i]['src-orig']) {
-			$info .= " (" . $res[$i]['src-orig'] . ")";
-		}
-		$info .= " -> ";
-		$info .= $res[$i]['dst'];
-		if ($res[$i]['dst-orig']) {
-			$info .= " (" . $res[$i]['dst-orig'] . ")";
-			$killdstip = get_ip($res[$i]['dst-orig']);
-		} else {
-			$killdstip = $dstip;
+	if (is_array($res) && count($res)) {
+		$interface_names = convert_real_interface_to_friendly_interface_name_fast();
+		$interface_descriptions = get_configured_interface_with_descr(true);
+		$interfaces = [];
+		foreach ($interface_names as $port => $name) {
+			$interfaces[$port] = $interface_descriptions[$name];
 		}
 
-		$statedisp[$i]['interface'] = convert_real_interface_to_friendly_descr($res[$i]['if']);
-		$statedisp[$i]['proto'] = $res[$i]['proto'];
-		$statedisp[$i]['display'] = $info;
-		$statedisp[$i]['srcip'] = $srcip;
-		$statedisp[$i]['dstip'] =  $dstip;
-		$statedisp[$i]['state'] = $res[$i]['state'];
-		$statedisp[$i]['packets'] = format_number($res[$i]['packets in']) . ' / ' . format_number($res[$i]['packets out']);
-		$statedisp[$i]['bytes'] = format_bytes($res[$i]['bytes in']) . ' / ' . format_bytes($res[$i]['bytes out']);
-
-	endfor;
+		foreach ($res as $state) {
+			if (isset($interface_selected) && ($state['if'] !== $interface_selected)) {
+				continue;
+			}
+			$statedisp[] = [
+				'interface' => $interfaces[$state['if']] ?? $state['if'],
+				'proto' => $state['proto'],
+				'display' => $state['src'] . (!empty($state['src-orig']) ? " ({$state['src-orig']})" : '') . ' -> ' . $state['dst'] . (!empty($state['dst-orig']) ? " ({$state['dst-orig']})" : ''),
+				'srcip' => get_ip($state['src']),
+				'dstip' => get_ip($state['dst']),
+				'state' => $state['state'],
+				'packets' => format_number($state['packets in']) . ' / ' . format_number($state['packets out']),
+				'bytes' => format_bytes($state['bytes in']) . ' / ' . format_bytes($state['bytes out'])
+			];
+		}
+	}
 
 	return $json ? json_encode($statedisp) : $statedisp;
 }

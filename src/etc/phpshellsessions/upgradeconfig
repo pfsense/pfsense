@@ -41,7 +41,7 @@ if (is_array($command_split)) {
 if (empty($args[0])) {
 	echo gettext("Upgrading current live configuration.") . "\n";
 	require_once('config.inc');
-	config_read_file(true);
+	config_read_file(true, false);
 	convert_config();
 	exit(0);
 }
@@ -131,6 +131,6 @@ if ($prev_version != config_get_path('version')) {
 }
 
 /* Restore old content */
-config_read_file();
+config_read_file(false, false);
 
 echo gettext("Done") . "\n";

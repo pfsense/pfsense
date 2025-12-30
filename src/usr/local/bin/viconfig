@@ -1,3 +1,4 @@
 #!/bin/sh
 vi /cf/conf/config.xml
+# Configuration file may have been manually modified by the user.
 rm /tmp/config.cache

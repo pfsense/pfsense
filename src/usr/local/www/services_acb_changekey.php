@@ -151,7 +151,7 @@ $section->addInput(new Form_Checkbox(
 	'confirmation',
 	'Warning',
 	'Check this box to acknowledge that the Device Key will change, disconnecting from previous backups',
-	($pconfig['reverse'] == "yes")
+	false
 ))->setHelp('Checking this box enables the Update Key button. ' .
 	'Save a copy of the old Device Key before continuing.%1$s%1$s' .
 	'Old backups are not automatically removed from the server and must be removed manually.',

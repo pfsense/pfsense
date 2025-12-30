@@ -29,6 +29,129 @@ require_once("ipsec.inc");
 require_once("filter.inc");
 require_once("itemid.inc");
 
+/**
+ * Add Port Forwarding rules.
+ * @param array $rules_list A list of config rules.
+ * @param int $index A config rule index used to place the new rule(s).
+ * 		A zero or greater value adds the rule(s) after that index.
+ * 		A value of -1 adds the rule(s) at the top before all separators.
+ * 		A value of -2 or lower adds the rule(s) at the end after all
+ * 		separators.
+ * @param bool $replace If a rule is found where the new rule(s) would
+ * 		be added that existing rule will be replaced with the new rule(s).
+ */
+function add_rdr_rules(array $rules_list, int $index = -2, bool $replace = false, array &$changes = []) {
+	$index = get_anynat_rule_relative_index('rdr', $index);
+	if (!isset($index)) {
+		return;
+	}
+	$separators = config_get_path('nat/separator', []);
+	$nat_rules = get_anynat_rules_map('rdr');
+	$changed_rules = false;
+	$changed_separators = false;
+	foreach (get_anynat_rules_map('rdr', $rules_list) as $new_category_name => $new_category) {
+		foreach ($new_category as $new_group_name => $new_group) {
+			foreach ($new_group as $new_subcategory_name => $new_rules) {
+				// Get existing rules to modify.
+				$rules = array_get_path(
+					$nat_rules,
+					"{$new_category_name}/{$new_group_name}/{$new_subcategory_name}",
+					[]
+				);
+
+				// Insert the rules.
+				$result = insert_config_rules($rules, $separators, $new_rules, $index, $replace);
+				if ($result['rules']) {
+					array_set_path(
+						$nat_rules,
+						"{$new_category_name}/{$new_group_name}/{$new_subcategory_name}",
+						$rules
+					);
+					$changed_rules = true;
+					if ($result['separators']) {
+						$changed_separators = true;
+					}
+				}
+			}
+		}
+	}
+
+	if ($changed_rules) {
+		if ($changed_separators) {
+			config_set_path('nat/separator', $separators);
+			$changes['rdr_separators'] = true;
+		}
+		set_anynat_rules_map('rdr', $nat_rules);
+		$changes['rdr_rules'] = true;
+
+		// Check for filter rule associations.
+		foreach ($rules_list as $new_rule) {
+			if (isset($new_rule['associated-rule-id'])) {
+				toggle_id($new_rule['associated-rule-id'], !isset($new_rule['disabled']), $changes);
+			}
+		}
+	}
+}
+
+/**
+ * Remove Port Forwarding rules.
+ * @param int|array $search_index One or more indices of config rules.
+ */
+function remove_rdr_rules(int|array $search_index, array &$changes = []) {
+	if (!is_array($search_index)) {
+		$search_index = [$search_index];
+	}
+	if (empty($search_index)) {
+		return;
+	}
+
+	$separators = config_get_path('nat/separator', []);
+	$associated_id_list = [];
+	$rules_map = get_anynat_rules_map('rdr');
+	$changed_rules = false;
+	$changed_separators = false;
+	foreach (get_anynat_rules_index('rdr', $search_index) as $category_name => $category) {
+		foreach ($category as $group_name => $group) {
+			foreach ($group as $subcategory_name => $rules_index) {
+				// Get existing rules to modify.
+				$rules = &$rules_map[$category_name][$group_name][$subcategory_name];
+
+				// Get related info before rules are removed.
+				$relative_index_list = [];
+				foreach (array_reverse($rules_index['matched_rules']) as $index) {
+					$relative_index_list[] = $index['relative_index'];
+					if (!empty($rules[$index['relative_index']]['associated-rule-id'])) {
+						// Remove the association in NAT rules.
+						$associated_id_list[] = $rules[$index['relative_index']]['associated-rule-id'];
+					}
+				}
+
+				// Remove the rules.
+				$result = remove_config_rules($rules, $separators, $relative_index_list);
+				if ($result['rules']) {
+					$changed_rules = true;
+					if ($result['separators']) {
+						$changed_separators = true;
+					}
+				}
+				unset($rules);
+			}
+		}
+	}
+
+	if ($changed_rules) {
+		if ($changed_separators) {
+			config_set_path('nat/separator', $separators);
+			$changes['rdr_separators'] = true;
+		}
+		set_anynat_rules_map('rdr', $rules_map);
+		$changes['rdr_rules'] = true;
+		foreach ($associated_id_list as $id) {
+			delete_id($id, false, $changes);
+		}
+	}
+}
+
 $ifdisp = get_configured_interface_with_descr();
 
 function build_localtype_list($json = false) {
@@ -90,8 +213,7 @@ function saveNATrule($post, $id, $json = false) {
 	$rdr_dsttype_flags = [SPECIALNET_ANY, SPECIALNET_SELF, SPECIALNET_CLIENTS, SPECIALNET_IFADDR, SPECIALNET_IFNET, SPECIALNET_VIPS];
 	global $ifdisp;
 
-	$a_nat = config_get_path('nat/rule', []);
-	$a_separators = config_get_path('nat/separator', []);
+	$a_nat = get_anynat_rules_list('rdr');
 
 	$input_errors = array();
 
@@ -383,6 +505,9 @@ function saveNATrule($post, $id, $json = false) {
 		if (isset($id) && ($a_nat[$id]) && ($a_nat[$id] === $natent)) {
 			continue;
 		}
+		if ($natent['ipprotocol'] != $post['ipprotocol']) {
+			continue;
+		}
 		if ($natent['interface'] != $post['interface']) {
 			continue;
 		}
@@ -479,7 +604,7 @@ function saveNATrule($post, $id, $json = false) {
 		// If we used to have an associated filter rule, but no-longer should have one
 		if (!empty($a_nat[$id]) && (empty($natent['associated-rule-id']) || $natent['associated-rule-id'] != $a_nat[$id]['associated-rule-id'])) {
 			// Delete the previous rule
-			delete_id($a_nat[$id]['associated-rule-id']);
+			delete_id($a_nat[$id]['associated-rule-id'], false);
 			if (!$json) {
 				mark_subsystem_dirty('filter');
 			}
@@ -504,7 +629,7 @@ function saveNATrule($post, $id, $json = false) {
 		}
 
 		if ($need_filter_rule == true) {
-			$filter_rule_config = config_get_path('filter/rule', []);
+			$filter_rule_config = get_filter_rules_list();
 			/* auto-generate a matching firewall rule */
 			$filterent = array();
 			unset($filterentid);
@@ -515,7 +640,7 @@ function saveNATrule($post, $id, $json = false) {
 				if ($filterentid === false) {
 					$filterent['associated-rule-id'] = $natent['associated-rule-id'];
 				} else {
-					$filterent =& $filter_rule_config[$filterentid];
+					$filterent = $filter_rule_config[$filterentid];
 				}
 			}
 
@@ -571,10 +696,10 @@ function saveNATrule($post, $id, $json = false) {
 				}
 				$filterent['tracker'] = (int)microtime(true);
 				$filterent['created'] = make_config_revision_entry(null, gettext("NAT Port Forward"));
-				$filter_rule_config[] = $filterent;
+				add_filter_rules([$filterent]);
+			} elseif ($filterentid !== false) {
+				add_filter_rules([$filterent], $filterentid, true);
 			}
-			config_set_path('filter/rule', $filter_rule_config);
-			filter_rules_sort();
 
 			if (!$json) {
 				mark_subsystem_dirty('filter');
@@ -593,40 +718,30 @@ function saveNATrule($post, $id, $json = false) {
 		}
 
 		// Update the NAT entry now
+		$changes = [];
 		if (isset($id) && $a_nat[$id]) {
-			if (isset($natent['associated-rule-id']) &&
-			    (isset($a_nat[$id]['disabled']) !== isset($natent['disabled']))) {
-				// Check for filter rule associations
-				toggle_id($natent['associated-rule-id'], !isset($natent['disabled']));
-				
-				if (!$json) {
-					mark_subsystem_dirty('filter');
-				}
+			if (isset($a_nat[$id]['labels'])) {
+				// Keep rule labels.
+				$natent['labels'] = $a_nat[$id]['labels'];
 			}
-			$a_nat[$id] = $natent;
+			if (isset($a_nat[$id]['force_category'])) {
+				// Keep filter category override.
+				$natent['force_category'] = $a_nat[$id]['force_category'];
+			}
+			add_rdr_rules([$natent], $id, true, $changes);
 		} else {
 			$natent['created'] = make_config_revision_entry();
 			if (is_numeric($after)) {
-				// place the rule on top
-				array_splice($a_nat, $after+1, 0, array($natent));
-
-				// shift the separators
-				if ($after == -1) {
-					// rule is being placed on top
-					shift_separators($a_separators, -1);
-				} else {
-					// rule is being placed after another rule
-					shift_separators($a_separators, $after);
-				}
-				config_set_path('nat/separator', $a_separators);
+				add_rdr_rules([$natent], $after, false, $changes);
 			} else {
-				$a_nat[] = $natent;
+				add_rdr_rules([$natent], -2, false, $changes);
 			}
 		}
 
-		config_set_path('nat/rule', $a_nat);
-		config_set_path('nat/separator', $a_separators);
 		if (write_config(gettext("Firewall: NAT: Port Forward - saved/edited a port forward rule."))) {
+			if (!$json && isset($changes['filter_rules'])) {
+				mark_subsystem_dirty('filter');
+			}
 			if (!$json) {
 				mark_subsystem_dirty('natconf');
 			} else {
@@ -648,6 +763,7 @@ function toggleNATrule($post, $json = false) {
 		$post['rule'] = [ $post['id'] ];
 	}
 
+	$changes = [];
 	foreach ($post['rule'] as $rulei) {
 		if (config_path_enabled("nat/rule/{$rulei}", 'disabled')) {
 			config_del_path("nat/rule/{$rulei}/disabled");
@@ -661,9 +777,8 @@ function toggleNATrule($post, $json = false) {
 		$associated_rule_id = config_get_path("nat/rule/{$rulei}/associated-rule-id");
 
 		if ($associated_rule_id != null) {
-			toggle_id($associated_rule_id, $rule_status);
+			toggle_id($associated_rule_id, $rule_status, $changes);
 			unset($rule_status);
-			$want_dirty_filter = true;
 		}
 	}
 
@@ -677,7 +792,7 @@ function toggleNATrule($post, $json = false) {
 	if ($write_ret) {
 		if (!$json) {
 			mark_subsystem_dirty('natconf');
-			if ($want_dirty_filter) {
+			if (isset($changes['filter_rules'])) {
 				mark_subsystem_dirty('filter');
 			}
 			header("Location: firewall_nat.php");
@@ -693,48 +808,23 @@ function toggleNATrule($post, $json = false) {
 }
 
 function deleteNATrule($post, $json = false) {
-	$a_separators = config_get_path('nat/separator', []);
-
 	// Check for single rule
 	if (!(is_array($post['rule']) && count($post['rule']))) {
 		$post['rule'] = array( $post['id'] => $post['id'] );
 	}
 
-	/* When deleting rules using an unordered index array, $num_deleted may
-	   be inaccurate since removing a higher index rule (e.g. 5) should not
-	   decrement lower indecies (e.g. 2). This sorting is only necessary when
-	   the rule index is NOT recalculated on every loop. */
-	asort($post['rule'], SORT_NATURAL);
-	$num_deleted = 0;
+	$changes = [];
+	remove_rdr_rules($post['rule'], $changes);
 
-	foreach ($post['rule'] as $rulei) {
-		// separators must be updated before the rule is removed
-		shift_separators($a_separators, $rulei - $num_deleted, true);
-
-		// remove the rule
-		$associated_rule_id = config_get_path("nat/rule/{$rulei}/associated-rule-id");
-		if ($associated_rule_id != null) {
-			delete_id($associated_rule_id);
-			$want_dirty_filter = true;
-		}
-		config_del_path("nat/rule/{$rulei}");
-		$num_deleted++;
-	}
-	config_set_path('nat/separator', $a_separators);
-
-	if ($num_deleted) {
-		if ($num_deleted == 1) {
-			$write_ret = write_config("Firewall: NAT: Port forward - rule deleted");
-		} else {
-			$write_ret = write_config("Firewall: NAT: Port forward - Multiple rules deleted");
-		}
+	if (isset($changes['rdr_rules'])) {
+		$write_ret = write_config("Firewall: NAT: Port forward - rule(s) deleted");
 
 		if ($write_ret) {
 			if ($json) {
 				filter_configure();
 			} else {
 				mark_subsystem_dirty('natconf');
-				if ($want_dirty_filter) {
+				if (isset($changes['filter_rules'])) {
 					mark_subsystem_dirty('filter');
 				}
 			}
@@ -767,20 +857,11 @@ function reorderNATrules($post, $json = false) {
 	$updated = false;
 	$dirty = false;
 
-	$a_nat = config_get_path('nat/rule', []);
 	$a_separators = config_get_path('nat/separator', []);
 
 	/* update rule order, POST[rule] is an array of ordered IDs */
 	if (is_array($post['rule']) && !empty($post['rule'])) {
-		$a_nat_new = array();
-
-		// if a rule is not in POST[rule], it has been deleted by the user
-		foreach ($post['rule'] as $id) {
-			$a_nat_new[] = $a_nat[$id];
-		}
-
-		if ($a_nat !== $a_nat_new) {
-			$a_nat = $a_nat_new;
+		if (set_anynat_rules_order('rdr', $post['rule'])) {
 			$dirty = true;
 		}
 	}
@@ -804,7 +885,6 @@ function reorderNATrules($post, $json = false) {
 	}
 
 	if ($updated || $dirty) {
-		config_set_path('nat/rule', $a_nat);
 		config_set_path('nat/separator', $a_separators);
 		if (write_config("NAT: Rule order changed")) {
 			if ($json) {
@@ -868,7 +948,7 @@ function MVC_create_interface_list() {
 }
 
 function getNATRule($id, $json = false) {
-	$a_nat = config_get_path('nat/rule', []);
+	$a_nat = get_anynat_rules_list('rdr');
 
 	if (isset($id) && $a_nat[$id]) {
 		if (isset($a_nat[$id]['created']) && is_array($a_nat[$id]['created'])) {

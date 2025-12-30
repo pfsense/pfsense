@@ -64,7 +64,7 @@ if (empty($a_cp) || empty($a_zone)) {
 	exit;
 }
 
-$pgtitle = array(gettext("Services"), gettext("Captive Portal"), config_get_path("captiveportal/{$cpzone}/zone"), gettext("Configuration"));
+$pgtitle = array(gettext("Services"), gettext("Captive Portal"), htmlspecialchars($cpzone), gettext("Configuration"));
 $pglinks = array("", "services_captiveportal_zones.php", "@self", "@self");
 $shortcut_section = "captiveportal";
 
@@ -193,7 +193,7 @@ if ($_POST['save']) {
 			foreach ($a_cp as $cpkey => $cp) {
 				if ($cpkey != $cpzone || empty($cpzone)) {
 					if (in_array($cpbrif, explode(",", $cp['interface']))) {
-						$input_errors[] = sprintf(gettext('The captive portal cannot be used on interface %1$s since it is used already on %2$s instance.'), $cpbrif, $cp['zone']);
+						$input_errors[] = sprintf(gettext('The captive portal cannot be used on interface %1$s since it is used already on %2$s instance.'), $cpbrif, ($cpkey . ($cp['descr'] ? " ({$cp['descr']})" : '')));
 					}
 				}
 			}

@@ -119,7 +119,7 @@ if ($_GET) {
 			$can_add = false;
 			$can_enable = false;
 			$dontshow = true;
-			foreach (config_get_path('filter/rule', []) as $key => $rule) {
+			foreach (get_filter_rules_list() as $key => $rule) {
 				if (isset($rule['dnpipe'])) {
 					config_del_path("filter/rule/{$key}/dnpipe");
 				}
@@ -231,7 +231,8 @@ if ($_POST) {
 				$number = dnpipe_find_nextnumber();
 				$dnpipe->SetNumber($number);
 				unset($tmppath);
-				$tmppath[] = $dnpipe->GetQname();
+				$tmppath = array();
+				array_push($tmppath, shaper_dn_config_get_next_queue_index($tmppath));
 				$dnpipe->SetLink($tmppath);
 				$dnpipe->wconfig();
 				if (write_config("Traffic Shaper: New pipe added")) {
@@ -256,7 +257,7 @@ if ($_POST) {
 		}
 		if (empty($input_errors) && $dnpipe) {
 			$tmppath =& $dnpipe->GetLink();
-			array_push($tmppath, $qname);
+			array_push($tmppath, shaper_dn_config_get_next_queue_index($tmppath));
 			$tmp =& $dnpipe->add_queue($pipe, $_POST, $tmppath, $input_errors);
 			if (!$input_errors) {
 				array_pop($tmppath);

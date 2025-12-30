@@ -268,12 +268,16 @@ function build_interface_list() {
 
 $pconfig = config_get_path('ntpd', []);
 $pconfig['enable'] = ($pconfig['enable'] != 'disabled') ? 'enabled' : 'disabled';
+if (config_get_path('ntpd/enable') != $pconfig['enable']) {
+	config_set_path('ntpd/enable', $pconfig['enable']);
+}
 if (empty($pconfig['interface'])) {
 	$pconfig['interface'] = array();
+	config_set_path('ntpd/interface', '');
 } else {
 	$pconfig['interface'] = explode(",", $pconfig['interface']);
 }
-config_set_path('ntpd', $pconfig);
+
 $pgtitle = array(gettext("Services"), gettext("NTP"), gettext("Settings"));
 $pglinks = array("", "@self", "@self");
 $shortcut_section = "ntp";

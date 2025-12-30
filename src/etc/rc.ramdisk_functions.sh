@@ -26,32 +26,34 @@ RAMDISK_FLAG_FILE=/conf/ram_disks_failed
 RAMDISK_DEFAULT_SIZE_tmp=40
 RAMDISK_DEFAULT_SIZE_var=60
 
-# Replacement for /etc/rc.d/zfsbe onestart
-_be_remount_ds() {
-	local _dataset="${1}"
-
-	/sbin/zfs list -rH -o mountpoint,name,canmount,mounted -s mountpoint -t filesystem "${_dataset}" | \
-	while read _mp _name _canmount _mounted ; do
-		# skip filesystems that must *not* be mounted
-		[ "${_canmount}" = "off" -o "${_mp}" = "/" ] && continue
-		# unmount the dataset if mounted...
-		[ "$_mounted" = "yes" ] && /sbin/umount -f "${_name}"
-		# mount the dataset
-		/sbin/zfs mount "${_name}"
-	done
+#
+# Remounts subordinate datasets of a parent dataset
+#
+_be_remount_subordinate()
+{
+	/sbin/zfs list -rH -o mountpoint,name,canmount,mounted -s mountpoint -t filesystem "${1}" | \
+		while read _mp _name _canmount _mounted ; do
+			# skip filesystems that must *not* be mounted
+			[ "${_canmount}" = "off" -o "${_mp}" = "/" ] && continue
+			# unmount the dataset if mounted...
+			[ "${_mounted}" = "yes" ] && /sbin/zfs umount -f "${_name}"
+			# finally, mount the dataset
+			/sbin/zfs mount "${_name}"
+		done
 }
 
-# Replacement for /etc/rc.d/zfsbe onestart
+#
+# Mount ZFS boot environment
+#
 _be_mount_zfs() {
 	echo -n "Mounting ZFS boot environment..."
 	/sbin/mount -p | while read _dev _mp _type _rest; do
 		[ "${_mp}"  = "/" ] || continue
-		if [ "${_type}" = "zfs" ] ; then
-			_be_remount_ds "${_dev}"
-		fi
+		[ "${_type}" = "zfs" ] || continue
+		_be_remount_subordinate "${_dev}"
 		break
 	done
-	echo " done."
+	echo "done."
 }
 
 # Check if RAM disks are enabled in config.xml
@@ -83,7 +85,7 @@ ramdisk_reset_status () {
 ramdisk_was_active() {
 	# If /var is on a memory disk, then RAM disks are active now or were active and recently disabled
 	DISK_NAME=`/bin/df /var/db/rrd | /usr/bin/tail -1 | /usr/bin/awk '{print $1;}'`
-	DISK_TYPE=`/usr/bin/basename ${DISK_NAME} | /usr/bin/cut -c1-2`
+	DISK_TYPE=$( /usr/bin/basename "${DISK_NAME}" | /usr/bin/cut -c1-2 )
 	[ "${DISK_TYPE}" = "md" ]
 	return $?
 }
@@ -97,11 +99,11 @@ ramdisk_get_size () {
 	NAME=${1}
 	DEFAULT_SIZE=$(eval echo \${RAMDISK_DEFAULT_SIZE_${NAME}})
 
-	SIZE=$(/usr/local/sbin/read_xml_tag.sh string system/use_mfs_${NAME}_size)
-	if [ -n "${SIZE}" ] && [ ${SIZE} -gt 0 ]; then
-		echo ${SIZE}
+	SIZE=$(/usr/local/sbin/read_xml_tag.sh string "system/use_mfs_${NAME}_size")
+	if [ -n "${SIZE}" ] && [ "${SIZE}" -gt 0 ]; then
+		echo "${SIZE}"
 	else
-		echo ${DEFAULT_SIZE}
+		echo "${DEFAULT_SIZE}"
 	fi
 	return 0
 }
@@ -113,11 +115,11 @@ ramdisk_check_size () {
 	# Check available RAM
 	PAGES_FREE=$( /sbin/sysctl -n vm.stats.vm.v_free_count )
 	PAGE_SIZE=$( /sbin/sysctl -n vm.stats.vm.v_page_size )
-	MEM_FREE=$( /bin/expr ${PAGES_FREE} \* ${PAGE_SIZE} )
+	MEM_FREE=$(( PAGES_FREE * PAGE_SIZE ))
 	# Convert to MB
-	MEM_FREE=$( /bin/expr ${MEM_FREE} / 1024 / 1024 )
+	MEM_FREE=$(( MEM_FREE / 1024 / 1024 ))
 	# Total size of desired RAM disks
-	MEM_NEED=$( /bin/expr ${tmpsize} + ${varsize} )
+	MEM_NEED=$(( tmpsize + varsize ))
 	[ ${MEM_FREE} -gt ${MEM_NEED} ]
 	return $?
 }
@@ -128,18 +130,14 @@ ramdisk_check_size () {
 #   ramdisk_try_mount var
 ramdisk_try_mount () {
 	NAME=$1
-	if [ ramdisk_check_size ]; then
-		SIZE=$(eval echo \${${NAME}size})m
-		if [ "${NAME}" = "tmp" ]; then
-			MODE="1777"
-		else
-			MODE="1755"
-		fi
-		/sbin/mount -o rw,size=${SIZE},mode=${MODE} -t tmpfs tmpfs /${NAME}
-		return $?
+	SIZE=$(eval echo \${${NAME}size})m
+	if [ "${NAME}" = "tmp" ]; then
+		MODE="1777"
 	else
-		return 1;
+		MODE="1755"
 	fi
+	/sbin/mount -o rw,size="${SIZE}",mode="${MODE}" -t tmpfs tmpfs "/${NAME}"
+	return $?
 }
 
 # If the install has RAM disks, or if the full install _was_ using RAM disks, make a backup.
@@ -161,7 +159,7 @@ ramdisk_make_backup () {
 #   ramdisk_relocate_pkgdb disk
 #   ramdisk_relocate_pkgdb ram
 ramdisk_relocate_pkgdb () {
-	if [ ${1} = "disk" ]; then
+	if [ "${1}" = "disk" ]; then
 		local SRC=/root
 		local DST=
 	else
@@ -193,7 +191,7 @@ ramdisk_relocate_pkgdb_all () {
 	if ramdisk_check_enabled; then
 		USE_RAMDISK=true
 	fi
-	if [ -z "${USE_RAMDISK}" -a -f /root/var/db/pkg/local.sqlite ]; then
+	if [ -z "${USE_RAMDISK}" ] && [ -f /root/var/db/pkg/local.sqlite ]; then
 		if ramdisk_failed; then
 			echo "Not relocating pkg db due to previous RAM disk failure."
 			return 1
@@ -201,7 +199,7 @@ ramdisk_relocate_pkgdb_all () {
 		# If RAM disks are disabled, move files back into place
 		MOVE_PKG_DATA=1
 		ramdisk_relocate_pkgdb disk
-	elif [ -n "${USE_RAMDISK}" -a -f /var/db/pkg/local.sqlite ]; then
+	elif [ -n "${USE_RAMDISK}" ] && [ -f /var/db/pkg/local.sqlite ]; then
 		# If RAM disks are enabled, move files to a safe place
 		MOVE_PKG_DATA=1
 		ramdisk_relocate_pkgdb ram

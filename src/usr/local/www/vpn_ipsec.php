@@ -239,7 +239,7 @@ if ($_POST['apply']) {
 		$save = 0;
 	}
 
-	if ($save === 1) {
+	if (empty($input_errors) && ($save === 1)) {
 		if (write_config(gettext("Saved configuration changes for IPsec tunnels."))) {
 			mark_subsystem_dirty('ipsec');
 		}
@@ -351,7 +351,7 @@ $i = 0; foreach (config_get_path('ipsec/phase1', []) as $ph1ent):
 <?php
 			if ($ph1ent['interface']) {
 				if (isset($iflabels[$ph1ent['interface']])) {
-					$if = htmlspecialchars($iflabels[$ph1ent['interface']]);
+					$if = $iflabels[$ph1ent['interface']];
 				} else {
 					$if = sprintf("Interface not found: '%s'", $ph1ent['interface']);
 				}
@@ -359,10 +359,11 @@ $i = 0; foreach (config_get_path('ipsec/phase1', []) as $ph1ent):
 				$if = "WAN";
 			}
 
+			echo htmlspecialchars($if)."<br />";
 			if (!isset($ph1ent['mobile'])) {
-				echo $if."<br />".$ph1ent['remote-gateway'];
+				echo $ph1ent['remote-gateway'];
 			} else {
-				echo $if."<br /><strong>" . gettext("Mobile Clients") . "</strong>";
+				echo "<strong>" . gettext("Mobile Clients") . "</strong>";
 			}
 ?>
 						</td>

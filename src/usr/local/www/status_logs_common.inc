@@ -644,6 +644,7 @@ function manage_log_code() {
 	global $logfile, $specific_log, $pconfig, $save_settings, $input_errors, $extra_save_msg, $retval, $changes_applied, $allowed_logs;
 
 	$changes_applied = false;
+	$filterlog_changed = false;
 	$extra_save_msg = "";
 	$specific_log = basename($logfile) . '_settings';
 	$syslog_config = config_get_path('syslog', []);
@@ -662,10 +663,13 @@ function manage_log_code() {
 
 	// Specific to Firewall Log
 	if ($logfile == 'filter') {
+		$pconfig['logipoptions'] = !isset($syslog_config['nologipoptions']);
 		$pconfig['logdefaultblock'] = !isset($syslog_config['nologdefaultblock']);
 		$pconfig['logdefaultpass'] = isset($syslog_config['nologdefaultpass']);
 		$pconfig['logbogons'] = !isset($syslog_config['nologbogons']);
 		$pconfig['logprivatenets'] = !isset($syslog_config['nologprivatenets']);
+		$pconfig['loglinklocal4'] = !isset($syslog_config['nologlinklocal4']);
+		$pconfig['logsnort2c'] = !isset($syslog_config['nologsnort2c']);
 		$pconfig['filterdescriptions'] = isset($syslog_config['filterdescriptions']) ? $syslog_config['filterdescriptions'] : null;
 	}
 
@@ -691,11 +695,14 @@ function manage_log_code() {
 
 		// Specific to Firewall Log
 		if ($logfile == 'filter') {
+			$logipoptions = getGETPOSTsettingvalue('logipoptions',  null);
 			$logdefaultblock = getGETPOSTsettingvalue('logdefaultblock',  null);
 			$logdefaultpass = getGETPOSTsettingvalue('logdefaultpass', null);
 			$logbogons = getGETPOSTsettingvalue('logbogons', null);
 			$logprivatenets  = getGETPOSTsettingvalue('logprivatenets',  null);
+			$loglinklocal4 = getGETPOSTsettingvalue('loglinklocal4',  null);
 			$filterdescriptions  = getGETPOSTsettingvalue('filterdescriptions',  null);
+			$logsnort2c = getGETPOSTsettingvalue('logsnort2c',  null);
 		}
 
 		unset($input_errors);
@@ -768,15 +775,21 @@ function manage_log_code() {
 
 		// Specific to  Firewall Log
 			if ($logfile == 'filter') {
+				$oldnologipoptions = isset($syslog_config['nologipoptions']);
 				$oldnologdefaultblock = isset($syslog_config['nologdefaultblock']);
 				$oldnologdefaultpass = isset($syslog_config['nologdefaultpass']);
 				$oldnologbogons = isset($syslog_config['nologbogons']);
 				$oldnologprivatenets = isset($syslog_config['nologprivatenets']);
+				$oldnologlinklocal4 = isset($syslog_config['nologlinklocal4']);
+				$oldnologsnort2c = isset($syslog_config['nologsnort2c']);
 
+				$syslog_config['nologipoptions'] = $logipoptions ? false : true;
 				$syslog_config['nologdefaultblock'] = $logdefaultblock ? false : true;
 				$syslog_config['nologdefaultpass'] = $logdefaultpass ? true : false;
 				$syslog_config['nologbogons'] = $logbogons ? false : true;
 				$syslog_config['nologprivatenets'] = $logprivatenets ? false : true;
+				$syslog_config['nologlinklocal4'] = $loglinklocal4 ? false : true;
+				$syslog_config['nologsnort2c'] = $logsnort2c ? false : true;
 
 				if (is_numeric($filterdescriptions) && $filterdescriptions > 0) {
 					$syslog_config['filterdescriptions'] = $filterdescriptions;
@@ -785,11 +798,18 @@ function manage_log_code() {
 				}
 
 				if (
+				    ($oldnologipoptions !== $syslog_config['nologipoptions']) ||
 				    ($oldnologdefaultblock !== $syslog_config['nologdefaultblock']) ||
 				    ($oldnologdefaultpass !== $syslog_config['nologdefaultpass']) ||
 				    ($oldnologbogons !== $syslog_config['nologbogons']) ||
-				    ($oldnologprivatenets !== $syslog_config['nologprivatenets'])) {
+				    ($oldnologprivatenets !== $syslog_config['nologprivatenets']) ||
+				    ($oldnologlinklocal4 !== $syslog_config['nologlinklocal4']) ||
+				    ($oldnologsnort2c !== $syslog_config['nologsnort2c'])) {
 					$logging_changed = $firewall_logging_changed = true;
+				}
+
+				if ($oldnologipoptions !== $syslog_config['nologipoptions']) {
+					$filterlog_changed = true;
 				}
 			}
 
@@ -812,7 +832,7 @@ function manage_log_code() {
 				if ($nginx_logging_changed) {
 					ob_flush();
 					flush();
-					log_error(gettext("webConfigurator configuration has changed. Restarting webConfigurator."));
+					logger(LOG_NOTICE, localize_text('webConfigurator configuration has changed. Restarting webConfigurator.'));
 					send_event("service restart webgui");
 					$extra_save_msg = gettext("WebGUI process is restarting.");
 				}
@@ -823,7 +843,7 @@ function manage_log_code() {
 				if ($firewall_logging_changed) {
 					require_once("filter.inc");
 					$retval |= filter_configure();
-					filter_pflog_start();
+					filter_pflog_start($filterlog_changed);
 				}
 			}
 		}
@@ -989,32 +1009,53 @@ function manage_log_section() {
 	// Specific to Firewall Log
 	if ($logfile == 'filter') {
 		$section->addInput(new Form_Checkbox(
-			'logdefaultblock',
-			'Log firewall default blocks',
-			'Log packets matched from the default block rules in the ruleset',
-			$pconfig['logdefaultblock']
-		))->setHelp('Packets that are blocked by the implicit default block rule will not be logged if this option is unchecked. Per-rule logging options are still respected.');
+			'logipoptions',
+			null,
+			'Packets blocked due to IP options',
+			$pconfig['logipoptions']
+		))->setHelp('Log packets that are %1$sblocked%2$s due to unmatched IP options in "pass" rules.', '<strong>', '</strong>');
 
+		$section->addInput(new Form_Checkbox(
+			'logdefaultblock',
+			null,
+			'Default firewall "block" rules',
+			$pconfig['logdefaultblock']
+		))->setHelp('Log packets that are %1$sblocked%2$s by the implicit default block rule.', '<strong>', '</strong>');
+		
 		$section->addInput(new Form_Checkbox(
 			'logdefaultpass',
 			null,
-			'Log packets matched from the default pass rules put in the ruleset',
+			'Default firewall "pass" rules',
 			$pconfig['logdefaultpass']
-		))->setHelp('Packets that are allowed by the implicit default pass rule will be logged if this option is checked. Per-rule logging options are still respected. ');
-
+		))->setHelp('Log packets that are %1$sallowed%2$s by the implicit default pass rule.', '<strong>', '</strong>');
+		
 		$section->addInput(new Form_Checkbox(
 			'logbogons',
 			null,
-			'Log packets blocked by \'Block Bogon Networks\' rules',
+			'Default "Bogon Networks" block rules',
 			$pconfig['logbogons']
-		));
-
+		))->setHelp('Log packets that are %1$sblocked%2$s by the assigned interface option "Block bogon networks".', '<strong>', '</strong>');
+		
 		$section->addInput(new Form_Checkbox(
 			'logprivatenets',
 			null,
-			'Log packets blocked by \'Block Private Networks\' rules',
+			'Default "Private Networks" block rules',
 			$pconfig['logprivatenets']
-		));
+		))->setHelp('Log packets that are %1$sblocked%2$s by the assigned interface option "Block private networks and loopback addresses".', '<strong>', '</strong>');		
+
+		$section->addInput(new Form_Checkbox(
+			'loglinklocal4',
+			null,
+			'Default "IPv4 link-local" block rules',
+			$pconfig['nologlinklocal4']
+		))->setHelp('Log packets that are %1$sblocked%2$s by the default "Block IPv4 link-local" rules.', '<strong>', '</strong>');
+
+		$section->addInput(new Form_Checkbox(
+			'logsnort2c',
+			null,
+			'Hosts blocked by IDS',
+			$pconfig['nologsnort2c']
+		))->setHelp('Log packets that are %1$sblocked%2$s by IDS packages.', '<strong>', '</strong>');
 
 		$section->addInput(new Form_Select(
 			'filterdescriptions',

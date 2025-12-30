@@ -47,7 +47,7 @@ define('DEFAULT_TTL', 18);
 
 // Set defaults in case they are not supplied.
 $do_traceroute = false;
-$host = '';
+$host = $host_utf8 = '';
 $ttl = DEFAULT_TTL;
 $ipproto = 'ipv4';
 $sourceip = 'any';
@@ -63,7 +63,11 @@ if ($_POST || $_REQUEST['host']) {
 	if (($_REQUEST['ttl'] < 1) || ($_REQUEST['ttl'] > MAX_TTL)) {
 		$input_errors[] = sprintf(gettext("Maximum number of hops must be between 1 and %s"), MAX_TTL);
 	}
-	$host = idn_to_ascii(trim($_REQUEST['host']));
+	$host = trim($_REQUEST['host']);
+	if (!empty($host)) {
+		$host = idn_to_ascii($host);
+		$host_utf8 = idn_to_utf8($host);
+	}
 	$ipproto = $_REQUEST['ipproto'];
 	if (($ipproto == "ipv4") && is_ipaddrv6($host)) {
 		$input_errors[] = gettext("When using IPv4, the target host must be an IPv4 address or hostname.");
@@ -117,7 +121,7 @@ if ($do_traceroute) {
 	$result = shell_exec($cmd);
 
 	if (!$result) {
-		print_info_box(sprintf(gettext('Error: %s could not be traced/resolved'), htmlspecialchars(idn_to_utf8($host))));
+		print_info_box(sprintf(gettext('Error: %s could not be traced/resolved'), htmlspecialchars($host_utf8)));
 	}
 }
 
@@ -129,7 +133,7 @@ $section->addInput(new Form_Input(
 	'host',
 	'*Hostname',
 	'text',
-	idn_to_utf8($host),
+	$host_utf8,
 	['placeholder' => 'Hostname to trace.']
 ));
 

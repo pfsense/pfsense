@@ -756,7 +756,7 @@ function saveAlias($post, $id) {
 				}
 				@unlink($g['tmp_path'] . '/.system_routes.apply');
 
-				$retval |= system_routing_configure();
+				$retval = system_routing_configure();
 				$retval |= filter_configure();
 				/* reconfigure our gateway monitor */
 				setup_gateways_monitor();

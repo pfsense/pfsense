@@ -216,6 +216,10 @@ if ($_POST['save']) {
 
 	/* input validation */
 
+	if (!array_key_exists($pconfig['interface'], build_interface_list())) {
+		$input_errors[] = gettext("Invalid interface.");
+	}
+
 	$method = $pconfig['authentication_method'];
 
 	// Unset ca and cert if not required to avoid storing in config

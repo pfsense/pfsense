@@ -33,9 +33,6 @@ require_once("config.inc");
 require_once("auth.inc");
 require_once("interfaces.inc");
 
-/* setup syslog logging */
-openlog("openvpn", LOG_ODELAY, LOG_AUTH);
-
 global $common_name, $username, $dev, $untrusted_port;
 
 if (isset($_GET['username'])) {
@@ -58,13 +55,11 @@ if (isset($_GET['username'])) {
 }
 
 if (!$username) {
-	syslog(LOG_ERR, "invalid user authentication environment");
+	logger(LOG_ERR, localize_text("invalid user authentication environment"), LOG_PREFIX_OPENVPN, LOG_AUTH);
 	if (isset($_GET['username'])) {
 		echo "FAILED";
-		closelog();
 		return;
 	} else {
-		closelog();
 		return (-1);
 	}
 }
@@ -75,25 +70,21 @@ if (!$username) {
 $authenticated = false;
 
 if (($strictusercn === true) && (mb_strtolower($common_name) !== mb_strtolower($username))) {
-	syslog(LOG_WARNING, "Username does not match certificate common name (\"{$username}\" != \"{$common_name}\"), access denied.");
+	logger(LOG_WARNING, localize_text("Username does not match certificate common name (\"%s\" != \"%s\"), access denied.", $username, $common_name), LOG_PREFIX_OPENVPN, LOG_AUTH);
 	if (isset($_GET['username'])) {
 		echo "FAILED";
-		closelog();
 		return;
 	} else {
-		closelog();
 		return (1);
 	}
 }
 
 if (!is_array($authmodes)) {
-	syslog(LOG_WARNING, "No authentication server has been selected to authenticate against. Denying authentication for user {$username}");
+	logger(LOG_WARNING, localize_text("No authentication server has been selected to authenticate against. Denying authentication for user %s", $username), LOG_PREFIX_OPENVPN, LOG_AUTH);
 	if (isset($_GET['username'])) {
 		echo "FAILED";
-		closelog();
 		return;
 	} else {
-		closelog();
 		return (1);
 	}
 }
@@ -117,13 +108,11 @@ foreach ($authmodes as $authmode) {
 }
 
 if ($authenticated == false) {
-	syslog(LOG_WARNING, "user '{$username}' could not authenticate.");
+	logger(LOG_WARNING, localize_text("user '%s' could not authenticate.", $username), LOG_PREFIX_OPENVPN, LOG_AUTH);
 	if (isset($_GET['username'])) {
 		echo "FAILED";
-		closelog();
 		return;
 	} else {
-		closelog();
 		return (-1);
 	}
 }
@@ -158,8 +147,7 @@ if (!empty($content)) {
 	@file_put_contents("{$g['tmp_path']}/{$username}", $content);
 }
 
-syslog(LOG_NOTICE, "user '{$username}' authenticated");
-closelog();
+logger(LOG_NOTICE, localize_text("user '%s' authenticated", $username), LOG_PREFIX_OPENVPN, LOG_AUTH);
 
 if (isset($_GET['username'])) {
 	echo "OK";

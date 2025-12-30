@@ -172,6 +172,9 @@ if (($act == "edit") || ($act == "dup")) {
 
 		$pconfig['tunnel_network'] = $this_server_config['tunnel_network'];
 		$pconfig['tunnel_networkv6'] = $this_server_config['tunnel_networkv6'];
+		$pconfig['tunnel_networkv6_type'] = $this_server_config['tunnel_networkv6_type'];
+		$pconfig['tunnel_track6_interface'] = $this_server_config['tunnel_track6_interface'];
+		$pconfig['tunnel_track6_prefix_id'] = $this_server_config['tunnel_track6_prefix_id'];
 
 		$pconfig['remote_network'] = $this_server_config['remote_network'];
 		$pconfig['remote_networkv6'] = $this_server_config['remote_networkv6'];
@@ -446,6 +449,12 @@ if ($_POST['save']) {
 	    ($this_server_config['tunnel_networkv6'] != $pconfig['tunnel_networkv6'])) &&
 	    openvpn_is_tunnel_network_in_use($pconfig['tunnel_networkv6'])) {
 		$input_errors[] = gettext("The submitted IPv6 Tunnel Network is already in use.");
+	}
+
+	if (!empty($pconfig['tunnel_track6_interface']) && !empty($pconfig['tunnel_track6_prefix_id'])) {
+		if (!ctype_xdigit($pconfig['tunnel_track6_prefix_id'])) {
+			$input_errors[] = gettext("A valid hexadecimal number must be entered for the IPv6 prefix ID.");
+		}
 	}
 
 	if ($result = openvpn_validate_cidr($pconfig['remote_network'], 'IPv4 Remote Network', true, "ipv4", true)) {
@@ -754,6 +763,11 @@ if ($_POST['save']) {
 		$server['gwredir6'] = $pconfig['gwredir6'];
 		$server['local_network'] = $pconfig['local_network'];
 		$server['local_networkv6'] = $pconfig['local_networkv6'];
+		if ($pconfig['tunnel_networkv6_type'] == 'track6') {
+			$server['tunnel_networkv6_type'] = $pconfig['tunnel_networkv6_type'];
+			$server['tunnel_track6_interface'] = $pconfig['tunnel_track6_interface'];
+			$server['tunnel_track6_prefix_id'] = $pconfig['tunnel_track6_prefix_id'];
+		}
 		$server['maxclients'] = $pconfig['maxclients'];
 		$server['connlimit'] = $pconfig['connlimit'];
 		$server['allow_compression'] = $pconfig['allow_compression'];
@@ -1265,6 +1279,13 @@ if ($act=="new" || $act=="edit"):
 			'including Exit Notify, and Inactive.',
 			'<br/>');
 
+	$section->addInput(new Form_Select(
+		'tunnel_networkv6_type',
+		'IPv6 Tunnel Type',
+		$pconfig['tunnel_networkv6_type'] ?: 'staticv6',
+		["staticv6" => gettext("Static IPv6"), "track6" => gettext("Track Interface")]
+	));
+
 	$section->addInput(new Form_Input(
 		'tunnel_networkv6',
 		'IPv6 Tunnel Network',
@@ -1274,6 +1295,24 @@ if ($act=="new" || $act=="edit"):
 			'communications between this server and client hosts expressed using CIDR notation ' .
 			'(e.g. fe80::/64). The ::1 address in the network will be assigned to the server ' .
 			'virtual interface. The remaining addresses will be assigned to connecting clients.');
+
+	$section->addInput(new Form_Select(
+		'tunnel_track6_interface',
+		'*IPv6 Interface',
+		array_get_path($pconfig, 'tunnel_track6_interface'),
+		build_ipv6interface_list()
+	))->setHelp('Selects the dynamic IPv6 WAN interface to track for configuration.');
+
+	if (array_get_path($pconfig, 'tunnel_track6_prefix_id') == "") {
+		array_set_path($pconfig, 'tunnel_track6_prefix_id', 0);
+	}
+
+	$section->addInput(new Form_Input(
+		'tunnel_track6_prefix_id',
+		'IPv6 Prefix ID',
+		'text',
+		$pconfig['tunnel_track6_prefix_id']
+	))->setHelp('(%1$shexadecimal%2$s from 0 to %3$s) The value in this field is the (Delegated) IPv6 prefix ID. This determines the configurable network ID based on the dynamic IPv6 connection. The default value is 0.', '<b>', '</b>', '<span id="track6-prefix-id-range"></span>');
 
 	$section->addInput(new Form_Checkbox(
 		'serverbridge_dhcp',
@@ -2207,6 +2246,7 @@ events.push(function() {
 		switch (value) {
 			case "tun":
 				hideInput('tunnel_network', false);
+				hideInput('tunnel_networkv6', false);
 				hideCheckbox('serverbridge_dhcp', true);
 				hideInput('serverbridge_interface', true);
 				hideCheckbox('serverbridge_routegateway', true);
@@ -2292,6 +2332,13 @@ events.push(function() {
 		var hide  = ! $('#duplicate_cn').prop('checked');
 
 		hideInput('connlimit', hide);
+	}
+
+	function ipv6_type_change() {
+		var hide = ($('#tunnel_networkv6_type').val() == 'track6')
+		hideInput('tunnel_networkv6', hide);
+		hideInput('tunnel_track6_interface', !hide);
+		hideInput('tunnel_track6_prefix_id', !hide);
 	}
 
 	// ---------- Monitor elements for change and call the appropriate display functions ------------------------------
@@ -2399,6 +2446,11 @@ events.push(function() {
 		allow_compression_change();
 	});
 
+	// IPv6 Tunnel Type
+	$('#tunnel_networkv6_type').change(function () {
+		ipv6_type_change();
+	});
+
 	function updateCipher(mem) {
 		var found = false;
 		var ciphers_all = <?= json_encode($openvpn_all_data_ciphers) ?>;
@@ -2461,6 +2513,7 @@ events.push(function() {
 	ocspcheck_change();
 	allow_compression_change();
 	duplicate_cn_change();
+	ipv6_type_change();
 });
 //]]>
 </script>

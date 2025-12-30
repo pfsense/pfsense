@@ -83,7 +83,7 @@ if (isset($_POST['save'])) {
 	if (isset($_POST['name'])) {
 		/* check for overlaps */
 		foreach (config_get_path('gateways/gateway_group', []) as $gateway_group) {
-			if ($this_gateway_group_config && ($this_gateway_group_config === $gateway_group)) {
+			if (isset($id) && ($this_gateway_group_config && ($this_gateway_group_config === $gateway_group))) {
 				if ($gateway_group['name'] != $_POST['name']) {
 					$input_errors[] = gettext("Changing name on a gateway group is not allowed.");
 				}
@@ -310,10 +310,11 @@ $section->addInput(new Form_Select(
 		'kill' => 'Kill states on gateway recovery',
 	]
 ))->setHelp('%2$sKeep states on gateway recovery%3$s: states for this gateway ' .
-	'group are unaffected.%1$s%2$sKill states on gateway recovery%3$s: kill  ' .
-	'policy routing states for lower-priority gateways.%1$sNote: gateway ' .
-	'priority changes may not affect states created before those changes.',
-	'<br/>', '<strong>', '</strong>');
+	'group are unaffected.%1$s%2$sKill states on gateway recovery%3$s: states  ' .
+	'created for lower-priority gateways by policy-routing firewall rules will ' .
+	'be killed.%1$sNote: changes to the gateway priority configuration only ' .
+	'affect states created after settings are applied - states which already ' .
+	'exist may need to be manually killed.', '<br/>', '<strong>', '</strong>');
 
 $section->addInput(new Form_Select(
 	'trigger',

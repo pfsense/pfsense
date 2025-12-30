@@ -32,7 +32,7 @@
 ##|*MATCH=firewall_schedule.php*
 ##|-PRIV
 
-define('CLOCK', '<i class="fa-regular fa-clock icon-black"></i>');
+define('CLOCK', '<i class="fa-regular fa-clock"></i>');
 
 $dayArray = array (gettext('Mon'), gettext('Tues'), gettext('Wed'), gettext('Thur'), gettext('Fri'), gettext('Sat'), gettext('Sun'));
 $monthArray = array (gettext('January'), gettext('February'), gettext('March'), gettext('April'), gettext('May'), gettext('June'), gettext('July'), gettext('August'), gettext('September'), gettext('October'), gettext('November'), gettext('December'));
@@ -107,8 +107,8 @@ foreach (config_get_path('schedules/schedule', []) as $schedule):
 				$firstDayFound = false;
 				$firstPrint = false;
 				foreach ($tempmontharray as $monthtmp) {
-					$month = $tempmontharray[$arraycounter];
-					$day = $tempdayarray[$arraycounter];
+					$month = (int)$tempmontharray[$arraycounter];
+					$day = (int)$tempdayarray[$arraycounter];
 
 					if (!$firstDayFound) {
 						$firstDay = $day;

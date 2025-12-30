@@ -110,11 +110,14 @@ if ($_GET) {
 		$can_add = false;
 		$can_enable = false;
 		$dontshow = true;
-		foreach (config_get_path('filter/rule', []) as $key => $rule) {
+		// remove_filter_rules
+		$remove_list = [];
+		foreach (get_filter_rules_list() as $key => $rule) {
 			if (isset($rule['wizard']) && $rule['wizard'] == "yes") {
-				config_del_path("filter/rule/{$key}");
+				$remove_list[] = $key;
 			}
 		}
+		remove_filter_rules($remove_list);
 
 		if (write_config("Traffic Shaper: Reset all")) {
 			$changes_applied = true;
@@ -218,7 +221,8 @@ if ($_POST) {
 		$altq->validate_input($_POST, $input_errors);
 		if (!$input_errors) {
 			unset($tmppath);
-			$tmppath[] = $altq->GetInterface();
+			$tmppath = array();
+			array_push($tmppath, shaper_config_get_next_queue_index($tmppath));
 			$altq->SetLink($tmppath);
 			$altq->wconfig();
 			if (write_config("Traffic Shaper: Added root queue")) {
@@ -234,7 +238,7 @@ if ($_POST) {
 		$qtmp =& $altq->find_queue($interface, $parentqueue);
 		if ($qtmp) {
 			$tmppath =& $qtmp->GetLink();
-			array_push($tmppath, $qname);
+			array_push($tmppath, shaper_config_get_next_queue_index($tmppath));
 			$tmp =& $qtmp->add_queue($interface, $_POST, $tmppath, $input_errors);
 			if (!$input_errors) {
 				array_pop($tmppath);

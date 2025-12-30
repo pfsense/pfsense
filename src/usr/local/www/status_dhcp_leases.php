@@ -317,7 +317,11 @@ foreach ($leases['lease'] as $data):
 							(<?=htmlspecialchars($mac_man[$mac_hi])?>)
 						<?php endif; ?>
 					</td>
-					<td><?=htmlspecialchars($data['hostname'])?></td>
+					<td>
+<?php if ($data['hostname'] && $data['dnsreg']): ?>
+						<i class="fa-solid fa-globe" title="<?=gettext('Registered with the DNS Resolver')?>"></i>
+<?php endif; ?>
+						<?=htmlspecialchars(explode('.', $data['hostname'])[0])?></td>
 					<td><?=htmlspecialchars($data['descr'])?></td>
 					<? if ($data['type'] != $static_string): ?>
 						<td><?=htmlspecialchars($data['starts'])?></td>

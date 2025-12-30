@@ -41,6 +41,12 @@ require_once('services_dhcp.inc');
 
 global $ddnsdomainkeyalgorithms;
 
+$dnsregpolicy_values = [
+	'default' => gettext('Track server'),
+	'enable' => gettext('Enable'),
+	'disable' => gettext('Disable')
+];
+
 if (!g_get('services_dhcp_server_enable')) {
 	header("Location: /");
 	exit;
@@ -152,6 +158,8 @@ if (is_array($dhcpdconf)) {
 		}
 
 		$pconfig['dhcpleaseinlocaltime'] = $dhcpleaseinlocaltime;
+		$pconfig['dnsregpolicy'] = $dhcpdconf['dnsregpolicy'];
+		$pconfig['earlydnsregpolicy'] = $dhcpdconf['earlydnsregpolicy'];
 	} else {
 		// Options that exist only in pools
 		$pconfig['descr'] = $dhcpdconf['descr'];
@@ -215,6 +223,10 @@ if (is_array($dhcpdconf)) {
 		$pconfig['omapi_port'] = $dhcpdconf['omapi_port'];
 		$pconfig['omapi_key'] = $dhcpdconf['omapi_key'];
 		$pconfig['omapi_key_algorithm'] = $dhcpdconf['omapi_key_algorithm'];
+	}
+
+	if (dhcp_is_backend('kea')) {
+		$pconfig['custom_kea_config'] = base64_decode($dhcpdconf['custom_kea_config']);
 	}
 }
 
@@ -367,6 +379,14 @@ if (isset($_POST['save'])) {
 
 	if (($_POST['dns1'] && !is_ipaddrv4($_POST['dns1'])) || ($_POST['dns2'] && !is_ipaddrv4($_POST['dns2'])) || ($_POST['dns3'] && !is_ipaddrv4($_POST['dns3'])) || ($_POST['dns4'] && !is_ipaddrv4($_POST['dns4']))) {
 		$input_errors[] = gettext("A valid IP address must be specified for each of the DNS servers.");
+	}
+
+	if ($_POST['earlydnsregpolicy'] && !array_key_exists($_POST['earlydnsregpolicy'], $dnsregpolicy_values)) {
+		$input_errors[] = gettext("Invalid DNS Registration Policy.");
+	}
+
+	if ($_POST['earlydnsregpolicy'] && !array_key_exists($_POST['earlydnsregpolicy'], $dnsregpolicy_values)) {
+		$input_errors[] = gettext("Invalid Early DNS Registration Policy.");
 	}
 
 	if ($_POST['deftime'] && (!is_numeric($_POST['deftime']) || ($_POST['deftime'] < 60))) {
@@ -606,6 +626,16 @@ if (isset($_POST['save'])) {
 		}
 	}
 
+	/* validate custom config */
+	if (dhcp_is_backend('kea')) {
+		if (!empty($_POST['custom_kea_config'])) {
+			$json = json_decode($_POST['custom_kea_config'], true);
+			if (!is_array($json) || (json_last_error() !== JSON_ERROR_NONE)) {
+				$input_errors[] = gettext('Custom configuration is not a well formed JSON object.');
+			}
+		}
+	}
+
 	if (!$input_errors) {
 		if (!is_numeric($pool)) {
 			if ($act == "newpool") {
@@ -661,6 +691,9 @@ if (isset($_POST['save'])) {
 					config_del_path("dhcpd/{$dhcpdifkey}/dhcpleaseinlocaltime");
 				}
 			}
+
+			$dhcpdconf['dnsregpolicy'] = $_POST['dnsregpolicy'];
+			$dhcpdconf['earlydnsregpolicy'] = $_POST['earlydnsregpolicy'];
 		} else {
 			// Options that exist only in pools
 			$dhcpdconf['descr'] = $_POST['descr'];
@@ -787,6 +820,10 @@ if (isset($_POST['save'])) {
 			$dhcpdconf['omapi_key_algorithm'] = $_POST['omapi_key_algorithm'];
 		}
 
+		if (dhcp_is_backend('kea')) {
+			$dhcpdconf['custom_kea_config'] = base64_encode($_POST['custom_kea_config']);
+		}
+
 		if (is_numeric($pool) && is_array(config_get_path("dhcpd/{$if}/pool/{$pool}"))) {
 			config_set_path("dhcpd/{$if}/pool/{$pool}", $dhcpdconf);
 		} elseif ($act == "newpool") {
@@ -808,66 +845,7 @@ if (isset($_POST['save'])) {
 
 if (isset($_POST['apply'])) {
 	$changes_applied = true;
-	$retval = 0;
-	$retvaldhcp = 0;
-	$retvaldns = 0;
-	/* dnsmasq_configure calls dhcpd_configure */
-	/* no need to restart dhcpd twice */
-	if (config_path_enabled('dnsmasq') &&
-	    config_path_enabled('dnsmasq', 'regdhcpstatic') &&
-	    dhcp_is_backend('isc')) {
-		$retvaldns |= services_dnsmasq_configure();
-		if ($retvaldns == 0) {
-			clear_subsystem_dirty('hosts');
-			clear_subsystem_dirty('dhcpd');
-		}
-	} elseif (config_path_enabled('unbound') &&
-		   config_path_enabled('unbound', 'regdhcpstatic') &&
-		   dhcp_is_backend('isc')) {
-		$retvaldns |= services_unbound_configure();
-		if ($retvaldns == 0) {
-			clear_subsystem_dirty('unbound');
-
-			clear_subsystem_dirty('hosts');
-			clear_subsystem_dirty('dhcpd');
-		}
-	} else {
-		$retvaldhcp |= services_dhcpd_configure();
-		if ($retvaldhcp == 0) {
-			clear_subsystem_dirty('dhcpd');
-		}
-	}
-	/* BIND package - Bug #3710 */
-	if (!function_exists('is_package_installed')) {
-		require_once('pkg-utils.inc');
-	}
-	if (is_package_installed('pfSense-pkg-bind') &&
-	    config_path_enabled('installedpackages/bind/config/0', 'enable_bind') &&
-	    dhcp_is_backend('isc')) {
-		$reloadbind = false;
-		$bindzone = config_get_path('installedpackages/bindzone/config', []);
-
-		for ($x = 0; $x < sizeof($bindzone); $x++) {
-			$zone = $bindzone[$x];
-			if ($zone['regdhcpstatic'] == 'on') {
-				$reloadbind = true;
-				break;
-			}
-		}
-		if ($reloadbind === true) {
-			if (file_exists("/usr/local/pkg/bind.inc")) {
-				require_once("/usr/local/pkg/bind.inc");
-				bind_sync();
-			}
-		}
-	}
-	if ($dhcpd_enable_changed) {
-		$retvalfc |= filter_configure();
-	}
-
-	if ($retvaldhcp == 1 || $retvaldns == 1 || $retvalfc == 1) {
-		$retval = 1;
-	}
+	$retval = dhcp_apply_changes();
 }
 
 if ($act == "delpool") {
@@ -1049,6 +1027,7 @@ $section->addInput(new Form_StaticText(
 ));
 
 if (!is_numeric($pool) && !($act == "newpool")) {
+	$kea_section = 'subnet';
 	if (config_path_enabled('dhcrelay')) {
 		$section->addInput(new Form_Checkbox(
 			'enable',
@@ -1065,6 +1044,7 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 		));
 	}
 } else {
+	$kea_section = 'pool';
 	print_info_box(gettext('Editing pool-specific options. To return to the Interface, click its tab above.'), 'info', false);
 }
 
@@ -1108,6 +1088,21 @@ $section->addInput(new Form_Checkbox(
 	gettext('Do not record a unique identifier (UID) in client lease data if present in the client DHCP request'),
 	$pconfig['ignoreclientuids']
 ))->setHelp(gettext('This option may be useful when a client can dual boot using different client identifiers but the same hardware (MAC) address.  Note that the resulting server behavior violates the official DHCP specification.'));
+endif;
+
+if (dhcp_is_backend('kea') && (!is_numeric($pool) && !($act === 'newpool'))):
+	$section->addInput(new Form_Select(
+		'dnsregpolicy',
+		gettext('DNS Registration'),
+		array_get_path($pconfig, 'dnsregpolicy', 'default'),
+		$dnsregpolicy_values
+	))->setHelp(gettext('Optionally overides the DHCP server default DNS registration policy to force a specific policy.'));
+	$section->addInput(new Form_Select(
+		'earlydnsregpolicy',
+		gettext('Early DNS Registration'),
+		array_get_path($pconfig, 'earlydnsregpolicy', 'default'),
+		$dnsregpolicy_values
+	))->setHelp(gettext('Optionally overides the DHCP server default early DNS registration policy to force a specific policy.'));
 endif;
 
 if (is_numeric($pool) || ($act == "newpool")) {
@@ -1855,6 +1850,16 @@ endif; /* dhcp_is_backend(isc') */
 
 $form->add($section);
 
+if (dhcp_is_backend('kea')):
+$section = new Form_Section(gettext('Custom Configuration'));
+$section->addInput(new Form_Textarea(
+	'custom_kea_config',
+	gettext('JSON Configuration'),
+	array_get_path($pconfig, 'custom_kea_config')
+))->setWidth(8)->setHelp(gettext('JSON to be merged into the "%1$s" section of the generated Kea DHCPv4 configuration.%2$sThe input must be a well formed JSON object and should not include the "%1$s" key itself.'), $kea_section, '<br/>');
+$form->add($section);
+endif;
+
 if ($act == "newpool") {
 	$form->addGlobal(new Form_Input(
 		'act',
@@ -1905,19 +1910,12 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 				<thead>
 					<tr>
-						<th><?=gettext("Static ARP")?></th>
-						<th><?=gettext("MAC Address")?></th>
-<?php
-	if ($got_cid):
-?>
-						<th><?=gettext("Client ID")?></th>
-<?php
-	endif;
-?>
+						<th><!-- status icons --></th>
 						<th><?=gettext("IP Address")?></th>
 						<th><?=gettext("Hostname")?></th>
+						<th><?=gettext("MAC Address")?></th>
 						<th><?=gettext("Description")?></th>
-						<th></th>
+						<th><?=gettext("Actions")?></th>
 					</tr>
 				</thead>
 <?php
@@ -1927,31 +1925,20 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 <?php
 	foreach (config_get_path("dhcpd/{$if}/staticmap", []) as $mapent) {
 ?>
-				<tr>
-					<td class="text-center" ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>';">
-						<?php if (isset($mapent['arp_table_static_entry'])): ?>
-							<i class="fa-solid fa-check"></i>
-						<?php endif; ?>
+				<tr ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>';">
+					<td>
+						<?=dhcp_static_mapping_icons($dhcpdconf, $mapent)?>
 					</td>
-					<td ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>';">
-						<?=htmlspecialchars($mapent['mac'])?>
-					</td>
-<?php
-		if ($got_cid):
-?>
-					<td ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>';">
-						<?=htmlspecialchars($mapent['cid'])?>
-					</td>
-<?php
-		endif;
-?>
-					<td ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>';">
+					<td>
 						<?=htmlspecialchars($mapent['ipaddr'])?>
 					</td>
-					<td ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>';">
+					<td>
 						<?=htmlspecialchars($mapent['hostname'])?>
 					</td>
-					<td ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>';">
+					<td <?php if ($mapent['cid']): ?>style="cursor: help;" data-toggle="popover" data-container="body" data-trigger="hover focus" data-content="<?=gettext('Client ID')?>: <span class=&quot;cid&quot;><?=$mapent['cid']?></span>" data-html="true" data-original-title="<?=gettext('DHCP Client Information')?>"<?php endif; ?>>
+						<?=htmlspecialchars($mapent['mac'])?>
+					</td>
+					<td>
 						<?=htmlspecialchars($mapent['descr'])?>
 					</td>
 					<td>

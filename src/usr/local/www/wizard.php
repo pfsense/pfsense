@@ -36,9 +36,6 @@ require_once("shaper.inc");
 require_once("rrd.inc");
 require_once("system.inc");
 
-// This causes the step #, field type and field name to be printed at the top of the page
-define('DEBUG', false);
-
 global $g;
 
 $stepid = htmlspecialchars($_REQUEST['stepid']);
@@ -490,7 +487,8 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 
 			if (config_get_path($field_conv_path) !== null) {
 				if ($field['type'] == "checkbox") {
-					if (empty(config_get_path($field_conv_path))) {
+					$isChecked = config_get_path($field_conv_path);
+					if ($isChecked || $isChecked === "") {
 						$value = true;
 					}
 				} else {
@@ -500,7 +498,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 		}
 
 
-		if (DEBUG) {
+		if (g_get('debug')) {
 			print('Step: ' . $pkg['step'][$stepid]['id'] . ', Field: ' . $field['type'] . ', Name: ' . $name . '<br />');
 		}
 
@@ -885,7 +883,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 				try{
 					@eval("\$value = &$source;");
 				} catch (\Throwable | \Error | \Exception $e) {
-					log_error($e);
+					logger(LOG_ERR, $e);
 				}
 				$input = $section->addInput(new Form_Textarea(
 					$name,
@@ -971,7 +969,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 					$name,
 					$etitle,
 					$field['typehint'],
-					($value != ""),
+					isset($value),
 					'on'
 				))->setHelp($field['description'])
 				  ->setOnclick($onclick);

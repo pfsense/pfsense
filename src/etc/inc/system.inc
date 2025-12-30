@@ -178,6 +178,10 @@ function activate_sysctls() {
 		$sysctls['kern.vt.enable_bell'] = '0';
 	}
 
+	if (is_module_loaded('zfs.ko')) {
+		$sysctls['vfs.zfs.txg.timeout'] = '30';
+	}
+
 	foreach (config_get_path('sysctl/item', []) as $tunable) {
 		if ($tunable['value'] == "default") {
 			$value = get_default_sysctl_value($tunable['tunable']);
@@ -624,6 +628,10 @@ function system_hosts_entries($dnscfg) {
 		if (isset($dnscfg['regdhcpstatic'])) {
 			$dhcpd = system_hosts_dhcpd_entries();
 		}
+		if (dhcp_is_backend('kea')) {
+			$dhcpd = array_merge($dhcpd, kea_earlydnsreg_mappings(),
+						kea6_earlydnsreg_mappings());
+		}
 	}
 
 	if (isset($dnscfg['dhcpfirst'])) {
@@ -676,8 +684,8 @@ function system_hosts_generate() {
 
 	$fd = fopen("{$g['etc_path']}/hosts", "w");
 	if (!$fd) {
-		log_error(gettext(
-		    "Error: cannot open hosts file in system_hosts_generate()."
+		logger(LOG_ERR, localize_text(
+		    "Cannot open hosts file in %s.", 'system_hosts_generate()'
 		    ));
 		return 1;
 	}
@@ -703,6 +711,11 @@ function system_dhcpleases_configure() {
 	if (!function_exists('is_dhcp_server_enabled')) {
 		require_once('pfsense-utils.inc');
 	}
+
+	if (dhcp_is_backend('kea')) {
+		return;
+	}
+
 	$pidfile = "{$g['varrun_path']}/dhcpleases.pid";
 
 	/* Start the monitoring process for dynamic dhcpclients. */
@@ -756,7 +769,7 @@ function system_dhcpleases_configure() {
 }
 
 function system_get_kea6status() {
-	$socket_path = g_get('varrun_path') . '/kea6-ctrl-socket';
+	$socket_path = g_get('varrun_path') . '/kea/kea6-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -800,7 +813,7 @@ out:
 }
 
 function system_get_kea4status() {
-	$socket_path = g_get('varrun_path') . '/kea4-ctrl-socket';
+	$socket_path = g_get('varrun_path') . '/kea/kea4-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -844,7 +857,7 @@ out:
 }
 
 function system_clear_all_kea4leases() {
-	$socket_path = g_get('varrun_path') . '/kea4-ctrl-socket';
+	$socket_path = g_get('varrun_path') . '/kea/kea4-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -872,7 +885,7 @@ function system_clear_all_kea4leases() {
 }
 
 function system_del_kea4lease(string $ip) {
-	$socket_path = g_get('varrun_path') . '/kea4-ctrl-socket';
+	$socket_path = g_get('varrun_path') . '/kea/kea4-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -905,7 +918,7 @@ function system_del_kea4lease(string $ip) {
 }
 
 function system_clear_all_kea6leases() {
-	$socket_path = g_get('varrun_path') . '/kea6-ctrl-socket';
+	$socket_path = g_get('varrun_path') . '/kea/kea6-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -932,8 +945,8 @@ function system_clear_all_kea6leases() {
 	socket_close($fd);
 }
 
-function system_del_kea6lease(string $ip) {
-	$socket_path = g_get('varrun_path') . '/kea6-ctrl-socket';
+function system_del_kea6lease(string $ip, string $type = 'IA_NA') {
+	$socket_path = g_get('varrun_path') . '/kea/kea6-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -950,10 +963,13 @@ function system_del_kea6lease(string $ip) {
 		return;
 	}
 
+	$ip_parts = explode('/', trim($ip));
+
 	$cmdjson = json_encode([
 		'command' => 'lease6-del',
 		'arguments' => [
-			'ip-address' => $ip
+			'ip-address' => $ip_parts[0],
+			'type' => $type
 		]
 	]);
 
@@ -965,12 +981,158 @@ function system_del_kea6lease(string $ip) {
 	socket_close($fd);
 }
 
+function system_get_kea6prefixes() {
+	$prefixes = [];
+
+	$socket_path = g_get('varrun_path') . '/kea/kea6-ctrl-socket';
+	$rbuf = NULL;
+
+	if (!file_exists($socket_path)) {
+		goto out;
+	}
+
+	$fd = socket_create(AF_UNIX, SOCK_STREAM, 0);
+	if (!$fd) {
+		goto out;
+	}
+
+	if (!socket_connect($fd, $socket_path, 0)) {
+		goto cleanup;
+	}
+
+	$cmdjson = json_encode(['command' => 'lease6-get-all']);
+
+	if (socket_send($fd, $cmdjson, strlen($cmdjson), 0) === false) {
+		goto cleanup;
+	}
+
+	$retjson = NULL;
+	for (;;) {
+		$bytes = socket_recv($fd, $rbuf, 8192, MSG_WAITALL);
+
+		/* error occured, just bail out */
+		if ($bytes === false) {
+			goto cleanup;
+		/* we got some data, append it to the json buffer */
+		} elseif ($bytes > 0) {
+			$retjson .= $rbuf;
+		} else {
+			break;
+		}
+	}
+
+	/* sanity check in case we received malformed json */
+	if (($ret = json_decode($retjson, true)) === false) {
+		goto cleanup;
+	}
+
+	$ndpdata = get_ndpdata();
+
+	$online_string = gettext("active/online");
+	$offline_string = gettext("idle/offline");
+	$active_string = gettext("active");
+	$expired_string = gettext("expired");
+	$reserved_string = gettext("reserved");
+	$released_string = gettext("released");
+	$dynamic_string = gettext("dynamic");
+	$static_string = gettext("static");
+
+	foreach ($ret['arguments']['leases'] as $lease) {
+		if ($lease['type'] !== 'IA_PD') {
+			continue;
+		}
+
+		$query6 = &$lease['user-context']['Netgate']['query6'];
+		if (!isset($query6, $query6['remote-addr'], $query6['iface-name'])) {
+			continue;
+		}
+
+		$prefix = "{$lease['ip-address']}/{$lease['prefix-len']}";
+		$nextHop = "{$query6['remote-addr']}%{$query6['iface-name']}";
+
+		$startsts = (int)$lease['cltt'];
+		$endsts = $startsts + (int)$lease['valid-lft'];
+
+		$item = [];
+		$item['act'] = $active_string;
+		if (time() > $endsts) {
+			$item['act'] = $expired_string;
+		}
+
+		$item['type'] = $dynamic_string;
+		$item['ip'] = $prefix;
+		$item['duid'] = $lease['duid'];
+		$item['iaid'] = $lease['iaid'];
+		$item['routed-to'] = $nextHop;
+		$item['if'] = convert_real_interface_to_friendly_interface_name($query6['iface-name']);
+
+		if (in_array($nextHop, array_keys($ndpdata))) {
+			$item['online'] = $online_string;
+		} else {
+			$item['online'] = $offline_string;
+		}
+
+		$format = 'Y/m/d H:i:s';
+		$item['starts'] = date($format, $startsts);
+		$item['ends'] = date($format, $endsts);
+
+		$prefixes[$item['ip']] = $item;
+	}
+
+	foreach (config_get_path('interfaces', []) as $ifname => $ifarr) {
+		$dhcpifconf = config_get_path("dhcpdv6/{$ifname}");
+		if (!$dhcpifconf || !isset($dhcpifconf['pdprefix'])) {
+			continue;
+		}
+		foreach (config_get_path("dhcpdv6/{$ifname}/staticmap", []) as $idx => $static) {
+			if (!$static['pdprefix']) {
+				continue;
+			}
+
+			$sprefix = array();
+			$sprefix['ip'] = $static['pdprefix'];
+
+			/* we've seen this entry before, so just modify it */
+			if (array_key_exists($sprefix['ip'], $prefixes)) {
+				$prefixes[$sprefix['ip']]['if'] = $ifname;
+				$prefixes[$sprefix['ip']]['type'] = $static_string;
+				$prefixes[$sprefix['ip']]['act'] = $static_string;
+				$prefixes[$sprefix['ip']]['descr'] = $static['descr'];
+				$prefixes[$sprefix['ip']]['staticmap_array_index'] = $idx;
+				continue;
+			}
+
+			/* we still want to show static leases even if Kea doesn't see them */
+			$sprefix['if'] = $ifname;
+			$sprefix['type'] = $static_string;
+			$sprefix['duid'] = $static['duid'];
+			$sprefix['start'] = "";
+			$sprefix['end'] = "";
+			$sprefix['descr'] = $static['descr'];
+			$sprefix['act'] = $static_string;
+			if (in_array($sprefix['ip'], array_keys($ndpdata))) {
+				$sprefix['online'] = $online_string;
+			} else {
+				$sprefix['online'] = $offline_string;
+			}
+			$sprefix['staticmap_array_index'] = $idx;
+
+			$prefixes[$sprefix['ip']] = $sprefix;
+		}
+	}
+
+cleanup:
+	socket_close($fd);
+out:
+	return ($prefixes);
+}
+
 function system_get_kea6leases() {
 	$leases = [];
 	$leases['lease'] = [];
 	$leases['failover'] = [];
 
-	$socket_path = g_get('varrun_path') . '/kea6-ctrl-socket';
+	$socket_path = g_get('varrun_path') . '/kea/kea6-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -1026,6 +1188,10 @@ function system_get_kea6leases() {
 	$leasem = [];
 
 	foreach ($ret['arguments']['leases'] as $lease) {
+		if ($lease['type'] !== 'IA_NA') {
+			continue; // Skip IA_PD leases here...
+		}
+
 		$startsts = (int)$lease['cltt'];
 		$endsts = $startsts + (int)$lease['valid-lft'];
 
@@ -1048,6 +1214,8 @@ function system_get_kea6leases() {
 
 		$item['hostname'] = rtrim($lease['hostname'], '.');
 
+		$item['dnsreg'] = kea6_dnsreg_subnet_enabled((int)$lease['subnet-id']);
+
 		$format = 'Y/m/d H:i:s';
 		$item['starts'] = date($format, $startsts);
 		$item['ends'] = date($format, $endsts);
@@ -1057,6 +1225,10 @@ function system_get_kea6leases() {
 
 	foreach (config_get_path('interfaces', []) as $ifname => $ifarr) {
 		foreach (config_get_path("dhcpdv6/{$ifname}/staticmap", []) as $idx => $static) {
+			if (!$static['ipaddrv6']) {
+				continue;
+			}
+
 			$slease = array();
 			$slease['ip'] = merge_ipv6_delegated_prefix(get_interface_ipv6($ifname), $static['ipaddrv6'], get_interface_subnetv6($ifname));
 
@@ -1078,6 +1250,7 @@ function system_get_kea6leases() {
 			$slease['end'] = "";
 			$slease['descr'] = $static['descr'];
 			$slease['hostname'] = $static['hostname'];
+			$slease['dnsreg'] = kea6_earlydnsreg_enabled(config_get_path("dhcpdv6/{$ifname}", []), $static);
 			$slease['act'] = $static_string;
 			if (in_array($slease['ip'], array_keys($ndpdata))) {
 				$slease['online'] = $online_string;
@@ -1103,7 +1276,7 @@ function system_get_kea4leases() {
 	$leases['lease'] = [];
 	$leases['failover'] = [];
 
-	$socket_path = '/var/run/kea4-ctrl-socket';
+	$socket_path = g_get('varrun_path') . '/kea/kea4-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -1194,6 +1367,8 @@ function system_get_kea4leases() {
 
 		$item['hostname'] = $lease['hostname'];
 
+		$item['dnsreg'] = kea_dnsreg_subnet_enabled((int)$lease['subnet-id']);
+
 		$format = 'Y/m/d H:i:s';
 		$item['starts'] = date($format, $startsts);
 		$item['ends'] = date($format, $endsts);
@@ -1219,6 +1394,7 @@ function system_get_kea4leases() {
 			$slease['starts'] = "";
 			$slease['ends'] = "";
 			$slease['hostname'] = $static['hostname'];
+			$slease['dnsreg'] = kea_earlydnsreg_enabled(config_get_path("dhcpd/{$ifname}", []), $static);
 			$slease['descr'] = $static['descr'];
 			$slease['act'] = $static_string;
 			$slease['online'] = in_array(strtolower($slease['mac']),
@@ -1513,7 +1689,7 @@ function system_staticroutes_configure($interface = "", $update_dns = false) {
 			}
 
 			if (empty($gateways_arr[$rtent['gateway']])) {
-				log_error(sprintf(gettext("Static Routes: Gateway IP could not be found for %s"), $rtent['network']));
+				logger(LOG_ERR, localize_text("Static Routes: Gateway IP could not be found for %s", $rtent['network']));
 				continue;
 			}
 			$gateway = $gateways_arr[$rtent['gateway']];
@@ -1744,7 +1920,7 @@ function system_webgui_start() {
 				config_set_path('system/webgui/ssl-certref', $cert['refid']);
 				write_config(sprintf(gettext("Generated new self-signed SSL/TLS certificate for HTTPS (%s)"), $cert['refid']));
 			} else {
-				log_error(sprintf(gettext("GUI certificate is not usable and there was an error creating a new self-signed certificate.")));
+				logger(LOG_ERR, localize_text("GUI certificate is not usable and there was an error creating a new self-signed certificate."), LOG_PREFIX_WEBGUI);
 			}
 		}
 		$crt = base64_decode($cert['crt']);
@@ -2350,7 +2526,7 @@ function system_ntp_setup_gps($serialport) {
 			}
 		}
 		if ($found === false) {
-			log_error(gettext("Could not find correct GPS baud rate."));
+			logger(LOG_ERR, localize_text("Could not find correct GPS baud rate."), LOG_PREFIX_NTP);
 			return false;
 		}
 	}
@@ -2436,7 +2612,7 @@ function system_ntp_configure() {
 		@unlink("{$g['varrun_path']}/ntpd.pid");
 		@unlink("{$g['varetc_path']}/ntpd.conf");
 		@unlink("{$g['varetc_path']}/ntp.keys");
-		log_error("NTPD is disabled.");
+		logger(LOG_INFO, localize_text("NTPD is disabled."), LOG_PREFIX_NTP);
 		return;
 	}
 
@@ -2454,7 +2630,7 @@ function system_ntp_configure() {
 	if (config_get_path('ntpd/serverauth') == 'yes') {
 		$ntpkeyscfg = "{$ntp_keyid} " . strtoupper(config_get_path('ntpd/serverauthalgo')) . " " . base64_decode(config_get_path('ntpd/serverauthkey')) . "\n";
 		if (!@file_put_contents("{$g['varetc_path']}/ntp.keys", $ntpkeyscfg)) {
-			log_error(sprintf(gettext("Could not open %s/ntp.keys for writing"), g_get('varetc_path')));
+			logger(LOG_ERR, localize_text("Could not open %s for writing", g_get('varetc_path') . '/ntp.keys'), LOG_PREFIX_NTP);
 			return;
 		}
 	} else {
@@ -2780,7 +2956,7 @@ function system_ntp_configure() {
 	/* A leapseconds file is really only useful if this clock is stratum 1 */
 	$ntpcfg .= "\n";
 	if (!empty(config_get_path('ntpd/leapsec'))) {
-		$leapsec .= base64_decode(config_get_path('ntpd/leapsec'));
+		$leapsec = base64_decode(config_get_path('ntpd/leapsec'));
 		file_put_contents('/var/db/leap-seconds', $leapsec);
 		$ntpcfg .= "leapfile /var/db/leap-seconds\n";
 	}
@@ -2815,7 +2991,7 @@ function system_ntp_configure() {
 
 	/* open configuration for writing or bail */
 	if (!@file_put_contents("{$g['varetc_path']}/ntpd.conf", $ntpcfg)) {
-		log_error(sprintf(gettext("Could not open %s/ntpd.conf for writing"), g_get('varetc_path')));
+		logger(LOG_ERR, localize_text("Could not open %s for writing", g_get('varetc_path') . '/ntpd.conf'), LOG_PREFIX_NTP);
 		return;
 	}
 
@@ -2828,7 +3004,7 @@ function system_ntp_configure() {
 	mwexec("/usr/local/sbin/ntpd -g -c {$g['varetc_path']}/ntpd.conf -p {$g['varrun_path']}/ntpd.pid", false, true);
 
 	// Note that we are starting up
-	log_error("NTPD is starting up.");
+	logger(LOG_INFO, localize_text("NTPD is starting up."), LOG_PREFIX_NTP);
 
 	if (is_platform_booting()) {
 		echo gettext("done.") . "\n";
@@ -2871,6 +3047,7 @@ function system_reboot_cleanup() {
 	mwexec("/usr/local/bin/beep.sh stop");
 	require_once("captiveportal.inc");
 	$cps = config_get_path('captiveportal', []);
+
 	foreach ($cps as $cpzone=>$cp) {
 		if (!isset($cp['preservedb'])) {
 			/* send Accounting-Stop packet for all clients, termination cause 'Admin-Reboot' */
@@ -2882,10 +3059,8 @@ function system_reboot_cleanup() {
 		captiveportal_send_server_accounting('off');
 	}
 
-	if (count($cps)> 0) {
-		/* Remove the pipe database */
-		unlink_if_exists("{$g['vardb_path']}/captiveportaldn.rules");
-	}
+	/* Remove the pipe database */
+	unlink_if_exists("{$g['vardb_path']}/captiveportaldn.rules");
 
 	require_once("voucher.inc");
 	voucher_save_db_to_config();
@@ -3097,7 +3272,7 @@ function system_get_serial() {
 	unset($output);
 	if ($platform['name'] == 'Turbot Dual-E') {
 		$if_info = get_interface_addresses('igb0');
-		if (!empty($if_info['hwaddr'])) {
+		if (isset($if_info) && !empty($if_info['hwaddr'])) {
 			$serial = str_replace(":", "", $if_info['hwaddr']);
 		}
 	} else {

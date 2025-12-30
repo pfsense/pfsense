@@ -157,7 +157,7 @@ $section->addInput(new Form_Select(
 $section->addInput(new Form_Select(
 	'type',
 	'Address type',
-	(!isset($pconfig['subnet'])) ? 'single':'network',
+	$pconfig['type']?:'single',
 	array(
 		'single' => gettext('Single address'),
 		'network' => gettext('Network')

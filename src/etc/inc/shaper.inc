@@ -189,7 +189,7 @@ function array_map_assoc(callable $f, array $a) {
 	return array_column(array_map($f, array_keys($a), $a), 1, 0);
 }
 function build_queue_params($array, $selected, $params, $id) {
-	$form .= '<div id="params_' . $id . '">';
+	$form = '<div id="params_' . $id . '">';
 
 	$selectedAlgorithm = $array[$selected];
 
@@ -337,6 +337,19 @@ function shaper_config_get_path($mypath) {
 	return $path;
 }
 
+function shaper_config_get_next_queue_index($mypath) {
+	if (!is_array($mypath)) {
+		return 0;
+	}
+
+	$q = config_get_path(shaper_config_get_path($mypath) . "/queue", []);
+	if (is_array($q) && count($q) > 0) {
+		return max(array_keys($q)) + 1;
+	} else {
+		return 0;
+	}
+}
+
 function shaper_config_del($mypath) {
 	$path = 'shaper';
 	for ($i = 0; $i < count($mypath) - 1; $i++) {
@@ -353,6 +366,20 @@ function shaper_dn_config_get_path($mypath) {
 
 	return $path;
 }
+
+function shaper_dn_config_get_next_queue_index($mypath) {
+	if (!is_array($mypath)) {
+		return 0;
+	}
+
+	$q = config_get_path(shaper_dn_config_get_path($mypath) . "/queue", []);
+	if (is_array($q) && count($q) > 0) {
+		return max(array_keys($q)) + 1;
+	} else {
+		return 0;
+	}
+}
+
 
 function shaper_dn_config_del($mypath) {
 	$path = 'dnshaper';
@@ -549,7 +576,7 @@ function get_interface_bandwidth($object) {
 }
 
 function cleanup_queue_from_rules($queue) {
-	$rulelist = config_get_path('filter/rule', []);
+	$rulelist = get_filter_rules_list();
 	foreach ($rulelist as & $rule) {
 		if ($rule['defaultqueue'] == $queue) {
 			unset($rule['defaultqueue']);
@@ -561,11 +588,11 @@ function cleanup_queue_from_rules($queue) {
 			unset($rule['ackqueue']);
 		}
 	}
-	config_set_path('filter/rule', $rulelist);
+	set_filter_rules_list($rulelist);
 }
 
 function cleanup_dnqueue_from_rules($queue) {
-	$rulelist = config_get_path('filter/rule', []);
+	$rulelist = get_filter_rules_list();
 	foreach ($rulelist as & $rule) {
 		if ($rule['dnpipe'] == $queue) {
 			unset($rule['dnpipe']);
@@ -574,11 +601,11 @@ function cleanup_dnqueue_from_rules($queue) {
 			unset($rule['pdnpipe']);
 		}
 	}
-	config_set_path('filter/rule', $rulelist);
+	set_filter_rules_list($rulelist);
 }
 
 function rename_queue_in_rules($name, $newname) {
-	$rulelist = config_get_path('filter/rule', []);
+	$rulelist = get_filter_rules_list();
 	foreach ($rulelist as & $rule) {
 		if ($rule['defaultqueue'] == $name) {
 			$rule['defaultqueue'] = $newname;
@@ -587,11 +614,11 @@ function rename_queue_in_rules($name, $newname) {
 			$rule['ackqueue'] = $newname;
 		}
 	}
-	config_set_path('filter/rule', $rulelist);
+	set_filter_rules_list($rulelist);
 }
 
 function rename_dnqueue_in_rules($name, $newname) {
-	$rulelist = config_get_path('filter/rule', []);
+	$rulelist = get_filter_rules_list();
 	foreach ($rulelist as & $rule) {
 		if ($rule['dnpipe'] == $name) {
 			$rule['dnpipe'] = $newname;
@@ -600,7 +627,7 @@ function rename_dnqueue_in_rules($name, $newname) {
 			$rule['pdnpipe'] = $newname;
 		}
 	}
-	config_set_path('filter/rule', $rulelist);
+	set_filter_rules_list($rulelist);
 }
 
 class altq_root_queue {
@@ -1005,7 +1032,6 @@ class altq_root_queue {
 				unset($error);
 				return "\n";
 			}
-			$frule .= $rules;
 		} else if ($this->GetEnabled() == "on" && $this->GetScheduler() == "CODELQ") {
 			$rules = " altq on " . get_real_interface($this->GetInterface());
 			if ($this->GetScheduler()) {
@@ -3602,7 +3628,7 @@ class dummynet_class {
 	}
 
 	function build_javascript() {
-		$javascript .= "<script type=\"text/javascript\">\n";
+		$javascript = "<script type=\"text/javascript\">\n";
 		$javascript .= "//<![CDATA[\n";
 		$javascript .= "function enable_maskbits(enable_over) {\n";
 		$javascript .= "var e = document.getElementById(\"mask\");\n";
@@ -3826,7 +3852,7 @@ class dnpipe_class extends dummynet_class {
 		}
 
 		if (count($input_errors)) {
-			log_error(sprintf(gettext('SHAPER: Could not create queue %1$s on interface %2$s because: %3$s'), $q->GetQname(), $interface, print_r($input_errors, true)));
+			logger(LOG_ERR, localize_text('Could not create queue %1$s on interface %2$s because: %3$s', $q->GetQname(), $interface, print_r($input_errors, true)), LOG_PREFIX_SHAPER);
 			return $q;
 		}
 		$number = dnqueue_find_nextnumber();

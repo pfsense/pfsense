@@ -22,20 +22,52 @@
 
 include_once('globals.inc');
 
-function anchor_list() {
-	$anchor_list = [];
-	exec("/sbin/pfctl -vsA 2>/dev/null | /usr/bin/sort -u", $anchor_list);
-	foreach ($anchor_list as $anchor) {
-		$anchor = trim($anchor);
-		echo "\n{$anchor} rules/nat contents:\n";
-		if (strpos($anchor, CPPREFIX) !== false) {
-			system("/sbin/pfctl -a " . escapeshellarg($anchor) . " -se");
-		} else {
-			system("/sbin/pfctl -a " . escapeshellarg($anchor) . " -sn");
-			system("/sbin/pfctl -a " . escapeshellarg($anchor) . " -sr");
-		}
+function wrap_comment(string $comment, bool $add_header = false): string {
+	$text = explode("\n", wordwrap($comment));
+	array_walk($text, function (&$string) {
+		$string = "# {$string}";
+	});
+	$header_wrap = str_pad('', max(array_map('strlen', $text)), '#');
+	$text = implode(PHP_EOL, $text);
+	if (!$add_header) {
+		return $text;
 	}
+	$text = $header_wrap . PHP_EOL . $text . PHP_EOL . $header_wrap;
+	return $text;
 }
 
-/* Start with a the root list of anchors */
+function anchor_list() {
+	$anchor_rules = [
+		'ethernet' => [],
+		'translation' => [],
+		'filter' => [],
+	];
+	$result = [];
+
+	exec("/sbin/pfctl -a '*' -se 2>/dev/null", $anchor_rules['ethernet']);
+	exec("/sbin/pfctl -a '*' -sn 2>/dev/null", $anchor_rules['translation']);
+	exec("/sbin/pfctl -a '*' -sr 2>/dev/null", $anchor_rules['filter']);
+
+	foreach ($anchor_rules as $type => &$rules) {
+		$add_header = true;
+		foreach ($rules as &$rule) {
+			if (empty($rule)) {
+				continue;
+			}
+			if (!str_starts_with($rule, ' ') &&
+				!str_starts_with($rule, '}') &&
+				!str_ends_with($rule, '{')) {
+				continue;
+			}
+			if ($add_header) {
+				$result[] = wrap_comment("{$type} rules", true);
+				$add_header = false;
+			}
+			$result[] = &$rule;
+		}
+	}
+
+	print(implode(PHP_EOL, $result));
+}
+
 anchor_list();

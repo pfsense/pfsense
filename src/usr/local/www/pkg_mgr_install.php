@@ -74,6 +74,9 @@ if (!empty($_REQUEST['pkg'])) {
 	$pkgname = $_REQUEST['pkg'];
 }
 
+$pkgname_vital = is_vital_system_default_package($pkgname);
+$pkgname_vital_message = gettext("This package is vital to system operation and cannot be removed.");
+
 if ($_REQUEST['ajax']) {
 	$response = "";
 	$code = 0;
@@ -345,7 +348,7 @@ if (!isvalidpid($gui_pidfile) && !$confirmed && !$completed &&
 			$pkgtxt = sprintf(gettext('Confirmation Required to reinstall package %s.'), $pkgname);
 			break;
 		case 'delete':
-			$pkgtxt = sprintf(gettext('Confirmation Required to remove package %s.'), $pkgname);
+			$pkgtxt = $pkgname_vital ? $pkgname : sprintf(gettext('Confirmation Required to remove package %s.'), $pkgname);
 			break;
 		case 'installed':
 		default:
@@ -464,6 +467,8 @@ if (!isvalidpid($gui_pidfile) && !$confirmed && !$completed &&
 					</div>
 				</div>
 <?php
+	elseif (($pkgmode == 'delete') && $pkgname_vital):
+		print_info_box($pkgname_vital_message);
 	else:
 ?>
 				<input type="hidden" name="pkg" value="<?=$pkgname;?>" />
@@ -636,7 +641,9 @@ if (!isvalidpid($gui_pidfile) && $confirmed && !$completed) {
 			break;
 	}
 
-	if (isset($params)) {
+	if (($pkgmode == 'delete') && $pkgname_vital) {
+		$failmsg = $pkgname_vital_message;
+	} elseif (isset($params)) {
 		$another_instance = true;
 		$log = array();
 		$upgrade_script = "{$pfsense_upgrade} -y -l {$logfilename}.txt -p {$sock_file}";

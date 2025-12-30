@@ -39,7 +39,8 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("system_advanced_network.inc");
 
-$reboot_msg = gettext('Changing the Hardware Checksum setting requires a system reboot.') . '\n\n' . gettext('Reboot now?');
+$offload_reboot_msg = gettext('Changing the Hardware Checksum setting requires a system reboot.') . '\n\n' . gettext('Reboot now?');
+$pppoe_reboot_msg = gettext('Changing the PPPoE client support setting requires a system reboot.') . '\n\n' . gettext('Reboot now?');
 
 if ($_POST) {
 	$pconfig = $_POST;
@@ -50,6 +51,8 @@ if ($_POST) {
 	$retval = $rv['retval'];
 	$changes_applied = $rv['changes_applied'];
 	$show_reboot_msg = $rv['show_reboot_msg'];
+	$reboot_cause = $rv['reboot_cause'];
+	$reboot_msg = ($reboot_cause == "pppoe") ? $pppoe_reboot_msg : $offload_reboot_msg;
 	$pconfig = $rv['pconfig'];
 } else {
 	$pconfig = getAdvancedNetwork();
@@ -318,6 +321,16 @@ $section->addInput(new Form_Checkbox(
 	isset($pconfig['ip_change_kill_states'])
 ))->setHelp('This option resets all states when a WAN IP Address changes instead of only '.
     'states associated with the previous IP Address.');
+
+$section->addInput(new Form_Checkbox(
+	'use_if_pppoe',
+	'Use if_pppoe kernel module for PPPoE client',
+	'Use if_pppoe kernel module for PPPoE client',
+	$pconfig['use_if_pppoe']
+))->setHelp('Checking this option will set the system to use the new if_pppoe kernel driver '.
+    'for PPPoE client connections. Keep it unchecked to use the deprecated PPPoE support from mpd5.%s'.
+    'NOTE: Changing this option interrupts connectivity for affected interfaces and requires a system reboot.',
+    '<br />');
 
 $form->add($section);
 print $form;

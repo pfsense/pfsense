@@ -37,6 +37,12 @@ require_once('guiconfig.inc');
 require_once('filter.inc');
 require_once('services_dhcp.inc');
 
+$dnsregpolicy_values = [
+	'default' => gettext('Track server'),
+	'enable' => gettext('Enable'),
+	'disable' => gettext('Disable')
+];
+
 if (!g_get('services_dhcp_server_enable')) {
 	header("Location: /");
 	exit;
@@ -87,6 +93,8 @@ if (!empty(config_get_path("dhcpdv6/{$if}"))) {
 if (is_array($dhcpdconf)) {
 	if (!is_numeric($pool) && !($act === 'newpool')) {
 		$pconfig['enable'] = isset($dhcpdconf['enable']);
+		$pconfig['dnsregpolicy'] = $dhcpdconf['dnsregpolicy'];
+		$pconfig['earlydnsregpolicy'] = $dhcpdconf['earlydnsregpolicy'];
 	} else {
 		$pconfig['descr'] = $dhcpdconf['descr'];
 	}
@@ -102,6 +110,10 @@ if (is_array($dhcpdconf)) {
 		$pconfig['prefixrange_to'] = $dhcpdconf['prefixrange']['to'];
 		$pconfig['prefixrange_length'] = $dhcpdconf['prefixrange']['prefixlength'];
 	}
+
+	$pconfig['pdprefix'] = $dhcpdconf['pdprefix'];
+	$pconfig['pdprefixlen'] = $dhcpdconf['pdprefixlen'];
+	$pconfig['pddellen'] = $dhcpdconf['pddellen'];
 
 	$pconfig['deftime'] = $dhcpdconf['defaultleasetime'];
 	$pconfig['maxtime'] = $dhcpdconf['maxleasetime'];
@@ -134,6 +146,10 @@ if (is_array($dhcpdconf)) {
 	$pconfig['netmask'] = $dhcpdconf['netmask'];
 	$pconfig['numberoptions'] = $dhcpdconf['numberoptions'];
 	$pconfig['dhcpv6leaseinlocaltime'] = $dhcpdconf['dhcpv6leaseinlocaltime'];
+
+	if (dhcp_is_backend('kea')) {
+		$pconfig['custom_kea_config'] = base64_decode($dhcpdconf['custom_kea_config']);
+	}
 }
 
 if (config_get_path("interfaces/{$if}/ipaddrv6") == 'track6') {
@@ -194,6 +210,15 @@ if (isset($_POST['apply'])) {
 	$pconfig['numberoptions'] = $numberoptions;
 
 	/* input validation */
+
+	if ($_POST['pdprefix']) {
+		if (!is_ipaddrv6($_POST['pdprefix'])) {
+			$input_errors[] = gettext('Delegated prefix must be a valid IPv6 prefix.');
+		}
+		if ((int)$_POST['pddellen'] < (int)$_POST['pdprefixlen']) {
+			$input_errors[] = gettext('Delegated length must be greater than or equal to the prefix length.');
+		}
+	}
 
 	// Note: if DHCPv6 Server is not enabled, then it is OK to adjust other parameters without specifying range from-to.
 	if ($_POST['enable'] || is_numeric($pool) || ($act === 'newpool')) {
@@ -272,6 +297,14 @@ if (isset($_POST['apply'])) {
 		($_POST['dns3'] && !is_ipaddrv6($_POST['dns3'])) ||
 		($_POST['dns4'] && !is_ipaddrv6($_POST['dns4']))) {
 		$input_errors[] = gettext("A valid IPv6 address must be specified for each of the DNS servers.");
+	}
+
+	if ($_POST['dnsregpolicy'] && !array_key_exists($_POST['dnsregpolicy'], $dnsregpolicy_values)) {
+		$input_errors[] = gettext("Invalid DNS Registration Policy.");
+	}
+
+	if ($_POST['earlydnsregpolicy'] && !array_key_exists($_POST['earlydnsregpolicy'], $dnsregpolicy_values)) {
+		$input_errors[] = gettext("Invalid Early DNS Registration Policy.");
 	}
 
 	if ($_POST['deftime'] && (!is_numeric($_POST['deftime']) || ($_POST['deftime'] < 60))) {
@@ -409,6 +442,16 @@ if (isset($_POST['apply'])) {
 		}
 	}
 
+	/* validate custom config */
+	if (dhcp_is_backend('kea')) {
+		if (!empty($_POST['custom_kea_config'])) {
+			$json = json_decode($_POST['custom_kea_config'], true);
+			if (!is_array($json) || (json_last_error() !== JSON_ERROR_NONE)) {
+				$input_errors[] = gettext('Custom configuration is not a well formed JSON object.');
+			}
+		}
+	}
+
 	if (!$input_errors) {
 		if (!is_numeric($pool)) {
 			if ($act === 'newpool') {
@@ -436,9 +479,22 @@ if (isset($_POST['apply'])) {
 			$dhcpdconf['range'] = [];
 		}
 
+		// Kea prefix delegation
+		if ($_POST['pdprefix']) {
+			$dhcpdconf['pdprefix'] = $_POST['pdprefix'];
+			$dhcpdconf['pdprefixlen'] = $_POST['pdprefixlen'];
+			$dhcpdconf['pddellen'] = $_POST['pddellen'];
+		} else {
+			unset($dhcpdconf['pdprefix']);
+			unset($dhcpdconf['pdprefixlen']);
+			unset($dhcpdconf['pddellen']);
+		}
+
 		// Global options
 		if (!is_numeric($pool) && !($act === 'newpool')) {
 			$dhcpdconf['enable'] = ($_POST['enable']) ? true : false;
+			$dhcpdconf['dnsregpolicy'] = $_POST['dnsregpolicy'];
+			$dhcpdconf['earlydnsregpolicy'] = $_POST['earlydnsregpolicy'];
 		} else {
 			// Options that exist only in pools
 			$dhcpdconf['descr'] = $_POST['descr'];
@@ -515,6 +571,10 @@ if (isset($_POST['apply'])) {
 
 		$dhcpdconf['numberoptions'] = $numberoptions;
 
+		if (dhcp_is_backend('kea')) {
+			$dhcpdconf['custom_kea_config'] = base64_encode($_POST['custom_kea_config']);
+		}
+
 		if (is_numeric($pool) && is_array(config_get_path("dhcpdv6/{$if}/pool/{$pool}"))) {
 			config_set_path("dhcpdv6/{$if}/pool/{$pool}", $dhcpdconf);
 		} elseif ($act === 'newpool') {
@@ -589,7 +649,7 @@ function build_pooltable() {
 
 			$pooltbl .= '<td><a class="fa-solid fa-pencil" title="'. gettext("Edit pool") . '" href="services_dhcpv6.php?if=' . htmlspecialchars($if) . '&pool=' . $i . '"></a>';
 
-			$pooltbl .= ' <a class="fa-solid fa-trash-can" title="'. gettext("Delete pool") . '" href="services_dhcpv6.php?if=' . htmlspecialchars($if) . '&act=delpool&id=' . $i . '" usepost></a></td>';
+			$pooltbl .= ' <a class="fa-solid fa-trash-can text-danger" title="'. gettext("Delete pool") . '" href="services_dhcpv6.php?if=' . htmlspecialchars($if) . '&act=delpool&id=' . $i . '" usepost></a></td>';
 			$pooltbl .= '</tr>';
 		}
 		$i++;
@@ -633,7 +693,12 @@ if ($changes_applied) {
 }
 
 if (is_subsystem_dirty('dhcpd6')) {
-	print_apply_box(gettext('The DHCP Server configuration has been changed.') . "<br />" . gettext('The changes must be applied for them to take effect.'));
+	print_apply_box(
+		gettext('The DHCP Server configuration has been changed.') . "<br />" .
+		gettext('The changes must be applied for them to take effect.') . "<br />" .
+		gettext('If the prefix has changed, remember to STOP then START the ' .
+			'Router Advertisement service to inform clients of the prefix change.')
+	);
 }
 
 $is_stateless_dhcp = in_array(config_get_path('dhcpdv6/'.$if.'/ramode', 'disabled'), ['stateless_dhcp']);
@@ -704,6 +769,7 @@ $section->addInput(new Form_StaticText(
 ));
 
 if (!is_numeric($pool) && !($act === 'newpool')) {
+	$kea_section = 'subnet';
 	if ($dhcrelay_enabled) {
 		$section->addInput(new Form_Checkbox(
 			'enable',
@@ -720,6 +786,7 @@ if (!is_numeric($pool) && !($act === 'newpool')) {
 		));
 	}
 } else {
+	$kea_section = 'pool';
 	print_info_box(gettext('Editing pool-specific options. To return to the Interface, click its tab above.'), 'info', false);
 }
 
@@ -736,6 +803,21 @@ $section->addInput(new Form_Select(
 	'If set to %3$sAllow known clients from any interface%4$s, any DHCP client with a DUID listed in a static mapping on %1$s%3$sany%4$s%2$s scope(s)/interface(s) will get an IP address. ' .
 	'If set to %3$sAllow known clients from only this interface%4$s, only DUIDs listed in static mappings on this interface will get an IP address within this scope/range.'),
 	'<i>', '</i>', '<b>', '</b>');
+
+if (dhcp_is_backend('kea') && (!is_numeric($pool) && !($act === 'newpool'))):
+	$section->addInput(new Form_Select(
+		'dnsregpolicy',
+		gettext('DNS Registration'),
+		array_get_path($pconfig, 'dnsregpolicy', 'default'),
+		$dnsregpolicy_values
+	))->setHelp(gettext('Optionally overides the DHCPv6 server default DNS registration policy to force a specific policy.'));
+	$section->addInput(new Form_Select(
+		'earlydnsregpolicy',
+		gettext('Early DNS Registration'),
+		array_get_path($pconfig, 'earlydnsregpolicy', 'default'),
+		$dnsregpolicy_values
+	))->setHelp(gettext('Optionally overides the DHCPv6 server default early DNS registration policy to force a specific policy.'));
+endif;
 
 if (dhcp_is_backend('kea')):
 if (is_numeric($pool) || ($act == "newpool")) {
@@ -873,6 +955,7 @@ $form->add($section);
 
 if (!is_numeric($pool) && !($act === 'newpool')):
 $section = new Form_Section(gettext('Prefix Delegation Pool'));
+if (dhcp_is_backend('isc')):
 $f1 = new Form_Input(
 	'prefixrange_from',
 	null,
@@ -916,6 +999,24 @@ $section->addInput(new Form_Select(
 		'64' => '64'
 		)
 ))->setHelp(gettext('A prefix range can be defined here for DHCP Prefix Delegation. This allows for assigning networks to subrouters. The start and end of the range must end on boundaries of the prefix delegation size.'));
+else:
+$section->addInput(new Form_IpAddress(
+	'pdprefix',
+	gettext('Delegated Prefix'),
+	$pconfig['pdprefix'],
+	'V6'
+))->addClass('trim')
+  ->addMask('pdprefixlen', $pconfig['pdprefixlen'], 48, 64, false)
+  ->setWidth(5)
+  ->setHelp(gettext('Starting address range from which delegated prefixes will be assigned. The prefix length here determines the fixed portion of the address, and it must be smaller than or equal to the delegated length below.' ));
+$section->addInput(new Form_Select(
+	'pddellen',
+	gettext('Delegated Length'),
+	$pconfig['pddellen'],
+	[] /* filled by `update_delegated_length` on page load and on changes to pdprefix */
+))->setWidth(5)
+  ->setHelp(gettext('The length of the prefixes that will be delegated to clients.'));
+endif;
 $form->add($section);
 endif;
 
@@ -1309,6 +1410,16 @@ if (dhcp_is_backend('kea')):
 $form->add($section);
 endif; /* dhcp_is_backend('kea') */
 
+if (dhcp_is_backend('kea')):
+$section = new Form_Section(gettext('Custom Configuration'));
+$section->addInput(new Form_Textarea(
+	'custom_kea_config',
+	gettext('JSON Configuration'),
+	array_get_path($pconfig, 'custom_kea_config')
+))->setWidth(8)->setHelp(gettext('JSON to be merged into the "%1$s" section of the generated Kea DHCPv6 configuration.%2$sThe input must be a well formed JSON object and should not include the "%1$s" key itself.'), $kea_section, '<br/>');
+$form->add($section);
+endif;	
+
 if ($act === 'newpool') {
 	$form->addGlobal(new Form_Input(
 		'act',
@@ -1345,11 +1456,15 @@ if (!is_numeric($pool) && !($act === 'newpool')):
 		<table class="table table-striped table-hover table-condensed">
 			<thead>
 				<tr>
-					<th><?=gettext("DUID")?></th>
-					<th><?=gettext("IPv6 address")?></th>
+					<th><!-- status icons --></th>
+					<th><?=gettext("IPv6 Address")?></th>
+<?php if (dhcp_is_backend('kea')): ?>
+					<th><?=gettext('Delegated Prefix')?></th>
+<?php endif; ?>
 					<th><?=gettext("Hostname")?></th>
+					<th><?=gettext("DUID")?></th>
 					<th><?=gettext("Description")?></th>
-					<th><!-- Buttons --></th>
+					<th><?=gettext("Actions")?></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -1358,15 +1473,23 @@ $i = 0;
 foreach (config_get_path("dhcpdv6/{$if}/staticmap", []) as $mapent):
 	if ($mapent['duid'] != "" or $mapent['ipaddrv6'] != ""):
 ?>
-			<tr>
+			<tr ondblclick="document.location='services_dhcpv6_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>';">
 				<td>
-					<?=htmlspecialchars($mapent['duid'])?>
+					<?=dhcp6_static_mapping_icons($dhcpdconf, $mapent)?>
 				</td>
 				<td>
 					<?=htmlspecialchars($mapent['ipaddrv6'])?>
 				</td>
+<?php if (dhcp_is_backend('kea')): ?>
+				<td>
+					<?=htmlspecialchars($mapent['pdprefix'])?>
+				</td>
+<?php endif; ?>
 				<td>
 					<?=htmlspecialchars($mapent['hostname'])?>
+				</td>
+				<td>
+					<?=htmlspecialchars($mapent['duid'])?>
 				</td>
 				<td>
 					<?=htmlspecialchars($mapent['descr'])?>
@@ -1598,6 +1721,18 @@ events.push(function() {
 		checkLastRow();
 	});
 
+	function update_delegated_length() {
+		let start = parseInt($('#pdprefixlen').val(), 10);
+		let dellen = $('#pddellen');
+		dellen.empty();
+		for (let i = start; i <= 128; i++) {
+			let selected = (i.toString() === "<?=$pconfig['pddellen']?>");
+			dellen.append(new Option(i, i, false, selected));
+		}
+	}
+
+	$('#pdprefixlen').on('change', update_delegated_length);
+
 	// On initial load
 	show_advdns(true);
 	show_advntp(true);
@@ -1611,6 +1746,7 @@ events.push(function() {
 		hideClass('adnloptions', true);
 		hideInput('addrow', true);
 	}
+	update_delegated_length();
 });
 //]]>
 </script>

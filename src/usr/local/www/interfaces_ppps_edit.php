@@ -51,6 +51,7 @@ if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
 
+unset($input_errors);
 $this_ppp_config = isset($id) ? config_get_path("ppps/ppp/{$id}") : null;
 if ($this_ppp_config) {
 	$pconfig['ptpid'] = $this_ppp_config['ptpid'];
@@ -58,6 +59,10 @@ if ($this_ppp_config) {
 		$pconfig['type'] = $this_ppp_config['type'];
 	}
 	$pconfig['interfaces'] = array_filter(explode(",", $this_ppp_config['ports']));
+	if (config_path_enabled('system', 'use_if_pppoe') &&
+	    is_array($pconfig['interfaces']) && count($pconfig['interfaces']) > 1) {
+		$input_errors[] = gettext("Multilink connections (MLPPP) using the if_pppoe kernel driver is not currently supported. Please select only one Link Interface.");
+	}
 	$pconfig['username'] = $this_ppp_config['username'];
 	$pconfig['password'] = base64_decode($this_ppp_config['password']);
 	if (isset($this_ppp_config['secret'])) {
@@ -254,6 +259,9 @@ if ($_POST['save']) {
 	if (($_POST['type'] == "ppp") && is_array($_POST['interfaces']) && (count($_POST['interfaces']) > 1)) {
 		$input_errors[] = gettext("Multilink connections (MLPPP) using the PPP link type is not currently supported. Please select only one Link Interface.");
 	}
+	if (config_path_enabled('system', 'use_if_pppoe') && is_array($_POST['interfaces']) && (count($_POST['interfaces']) > 1)) {
+		$input_errors[] = gettext("Multilink connections (MLPPP) using the if_pppoe kernel driver is not currently supported. Please select only one Link Interface.");
+	}
 	if ($_POST['provider'] && $_POST['null_service']) {
 		$input_errors[] = gettext("Do not specify both a Service name and a NULL Service name.");
 	}
@@ -433,7 +441,11 @@ if ($_POST['save']) {
 		$ppp['mtu-override'] =
 		    $_POST['mtu-override'] ? true : false;
 		$ppp['vjcomp'] = $_POST['vjcomp'] ? true : false;
-		$ppp['tcpmssfix'] = $_POST['tcpmssfix'] ? true : false;
+		if (config_path_enabled('system', 'use_if_pppoe')) {
+			$ppp['tcpmssfix'] = $_POST['ifpppoe_tcpmssfix'] ? true : false;
+		} else {
+			$ppp['tcpmssfix'] = $_POST['tcpmssfix'] ? true : false;
+		}
 		if (is_array($port_data['bandwidth'])) {
 			$ppp['bandwidth'] = implode(',', $port_data['bandwidth']);
 		}
@@ -523,6 +535,10 @@ $section->addInput(new Form_Select(
 ));
 
 $linklist = build_ppps_link_list();
+$if_select_help = "Select the interface for the PPP connection.";
+if ($pconfig['type'] == "pppoe" && !config_path_enabled('system', 'use_if_pppoe')) {
+	$if_select_help = "Select at least two interfaces for Multilink (MLPPP) connections.";
+}
 
 $section->addInput(new Form_Select(
 	'interfaces',
@@ -530,7 +546,7 @@ $section->addInput(new Form_Select(
 	$linklist['selected'],
 	$linklist['list'],
 	true // Allow multiples
-))->addClass('interfaces')->setHelp('Select at least two interfaces for Multilink (MLPPP) connections.');
+))->addClass('interfaces')->setHelp($if_select_help);
 
 $section->addInput(new Form_Input(
 	'descr',
@@ -800,6 +816,20 @@ $section->addInput(new Form_StaticText(
 $form->add($section);
 
 $section = new Form_Section('Advanced Configuration');
+$section->addClass('advifpppoeopts');
+$section->addInput(new Form_Checkbox(
+	'ifpppoe_tcpmssfix',
+	'TCPmssFix',
+	'Disable tcpmssfix (enabled by default).',
+	$pconfig['tcpmssfix']
+))->setHelp('Causes mpd to adjust incoming and outgoing TCP SYN segments so that the requested maximum segment size is not greater than the amount ' .
+			'allowed by the interface MTU. This is necessary in many setups to avoid problems caused by routers that drop ICMP Datagram Too Big messages. Without these messages, ' .
+			'the originating machine sends data, it passes the rogue router then hits a machine that has an MTU that is not big enough for the data. Because the IP Don\'t Fragment option is set, ' .
+			'this machine sends an ICMP Datagram Too Big message back to the originator and drops the packet. The rogue router drops the ICMP message and the originator never ' .
+			'gets to discover that it must reduce the fragment size or drop the IP Don\'t Fragment option from its outgoing data.');
+$form->add($section);
+
+$section = new Form_Section('Advanced Configuration');
 $section->addClass('adnlopts');
 
 $section->addInput(new Form_Checkbox(
@@ -1000,7 +1030,16 @@ events.push(function() {
 			showadvopts = !showadvopts;
 		}
 
-		hideClass('adnlopts', !showadvopts);
+		// if_pppoe options.
+		var if_pppoetype = <?php if (config_path_enabled('system', 'use_if_pppoe')) { echo 'true'; } else { echo 'false'; } ?>
+
+		if (if_pppoetype) {
+			hideClass('adnlopts', 1);
+			hideClass('advifpppoeopts', !showadvopts);
+		} else {
+			hideClass('adnlopts', !showadvopts);
+			hideClass('advifpppoeopts', 1);
+		}
 
 		// The options that follow are only shown if type == 'ppp'
 		var ppptype = ($('#type').val() == 'ppp');
@@ -1014,9 +1053,9 @@ events.push(function() {
 		hideCheckbox('uptime', !(showadvopts && ppptype));
 
 		// The options that follow are only shown if type == 'pppoe'
-		var pppoetype = ($('#type').val() == 'pppoe');
+		var pppoetype = ($('#type').val() == 'pppoe' && if_pppoetype == false);
 
-		hideClass('pppoe', !pppoetype);
+		hideClass('pppoe', (!pppoetype && !if_pppoetype));
 		hideResetDisplay(!(showadvopts && pppoetype));
 		hideInput('pppoe-reset-type', !(showadvopts && pppoetype));
 		hideCheckbox('pppoe-multilink-over-singlelink', !(showadvopts && pppoetype));

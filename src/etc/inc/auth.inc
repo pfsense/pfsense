@@ -1707,7 +1707,7 @@ function ldap_backed($username, $passwd, $authcfg, &$attributes = array()) {
 				$username = $info[0]['dn'];
 			}
 			$ldapgroupfilter = "(&({$ldapgroupattribute}={$username})({$ldapextendedquery}))";
-			$groupsearch = @$ldapfunc($ldap, $ldapdn, $ldapgroupfilter);
+			$groupsearch = @$ldapfunc($ldap, $ldapbasedn, $ldapgroupfilter);
 			if (g_get('debug')) {
 				logger(LOG_DEBUG, localize_text("RFC2307 group filter search: %s", $ldapgroupfilter), LOG_PREFIX_AUTHPROVIDER_LDAP);
 			}

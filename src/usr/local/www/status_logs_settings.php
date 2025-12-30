@@ -38,7 +38,7 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("status_logs_common.inc");
 
-global $g, $system_log_compression_types, $syslog_formats;
+global $g, $system_log_compression_types, $syslog_formats, $syslog_default_log_level;
 
 $pconfig['reverse'] = config_path_enabled('syslog', 'reverse');
 $pconfig['nentries'] = config_get_path('syslog/nentries');
@@ -77,6 +77,7 @@ $pconfig['logfilesize'] = config_get_path('syslog/logfilesize');
 $pconfig['logcompressiontype'] = system_log_get_compression();
 $pconfig['rotatecount'] = config_get_path('syslog/rotatecount');
 $pconfig['format'] = config_get_path('syslog/format');
+$pconfig['default_log_level'] = config_get_path('syslog/default_log_level', $syslog_default_log_level);
 
 if (!$pconfig['nentries']) {
 	$pconfig['nentries'] = g_get('default_log_entries');
@@ -219,6 +220,12 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		config_set_path('syslog/nologsnort2c', $_POST['logsnort2c'] ? false : true);
 		config_set_path('syslog/nolognginx', $_POST['lognginx'] ? false : true);
 		config_set_path('syslog/rawfilter', $_POST['rawfilter'] ? true : false);
+
+		if (isset($_POST['default_log_level']) && array_key_exists($_POST['default_log_level'], get_syslogd_log_levels())) {
+			config_set_path('syslog/default_log_level', $_POST['default_log_level']);
+		} else {
+			config_del_path('syslog/default_log_level');
+		}
 
 		if (is_numeric($_POST['filterdescriptions']) && $_POST['filterdescriptions'] > 0) {
 			config_set_path('syslog/filterdescriptions', $_POST['filterdescriptions']);
@@ -363,6 +370,13 @@ $section->addInput(new Form_Button(
 
 $form->add($section);
 $section = new Form_Section('Logging Preferences');
+
+$section->addInput(new Form_Select(
+	'default_log_level',
+	'Default Log Level',
+	(array_key_exists($pconfig['default_log_level'], get_syslogd_log_levels()) ? $pconfig['default_log_level'] : '*'),
+	get_syslogd_log_levels()
+))->setHelp('Sets the minimum log severity needed for messages to be logged. This may be overriden by program-specific settings.');
 
 $section->addInput(new Form_Checkbox(
 	'logipoptions',

@@ -38,7 +38,7 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("status_logs_common.inc");
 
-global $g, $system_log_compression_types, $syslog_formats, $syslog_default_log_level;
+global $g, $system_log_compression_types, $syslog_formats;
 
 $pconfig['reverse'] = config_path_enabled('syslog', 'reverse');
 $pconfig['nentries'] = config_get_path('syslog/nentries');
@@ -77,7 +77,11 @@ $pconfig['logfilesize'] = config_get_path('syslog/logfilesize');
 $pconfig['logcompressiontype'] = system_log_get_compression();
 $pconfig['rotatecount'] = config_get_path('syslog/rotatecount');
 $pconfig['format'] = config_get_path('syslog/format');
-$pconfig['default_log_level'] = config_get_path('syslog/default_log_level', $syslog_default_log_level);
+$pconfig['default_log_level'] = config_get_path('syslog/default_log_level');
+if (!isset($pconfig['default_log_level']) || !array_key_exists($pconfig['default_log_level'], get_syslogd_log_levels())) {
+	$pconfig['default_log_level'] = 'default';
+}
+$log_levels = array_merge(['default' => gettext('Default')], get_syslogd_log_levels());
 
 if (!$pconfig['nentries']) {
 	$pconfig['nentries'] = g_get('default_log_entries');
@@ -374,8 +378,8 @@ $section = new Form_Section('Logging Preferences');
 $section->addInput(new Form_Select(
 	'default_log_level',
 	'Default Log Level',
-	(array_key_exists($pconfig['default_log_level'], get_syslogd_log_levels()) ? $pconfig['default_log_level'] : '*'),
-	get_syslogd_log_levels()
+	$pconfig['default_log_level'],
+	$log_levels
 ))->setHelp('Sets the minimum log severity needed for messages to be logged. This may be overriden by program-specific settings.');
 
 $section->addInput(new Form_Checkbox(

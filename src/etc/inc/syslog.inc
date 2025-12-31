@@ -38,8 +38,6 @@ $syslog_formats = array(
 	'rfc5424' => gettext('syslog (RFC 5424, with RFC 3339 microsecond-precision timestamps)'),
 );
 
-global $syslog_default_log_level;
-$syslog_default_log_level = 'warning';
 function get_syslogd_log_levels() {
 	return [
 		'*' => gettext('Any'),
@@ -198,7 +196,7 @@ function clear_all_log_files($restart = false) {
 }
 
 function system_syslogd_start($sighup = false) {
-	global $g, $syslog_default_log_level;
+	global $g;
 	if (config_path_enabled('system','developerspew')) {
 		$mt = microtime();
 		echo "system_syslogd_start() being called $mt\n";
@@ -240,12 +238,13 @@ EOD;
 		'routed', 'watchfrr', 'zebra'
 	];
 
-	$default_log_level = config_get_path('syslog/default_log_level');
-	if (!isset($default_log_level) || !array_key_exists($default_log_level, get_syslogd_log_levels())) {
-		$default_log_level = $syslog_default_log_level;
+	$log_level_default = config_get_path('syslog/default_log_level');
+	if (isset($log_level_default) && !array_key_exists($log_level_default, get_syslogd_log_levels())) {
+		unset($log_level_default);
 	}
 	$syslogconf = "# Automatically generated, do not edit!\n";
 
+	$log_level_package = $log_level_default ?: '*';
 	foreach (config_get_path('installedpackages/package', []) as $key => $package) {
 		$pkg_log_facility = config_get_path("installedpackages/package/{$key}/logging/facilityname");
 		$pkg_log_filename = basename(config_get_path("installedpackages/package/{$key}/logging/logfilename"));
@@ -257,139 +256,160 @@ EOD;
 				mwexec('/usr/bin/touch ' . escapeshellarg($fn));
 			}
 			$pkgsyslogconf = "# Automatically generated for package {$package['name']}. Do not edit.\n";
-			$pkgsyslogconf .= "!{$pkg_log_facility}\n*.{$default_log_level}\t\t\t\t\t\t {$fn}\n";
+			$pkgsyslogconf .= "!{$pkg_log_facility}\n*.{$log_level_package}\t\t\t\t\t\t {$fn}\n";
 			@file_put_contents("{$g['varetc_path']}/syslog.d/" . basename($pkg_log_filename) . ".conf", $pkgsyslogconf);
 		}
 	}
 
 	$syslogconf .= "!*\n";
+	$log_level_auth = '*';
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= "auth.*;authpriv.* 					{$g['varlog_path']}/auth.log\n";
+		$syslogconf .= "auth.{$log_level_auth};authpriv.{$log_level_auth} 					{$g['varlog_path']}/auth.log\n";
 	}
 	if (config_path_enabled('syslog', 'auth')) {
-		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "auth.*;authpriv.*");
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "auth.{$log_level_auth};authpriv.{$log_level_auth}");
 	}
 
 	$syslogconf .= "!radvd\n";
-	$radvdloglevel = ((config_path_enabled('system', 'radvddebug')) ? $default_log_level : 'err');
+	if (config_path_enabled('system', 'radvddebug')) {
+		$log_level_radvd = 'err';
+	} else {
+		$log_level_radvd = $log_level_default ?: '*';
+	}
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= "*.{$radvdloglevel}								{$g['varlog_path']}/routing.log\n";
+		$syslogconf .= "*.{$log_level_radvd}								{$g['varlog_path']}/routing.log\n";
 	}
 	if (config_path_enabled('syslog', 'routing')) {
-		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "!radvd.{$radvdloglevel}");
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$log_level_radvd}");
 	}
 
 	$syslogconf .= "!routed,zebra,ospfd,ospf6d,bgpd,watchfrr,miniupnpd,igmpproxy\n";
+	$log_level_routing = $log_level_default ?: '*';
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= "*.{$default_log_level}									{$g['varlog_path']}/routing.log\n";
+		$syslogconf .= "*.{$log_level_routing}									{$g['varlog_path']}/routing.log\n";
 	}
 	if (config_path_enabled('syslog', 'routing')) {
-		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$default_log_level}");
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$log_level_routing}");
 	}
 
 	$syslogconf .= "!ntp,ntpd,ntpdate\n";
+	$log_level_ntpd = $log_level_default ?: '*';
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= "*.{$default_log_level}									{$g['varlog_path']}/ntpd.log\n";
+		$syslogconf .= "*.{$log_level_ntpd}									{$g['varlog_path']}/ntpd.log\n";
 	}
 	if (config_path_enabled('syslog', 'ntpd')) {
-		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$default_log_level}");
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$log_level_ntpd}");
 	}
 
 	$syslogconf .= "!ppp\n";
+	$log_level_ppp = $log_level_default ?: '*';
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= "*.{$default_log_level}									{$g['varlog_path']}/ppp.log\n";
+		$syslogconf .= "*.{$log_level_ppp}									{$g['varlog_path']}/ppp.log\n";
 	}
 	if (config_path_enabled('syslog', 'ppp')) {
-		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$default_log_level}");
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$log_level_ppp}");
 	}
 
 	$syslogconf .= "!poes\n";
+	$log_level_poes = $log_level_default ?: '*';
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= "*.{$default_log_level}									{$g['varlog_path']}/poes.log\n";
+		$syslogconf .= "*.{$log_level_poes}									{$g['varlog_path']}/poes.log\n";
 	}
 	if (config_path_enabled('syslog', 'vpn')) {
-		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$default_log_level}");
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$log_level_poes}");
 	}
 
 	$syslogconf .= "!l2tps\n";
+	$log_level_l2tps = $log_level_default ?: '*';
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= "*.{$default_log_level}									{$g['varlog_path']}/l2tps.log\n";
+		$syslogconf .= "*.{$log_level_l2tps}									{$g['varlog_path']}/l2tps.log\n";
 	}
 	if (config_path_enabled('syslog', 'vpn')) {
-		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$default_log_level}");
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$log_level_l2tps}");
 	}
 
 	$syslogconf .= "!charon,ipsec_starter\n";
+	$log_level_ipsec = $log_level_default ?: '*';
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= "*.{$default_log_level}									{$g['varlog_path']}/ipsec.log\n";
+		$syslogconf .= "*.{$log_level_ipsec}									{$g['varlog_path']}/ipsec.log\n";
 	}
 	if (config_path_enabled('syslog', 'vpn')) {
-		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$default_log_level}");
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$log_level_ipsec}");
 	}
 
 	$syslogconf .= "!openvpn\n";
+	$log_level_openvpn = $log_level_default ?: '*';
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= "*.{$default_log_level}									{$g['varlog_path']}/openvpn.log\n";
+		$syslogconf .= "*.{$log_level_openvpn}									{$g['varlog_path']}/openvpn.log\n";
 	}
 	if (config_path_enabled('syslog', 'vpn')) {
-		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$default_log_level}");
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$log_level_openvpn}");
 	}
 
 	$syslogconf .= "!dpinger\n";
+	$log_level_gateways = $log_level_default ?: '*';
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= "*.{$default_log_level}									{$g['varlog_path']}/gateways.log\n";
+		$syslogconf .= "*.{$log_level_gateways}									{$g['varlog_path']}/gateways.log\n";
 	}
 	if (config_path_enabled('syslog', 'dpinger')) {
-		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$default_log_level}");
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$log_level_gateways}");
 	}
 
 	$syslogconf .= "!dnsmasq,named,filterdns,unbound\n";
+	$log_level_resolver = $log_level_default ?: '*';
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= "*.{$default_log_level}									{$g['varlog_path']}/resolver.log\n";
+		$syslogconf .= "*.{$log_level_resolver}									{$g['varlog_path']}/resolver.log\n";
 	}
 	if (config_path_enabled('syslog', 'resolver')) {
-		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$default_log_level}");
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$log_level_resolver}");
 	}
 
 	$syslogconf .= "!dhcpd,dhcrelay,dhclient,dhcp6c,dhcpleases,dhcpleases6,kea2fib6,kea2unbound,kea-dhcp4,kea-dhcp6\n";
+	$log_level_dhcpd = $log_level_default ?: '*';
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= "*.{$default_log_level}									{$g['varlog_path']}/dhcpd.log\n";
+		$syslogconf .= "*.{$log_level_dhcpd}									{$g['varlog_path']}/dhcpd.log\n";
 	}
 	if (config_path_enabled('syslog', 'dhcp')) {
-		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$default_log_level}");
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$log_level_dhcpd}");
 	}
 
 	$syslogconf .= "!hostapd\n";
+	$log_level_wireless = $log_level_default ?: '*';
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= "*.{$default_log_level} 								{$g['varlog_path']}/wireless.log\n";
+		$syslogconf .= "*.{$log_level_wireless} 								{$g['varlog_path']}/wireless.log\n";
 	}
 	if (config_path_enabled('syslog', 'hostapd')) {
-		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$default_log_level}");
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$log_level_wireless}");
 	}
 
 	$syslogconf .= "!filterlog\n";
+	$log_level_filter = $log_level_default ?: '*';
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= "*.{$default_log_level} 								{$g['varlog_path']}/filter.log\n";
+		$syslogconf .= "*.{$log_level_filter} 								{$g['varlog_path']}/filter.log\n";
 	}
 	if (config_path_enabled('syslog', 'filter')) {
-		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$default_log_level}");
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$log_level_filter}");
 	}
 
 	$syslogconf .= "!logportalauth\n";
+	$log_level_portalauth = '*';
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= "*.* 								{$g['varlog_path']}/portalauth.log\n";
+		$syslogconf .= "*.{$log_level_portalauth} 								{$g['varlog_path']}/portalauth.log\n";
 	}
 	if (config_path_enabled('syslog', 'portalauth')) {
-		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$log_level_portalauth}");
 	}
 
+	$log_level_vpn = $log_level_default ?: '*';
+	$log_level_nginx = $log_level_default ?: '*';
+	$log_level_system = $log_level_default ?: 'notice';
 	$facilitylist = implode(',', array_unique($separatelogfacilities));
 	$syslogconf .= "!-{$facilitylist}\n";
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
 		$syslogconf .= <<<EOD
-local3.{$default_log_level}							{$g['varlog_path']}/vpn.log
-local5.{$default_log_level}							{$g['varlog_path']}/nginx.log
-*.{$default_log_level};kern.debug;lpr.info;mail.crit;news.err;local0.none;local3.none;local4.none;local7.none;security.*;auth.info;authpriv.info;daemon.{$default_log_level}	{$g['varlog_path']}/system.log
+local3.{$log_level_vpn}							{$g['varlog_path']}/vpn.log
+local5.{$log_level_nginx}							{$g['varlog_path']}/nginx.log
+*.{$log_level_system};kern.debug;lpr.info;mail.crit;news.err;local0.none;local3.none;local4.none;local7.none;security.*;auth.info;authpriv.info;daemon.none	{$g['varlog_path']}/system.log
 *.emerg								*
 
 EOD;
@@ -398,21 +418,22 @@ EOD;
 	$syslogconf .= <<<EOD
 !*
 :msg, startswith, "if_pppoe: "
-*.*								{$g['varlog_path']}/ppp.log
+*.{$log_level_ppp}								{$g['varlog_path']}/ppp.log
 :*
 
 EOD;
 
 	if (config_path_enabled('syslog', 'vpn')) {
-		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "local3.{$default_log_level}");
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "local3.{$log_level_vpn}");
 	}
 	if (config_path_enabled('syslog', 'system')) {
-		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.emerg;*.{$default_log_level};kern.debug;lpr.info;mail.crit;news.err;local0.none;local3.none;local4.none;local7.none;security.*;auth.info;authpriv.info;daemon.{$default_log_level}");
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.emerg;*.{$log_level_system};kern.debug;lpr.info;mail.crit;news.err;local0.none;local3.none;local4.none;local7.none;security.*;auth.info;authpriv.info;daemon.none");
 	}
+	$log_level_all = $log_level_default ?: '*';
 	if (config_path_enabled('syslog', 'logall')) {
 		// Make everything mean everything, including facilities excluded above.
 		$syslogconf .= "!*\n";
-		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$log_level_all}");
 	}
 
 	/* write syslog config to pfSense.conf */

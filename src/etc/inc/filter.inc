@@ -1853,84 +1853,204 @@ function filter_generate_gateways() {
 }
 
 /**
- * Returns the failover gateway label item to be used in a policy routing
- * rule. The label includes the gateway group name and its active tier.
+ * Returns the failover gateway group label item to be used in a policy
+ * routing rule. The label includes the gateway group name and its active
+ * tier. When the gateway group is also used as the sytem failover gateway
+ * group and no online gateways are available, the label will include the
+ * default gateway's tier - if the default gateway is part of the group.
  *
- * @param string|null $gateway A gateway group name or gateway IP address.
- *        If a gateway IP address is specified then it's assumed that the
- *        default failover gateway group is used. If the specified gateway
- *        address does not belong to a failover gateway group then an
- *        empty array is returned.
+ * @param string|null $gateway A gateway group name. Optionally a gateway
+ *        name or IP address may be specified instead; if so then the
+ *        function will check if it's part of the system failover gateway
+ *        group and use that to create the label. This is used for the
+ *        default allow rules which specify a route-to gateway.
+ * @return array The label item. If an appropriate gateway group isn't
+ *         found then an empty array is returned.
 */
 function get_failover_gateway_group_label_item(string|null $gateway): array {
 	if (empty($gateway)) {
 		return [];
 	}
 
-	$rule_gateway_group = '';
-	$rule_gateway_group_tier = '';
-
-	// Check if a gateway group was specified.
-	foreach(config_get_path('gateways/gateway_group', []) as $gw_group) {
-		if ($gw_group['name'] != $gateway) {
-			continue;
-		}
-		$rule_gateway_group = $gateway;
-		$rule_gateway_group_tier = get_highest_failover_tier_online($gateway);
-		break;
+	global $gateway_group_label_item_cache;
+	if (!isset($gateway_group_label_item_cache)) {
+		$gateway_group_label_item_cache = [];
+	} elseif (isset($gateway_group_label_item_cache[$gateway])) {
+		return $gateway_group_label_item_cache[$gateway];
 	}
 
-	// When an address is provided then the default failover group is used.
-	if (empty($rule_gateway_group)) {
-		$gateway_name = null;
-		$address_family = match (is_ipaddr($gateway)) {
-			4 => AF_INET,
-			6 => AF_INET6,
-			default => null
-		};
-		if (isset($address_family)) {
-			static $active_gateways = get_gateways();
-			foreach ($active_gateways as $gw_item) {
-				if ($gw_item['gateway'] != $gateway) {
+	// Get gateway configuration info, declared as static to maintain
+	// consistency within the same filter sync run.
+	static $gateways = get_gateways();
+	static $gateway_groups = config_get_path('gateways/gateway_group', []);
+	if (!isset($default_gateway4) && !isset($default_gateway6)) {
+		// Get the default gateway to use when no online gateways are
+		// available in the default failover gateway group. It's only
+		// used if the default gateway is also part of the group.
+		$tmp_default_gateway4 = '';
+		$tmp_default_gateway6 = '';
+		foreach ($gateways as $item) {
+			if (!isset($item['isdefaultgw'])) {
+				continue;
+			}
+			$address_family = match (is_ipaddr($item['gateway'])) {
+				4 => AF_INET,
+				6 => AF_INET6,
+				default => null
+			};
+			if ($address_family == AF_INET) {
+				$tmp_default_gateway4 = $item['name'];
+			} elseif ($address_family == AF_INET6) {
+				$tmp_default_gateway6 = $item['name'];
+			}
+		}
+		static $default_gateway4 = $tmp_default_gateway4;
+		static $default_gateway6 = $tmp_default_gateway6;
+	}
+	if (!isset($system_gateway_group4)) {
+		// Get the default IPv4 failover gateway group.
+		$tmp_system_gateway_group_default_gateway4_tier = '';
+		$tmp_system_gateway_or_group4 = config_get_path('gateways/defaultgw4', '');
+		$tmp_system_gateway_group4_tier = '';
+		$tmp_system_gateway_group4_members = [];
+		if (!empty($tmp_system_gateway_or_group4) && ($tmp_system_gateway_or_group4 != '-')) {
+			foreach ($gateway_groups as $group) {
+				// Make sure the system is set to use a gateway group.
+				if (($group['name'] != $tmp_system_gateway_or_group4) || !isset($group['item']) || !is_array($group['item'])) {
 					continue;
 				}
-				$gateway_name = $gw_item['name'];
+				foreach ($group['item'] as $item) {
+					list($member_name, $member_tier) = explode("|", $item);
+					if (!empty($member_name)) {
+						$tmp_system_gateway_group4_members[] = $member_name;
+						if ($member_name == $default_gateway4) {
+							$tmp_system_gateway_group_default_gateway4_tier = $member_tier;
+						}
+					}
+				}
+				if (empty($tmp_system_gateway_group4_members)) {
+					// No gateway group members found.
+					break;
+				}
+
+				$tmp_system_gateway_group4_tier = get_highest_failover_tier_online($tmp_system_gateway_or_group4);
+				// If no gateway is online and the default gateway is in
+				// the gateway group then use its tier as a last resort.
+				if (empty($tmp_system_gateway_group4_tier) && !empty($tmp_system_gateway_group_default_gateway4_tier)) {
+					$tmp_system_gateway_group4_tier = $tmp_system_gateway_group_default_gateway4_tier;
+				}
+
+				break;
+			}
+			if (empty($tmp_system_gateway_group4_tier)) {
+				// The system is not configured to use a failover gateway
+				// group.
+				$tmp_system_gateway_or_group4 = '';
+			}
+		}
+        static $system_gateway_group4 = $tmp_system_gateway_or_group4;
+		static $system_gateway_group4_tier = $tmp_system_gateway_group4_tier;
+		static $system_gateway_group4_members = $tmp_system_gateway_group4_members;
+	}
+	if (!isset($system_gateway_group6)) {
+		// Get the default IPv6 failover gateway group.
+		$tmp_system_gateway_group_default_gateway6_tier = '';
+		$tmp_system_gateway_or_group6 = config_get_path('gateways/defaultgw6', '');
+		$tmp_system_gateway_group6_tier = '';
+		$tmp_system_gateway_group6_members = [];
+		if (!empty($tmp_system_gateway_or_group6) && ($tmp_system_gateway_or_group6 != '-')) {
+			foreach ($gateway_groups as $group) {
+				// Make sure the system is set to use a gateway group.
+				if (($group['name'] != $tmp_system_gateway_or_group6) || !isset($group['item']) || !is_array($group['item'])) {
+					continue;
+				}
+				foreach ($group['item'] as $item) {
+					list($member_name, $member_tier) = explode("|", $item);
+					if (!empty($member_name)) {
+						$tmp_system_gateway_group6_members[] = $member_name;
+						if ($member_name == $default_gateway6) {
+							$tmp_system_gateway_group_default_gateway6_tier = $member_tier;
+						}
+					}
+				}
+				if (empty($tmp_system_gateway_group6_members)) {
+					// No gateway group members found.
+					break;
+				}
+
+				$tmp_system_gateway_group6_tier = get_highest_failover_tier_online($tmp_system_gateway_or_group6);
+				// If no gateway is online and the default gateway is in
+				// the gateway group then use its tier as a last resort.
+				if (empty($tmp_system_gateway_group6_tier) && !empty($tmp_system_gateway_group_default_gateway6_tier)) {
+					$tmp_system_gateway_group6_tier = $tmp_system_gateway_group_default_gateway6_tier;
+				}
+
+				break;
+			}
+			if (empty($tmp_system_gateway_group6_tier)) {
+				// The system is not configured to use a failover gateway
+				// group.
+				$tmp_system_gateway_or_group6 = '';
+			}
+		}
+        static $system_gateway_group6 = $tmp_system_gateway_or_group6;
+		static $system_gateway_group6_tier = $tmp_system_gateway_group6_tier;
+		static $system_gateway_group6_members = $tmp_system_gateway_group6_members;
+	}
+
+	// Check if an IP address was provided and look for the corresponding
+	// gateway name.
+	if (is_ipaddr($gateway) !== false) {
+		$found = false;
+		foreach ($gateways as $item) {
+			if ($item['gateway'] == $gateway) {
+				$gateway = $item['name'];
+				$found = true;
 				break;
 			}
 		}
-		if (isset($gateway_name)) {
-			if ($address_family == AF_INET) {
-				static $default_failover_gateway4 = config_get_path('gateways/defaultgw4', '');
-				if (!empty($default_failover_gateway4) && ($default_failover_gateway4 != '-')) {
-					static $default_failover_gateway4_tier = get_highest_failover_tier_online($default_failover_gateway4);
-				}
-
-				if (!empty($default_failover_gateway4_tier) && in_array($default_failover_gateway4, gateway_is_gwgroup_member($gateway_name))) {
-					// Gateway is a member of the default failover gateway group.
-					$rule_gateway_group = $default_failover_gateway4;
-					$rule_gateway_group_tier = $default_failover_gateway4_tier;
-				}
-			} elseif ($address_family == AF_INET6) {
-				static $default_failover_gateway6 = config_get_path('gateways/defaultgw6', '');
-				if (!empty($default_failover_gateway6) && ($default_failover_gateway6 != '-')) {
-					static $default_failover_gateway6_tier = get_highest_failover_tier_online($default_failover_gateway6);
-				}
-
-				if (!empty($default_failover_gateway6_tier) && in_array($default_failover_gateway6, gateway_is_gwgroup_member($gateway_name))) {
-					// Gateway is a member of the default failover gateway group.
-					$rule_gateway_group = $default_failover_gateway6;
-					$rule_gateway_group_tier = $default_failover_gateway6_tier;
-				}
-			}
+		if (!$found) {
+			// No applicable gateway group would be found.
+			return [];
 		}
 	}
 
-	if (empty($rule_gateway_group) || empty($rule_gateway_group_tier)) {
-		// Not part of a default failover group, or no online gateways in the group.
+	// Gateway label info to be used in the rule.
+	$rule_gateway_group = '';
+	$rule_gateway_group_tier = '';
+
+	// Check if the system gateway group info should be used.
+	if (($gateway == $system_gateway_group4) || in_array($gateway, $system_gateway_group4_members)) {
+		$rule_gateway_group = $system_gateway_group4;
+		$rule_gateway_group_tier = $system_gateway_group4_tier;
+	} elseif (($gateway == $system_gateway_group6) || in_array($gateway, $system_gateway_group6_members)) {
+		$rule_gateway_group = $system_gateway_group6;
+		$rule_gateway_group_tier = $system_gateway_group6_tier;
+	} else {
+		foreach($gateway_groups as $group) {
+			// Rules using a failover gateway group different from the
+			// system's gateway group cannot use the default gateway for
+			// the fallback tier. Hence if the gateway group has no online
+			// gateway it cannot support gateway recovery; an empty array
+			// is returned in such cases.
+			if ($group['name'] != $gateway) {
+				continue;
+			}
+			$rule_gateway_group_tier = get_highest_failover_tier_online($gateway);
+			if (!empty($rule_gateway_group_tier)) {
+				$rule_gateway_group = $gateway;
+			}
+			break;
+		}
+	}
+
+	if (empty($rule_gateway_group)) {
+		// Invalid gateway group.
 		return [];
 	}
 
-	return make_rule_label_item("{$rule_gateway_group_tier}:{$rule_gateway_group}", RULE_LABEL_KEY_GATEWAY);
+	$gateway_group_label_item_cache[$gateway] = make_rule_label_item("{$rule_gateway_group_tier}:{$rule_gateway_group}", RULE_LABEL_KEY_GATEWAY);
+	return $gateway_group_label_item_cache[$gateway];
 }
 
 /* returns space separated list of vpn subnets */

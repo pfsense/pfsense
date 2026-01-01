@@ -1930,7 +1930,7 @@ function get_failover_gateway_group_label_item(string|null $gateway): array {
 		return [];
 	}
 
-	return make_rule_label_item("{$rule_gateway_group_tier}:{$rule_gateway_group}", RULE_LABEL_KEY_GATEwAY);
+	return make_rule_label_item("{$rule_gateway_group_tier}:{$rule_gateway_group}", RULE_LABEL_KEY_GATEWAY);
 }
 
 /* returns space separated list of vpn subnets */

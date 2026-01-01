@@ -594,7 +594,7 @@ function remove_failover_states(?string $gateway_name = null): void {
 		// avoid killing states for the higher-tier gateway(s)
 		$tiers_to_kill = array_diff($tiers_to_kill, [min($tiers_to_kill)]);
 		foreach ($tiers_to_kill as $tier) {
-			mwexec_bg('/sbin/pfctl -M -k label -k ' . escapeshellarg(make_rule_label_string("{$tier}:{$group['name']}", RULE_LABEL_KEY_GATEwAY, false)) . ' -q');
+			mwexec_bg('/sbin/pfctl -M -k label -k ' . escapeshellarg(make_rule_label_string("{$tier}:{$group['name']}", RULE_LABEL_KEY_GATEWAY, false)) . ' -q');
 			logger(LOG_NOTICE, localize_text("killed policy routing states for tier {$tier} in {$group['name']}"), LOG_PREFIX_GWMON);
 		}
 	}

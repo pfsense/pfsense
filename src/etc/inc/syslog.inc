@@ -272,9 +272,9 @@ EOD;
 
 	$syslogconf .= "!radvd\n";
 	if (config_path_enabled('system', 'radvddebug')) {
-		$log_level_radvd = 'err';
+		$log_level_radvd = '*';
 	} else {
-		$log_level_radvd = $log_level_default ?: '*';
+		$log_level_radvd = $log_level_default ?: 'err';
 	}
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
 		$syslogconf .= "*.{$log_level_radvd}								{$g['varlog_path']}/routing.log\n";
@@ -329,7 +329,7 @@ EOD;
 	}
 
 	$syslogconf .= "!charon,ipsec_starter\n";
-	$log_level_ipsec = $log_level_default ?: '*';
+	$log_level_ipsec = '*';
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
 		$syslogconf .= "*.{$log_level_ipsec}									{$g['varlog_path']}/ipsec.log\n";
 	}
@@ -338,7 +338,7 @@ EOD;
 	}
 
 	$syslogconf .= "!openvpn\n";
-	$log_level_openvpn = $log_level_default ?: '*';
+	$log_level_openvpn = '*';
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
 		$syslogconf .= "*.{$log_level_openvpn}									{$g['varlog_path']}/openvpn.log\n";
 	}
@@ -355,13 +355,21 @@ EOD;
 		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$log_level_gateways}");
 	}
 
-	$syslogconf .= "!dnsmasq,named,filterdns,unbound\n";
+	$syslogconf .= "!dnsmasq,named,filterdns\n";
 	$log_level_resolver = $log_level_default ?: '*';
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
 		$syslogconf .= "*.{$log_level_resolver}									{$g['varlog_path']}/resolver.log\n";
 	}
 	if (config_path_enabled('syslog', 'resolver')) {
 		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$log_level_resolver}");
+	}
+	$syslogconf .= "!unbound\n";
+	$log_level_unbound = '*';
+	if (!config_path_enabled('syslog', 'disablelocallogging')) {
+		$syslogconf .= "*.{$log_level_unbound}									{$g['varlog_path']}/resolver.log\n";
+	}
+	if (config_path_enabled('syslog', 'resolver')) {
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$log_level_unbound}");
 	}
 
 	$syslogconf .= "!dhcpd,dhcrelay,dhclient,dhcp6c,dhcpleases,dhcpleases6,kea2fib6,kea2unbound,kea-dhcp4,kea-dhcp6\n";

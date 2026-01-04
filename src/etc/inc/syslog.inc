@@ -391,7 +391,7 @@ EOD;
 	}
 
 	$syslogconf .= "!filterlog\n";
-	$log_level_filter = $log_level_default ?: '*';
+	$log_level_filter = '*';
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
 		$syslogconf .= "*.{$log_level_filter} 								{$g['varlog_path']}/filter.log\n";
 	}

@@ -87,8 +87,8 @@ if ($_POST['save'] || $_POST['force']) {
 	$ddns_attr = array(
 		"cloudflare" => array("apex" => false, "wildcard" => false, "username_none" => true),
 		"cloudflare-v6" => array("apex" => false, "wildcard" => false, "username_none" => true),
-		"desec" => array("apex" => false, "wildcard" => false, "username_none" => true),
-		"desec-v6" => array("apex" => false, "wildcard" => false, "username_none" => true),
+		"desec" => array("apex" => false, "wildcard" => true, "username_none" => true),
+		"desec-v6" => array("apex" => false, "wildcard" => true, "username_none" => true),
 		"digitalocean" => array("apex" => true, "wildcard" => true, "username_none" => true),
 		"digitalocean-v6" => array("apex" => true, "wildcard" => true, "username_none" => true),
 		"dnsmadeeasy" => array("apex" => false, "wildcard" => false, "username_none" => true),
@@ -643,7 +643,7 @@ events.push(function() {
 			case 'desec-v6':
 				hideInput('username', true);
 				hideInput('mx', true);
-				hideCheckbox('wildcard', true);
+				hideCheckbox('wildcard', false);
 				break;
 			case "digitalocean":
 			case "digitalocean-v6":

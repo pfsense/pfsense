@@ -235,7 +235,7 @@ function mkdir_safe(string $directory, int $permissions = 0777, bool $recursive 
         try {
             return (\mkdir($directory, $permissions, $recursive));
         } catch (\Exception $e) {
-            syslogf(LOG_NOTICE, \gettext('Unable to mkdir directory: %s'), $directory);
+            syslogf(LOG_ERR, \gettext('Unable to mkdir directory: %s'), $directory);
         }
     }
 
@@ -335,7 +335,7 @@ function write_owned_routes(string $cachePath, array $routesByPrefix): void
 
     \file_put_contents($cachePath, \serialize($routesByPrefix));
 
-    syslogf(LOG_NOTICE, \gettext('Route cache updated: %s'), $cachePath);
+    syslogf(LOG_INFO, \gettext('Route cache updated: %s'), $cachePath);
 }
 
 function owned_routes(string $cachePath): array
@@ -387,13 +387,13 @@ function routes_sync(array $leaseRoutesByPrefix, array $ownedRoutesByPrefix): bo
     foreach ($routesToAdd as $dest => $nextHop) {
         route_add_or_change($dest, $nextHop);
         $syncHappened = true;
-        syslogf(LOG_NOTICE, \gettext('Route installed: %s via %s'), $dest, $nextHop);
+        syslogf(LOG_INFO, \gettext('Route installed: %s via %s'), $dest, $nextHop);
     }
 
     foreach (\array_keys($routesToRemove) as $dest) {
         route_del($dest);
         $syncHappened = true;
-        syslogf(LOG_NOTICE, \gettext('Route removed: %s'), $dest);
+        syslogf(LOG_INFO, \gettext('Route removed: %s'), $dest);
     }
 
     return ($syncHappened);
@@ -445,7 +445,7 @@ class FlushCommand extends Command
         }
 
         if ($syncHappened) {
-            syslogf(LOG_NOTICE, \gettext('Syncronization completed: %.4fms'), (\microtime(true) - $startTime) * 1000);
+            syslogf(LOG_INFO, \gettext('Syncronization completed: %.4fms'), (\microtime(true) - $startTime) * 1000);
         }
 
         \closelog();
@@ -508,7 +508,7 @@ class SyncCommand extends Command
         }
 
         if ($syncHappened) {
-            syslogf(LOG_NOTICE, \gettext('Syncronization completed: %.4fms'), (\microtime(true) - $startTime) * 1000);
+            syslogf(LOG_INFO, \gettext('Syncronization completed: %.4fms'), (\microtime(true) - $startTime) * 1000);
         }
 
         \closelog();

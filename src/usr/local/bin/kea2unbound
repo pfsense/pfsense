@@ -292,7 +292,7 @@ function mkdir_safe(string $directory, int $permissions = 0777, bool $recursive 
         try {
             return (\mkdir($directory, $permissions, $recursive));
         } catch (\Exception $e) {
-            syslogf(LOG_NOTICE, \gettext('Unable to mkdir directory: %s'), $directory);
+            syslogf(LOG_ERR, \gettext('Unable to mkdir directory: %s'), $directory);
         }
     }
 
@@ -505,7 +505,7 @@ function unbound_write_include(string $unboundConfFile, string $unboundIncludeFi
                 \fprintf($fd, "local-data: \"%s\"\n", $record);
             }
             \fclose($fd);
-            syslogf(LOG_NOTICE, \gettext('Include updated: %s (%s)'), $unboundIncludeFile, $newHash);
+            syslogf(LOG_INFO, \gettext('Include updated: %s (%s)'), $unboundIncludeFile, $newHash);
             return (true);
         }
     }
@@ -665,7 +665,7 @@ class FlushCommand extends Command
         }
 
         if ($flushHappened) {
-            syslogf(LOG_NOTICE, \gettext('Flush completed: %.4fms'), (\microtime(true) - $startTime) * 1000);
+            syslogf(LOG_INFO, \gettext('Flush completed: %.4fms'), (\microtime(true) - $startTime) * 1000);
         }
 
         \closelog();
@@ -753,7 +753,7 @@ class SyncCommand extends Command
         }
 
         if ($syncHappened) {
-            syslogf(LOG_NOTICE, \gettext('Synchronization completed: %.4fms'), (\microtime(true) - $startTime) * 1000);
+            syslogf(LOG_INFO, \gettext('Synchronization completed: %.4fms'), (\microtime(true) - $startTime) * 1000);
         }
 
         \closelog();

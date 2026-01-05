@@ -1632,10 +1632,12 @@ function is_cert_locally_renewable($cert) {
 
 /* Strict certificate requirements based on
  * https://redmine.pfsense.org/issues/9825
+ * https://redmine.pfsense.org/issues/16606
+ * https://cabforum.org/working-groups/server/baseline-requirements/requirements/#632-certificate-operational-periods-and-key-pair-usage-periods
  */
 global $cert_strict_values;
 $cert_strict_values = array(
-	'max_server_cert_lifetime' => 398,
+	'max_server_cert_lifetime' => 200,
 	'digest_blacklist' => array('md4', 'RSA-MD4',  'md5', 'RSA-MD5', 'md5-sha1',
 					'mdc2', 'RSA-MDC2', 'sha1', 'RSA-SHA1',
 					'RSA-SHA1-2', 'sha224', 'RSA-SHA224'),

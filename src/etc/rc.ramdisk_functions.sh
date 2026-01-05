@@ -149,6 +149,7 @@ ramdisk_make_backup () {
 		/etc/rc.backup_dhcpleases.sh
 		/etc/rc.backup_logs.sh
 		/etc/rc.backup_captiveportal.sh
+		/etc/rc.backup_packages_data.sh
 		# /etc/rc.backup_voucher.sh
 	fi
 }

@@ -953,6 +953,9 @@ function install_package_xml($package_name) {
 	if (is_array($pkg_config['plugins'])) {
 		config_set_path("installedpackages/package/{$pkgid}/plugins", $pkg_config['plugins']);
 	}
+	if (!empty($pkg_config['ramdisk_dir_names']) && is_string($pkg_config['ramdisk_dir_names'])) {
+		config_set_path("installedpackages/package/{$pkgid}/ramdisk_dir_names", $pkg_config['ramdisk_dir_names']);
+	}
 
 	update_status(gettext("Writing configuration... "));
 	write_config($changedesc);

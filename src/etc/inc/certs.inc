@@ -2127,6 +2127,7 @@ function cert_get_lifetime($cert, $untilexpire = false) {
  * NAME
  *   cert_analyze_lifetime - Analyze a certificate lifetime for expiration notices
  * INPUTS
+ *   $lifetime: Total lifetime of certificate
  *   $expiredays: Number of days until the certificate expires (See cert_get_lifetime())
  * RESULT
  *   An array of two entries:
@@ -2134,10 +2135,13 @@ function cert_get_lifetime($cert, $untilexpire = false) {
  *   1/$expstring: A text analysis describing the expiration timeframe.
  ******/
 
-function cert_analyze_lifetime($expiredays) {
+function cert_analyze_lifetime($lifetime, $expiredays) {
 	global $g;
 	/* Number of days at which to warn of expiration. */
-	$warning_days = config_get_path('notifications/certexpire/expiredays', g_get('default_cert_expiredays'));
+	$max_warning_days = config_get_path('notifications/certexpire/expiredays', g_get('default_cert_expiredays'));
+	# Take the lesser of 1/3 the lifetime remaining (minus one day) or the max warning days.
+	# This avoids warning too soon for short-lived certs
+	$warning_days = min(((int) ($lifetime / 3) - 1), $max_warning_days);
 
 	if ($expiredays > $warning_days) {
 		/* Not expiring soon */
@@ -2182,7 +2186,7 @@ function cert_print_dates($cert) {
 	/* Get the expiration days */
 	$expiredays = cert_get_lifetime($cert, true);
 	/* Analyze the lifetime value */
-	list($lrclass, $expstring) = cert_analyze_lifetime($expiredays);
+	list($lrclass, $expstring) = cert_analyze_lifetime(cert_get_lifetime($cert), $expiredays);
 	/* Output the dates, with a tooltip showing days until expiration, and
 	 * a visual indication of warning/expired status. */
 	?>
@@ -2333,7 +2337,7 @@ function cert_print_infoblock($cert) {
 
 		/* Lifetime before certificate expires (days from now to end) */
 		$expiredays = cert_get_lifetime($cert, true);
-		list($lrclass, $expstring) = cert_analyze_lifetime($expiredays);
+		list($lrclass, $expstring) = cert_analyze_lifetime($lifetime, $expiredays);
 		$certextinfo .= '<b>' . gettext("Lifetime Remaining: ") . '</b> ';
 		$certextinfo .= "<span class=\"text-{$lrclass}\">{$expstring}</span>";
 		$certextinfo .= '<br/>';
@@ -2398,7 +2402,7 @@ function cert_notify_expiring() {
 		if ($expiredays === null) {
 			continue;
 		}
-		list($lrclass, $expstring) = cert_analyze_lifetime($expiredays);
+		list($lrclass, $expstring) = cert_analyze_lifetime(cert_get_lifetime($cert), $expiredays);
 		/* Only notify if the certificate is expiring soon, or has
 		 * already expired */
 		if ($lrclass != 'normal') {

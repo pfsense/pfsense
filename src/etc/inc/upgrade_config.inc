@@ -7200,6 +7200,32 @@ function upgrade_240_to_241() {
 	}
 }
 
+function upgrade_241_to_242() {
+	/**
+	 * It was previously possible to enable specific remote logging
+	 * categories in addition to having "Everything" selected. The options
+	 * are mutually exclusive.
+	 */
+	$syslog_config = config_get_path('syslog', []);
+	if (isset($syslog_config['logall'])) {
+		unset(
+			$syslog_config['system'],
+			$syslog_config['filter'],
+			$syslog_config['resolver'],
+			$syslog_config['dhcp'],
+			$syslog_config['ppp'],
+			$syslog_config['auth'],
+			$syslog_config['portalauth'],
+			$syslog_config['vpn'],
+			$syslog_config['dpinger'],
+			$syslog_config['routing'],
+			$syslog_config['ntpd'],
+			$syslog_config['hostapd']
+		);
+		config_set_path('syslog', $syslog_config);
+	}
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

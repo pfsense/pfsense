@@ -115,6 +115,21 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
+	if ($_POST['logall']) {
+		$_POST['system'] = false;
+		$_POST['filter'] = false;
+		$_POST['resolver'] = false;
+		$_POST['dhcp'] = false;
+		$_POST['ppp'] = false;
+		$_POST['auth'] = false;
+		$_POST['portalauth'] = false;
+		$_POST['vpn'] = false;
+		$_POST['dpinger'] = false;
+		$_POST['routing'] = false;
+		$_POST['ntpd'] = false;
+		$_POST['hostapd'] = false;
+	}
+
 	if ($read_only) {
 		$input_errors[] = gettext("Insufficient privileges to make the requested change (read only).");
 	}
@@ -674,6 +689,7 @@ events.push(function() {
 
 	// ---------- On initial page load ------------------------------------------------------------
 
+	disableEverything();
 	hideClass('remotelogging', !$('#enable').prop('checked'));
 	hideSelect('sourceip', !$('#enable').prop('checked'));
 	hideSelect('ipproto', !$('#enable').prop('checked'));

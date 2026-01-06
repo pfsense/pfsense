@@ -796,21 +796,20 @@ function install_package_xml($package_name) {
 	/* add package information to config.xml */
 	$pkgid = get_package_id($pkg_info['name']);
 	update_status(gettext("Saving updated package information...") . "\n");
-	$pkgs = config_get_path('installedpackages/package', []);
 	if ($pkgid == -1) {
-		$pkgs[] = $pkg_info;
 		$changedesc = sprintf(gettext("Installed %s package."),
 		    $pkg_info['name']);
 		$to_output = gettext("done.") . "\n";
+		config_set_path('installedpackages/package/', $pkg_info);
 	} else {
 		$pkgs[$pkgid] = $pkg_info;
 		$changedesc = sprintf(gettext("Overwrote previous " .
 		    "installation of %s."), $pkg_info['name']);
 		$to_output = gettext("overwrite!") . "\n";
+		config_set_path("installedpackages/package/{$pkgid}", $pkg_info);
 	}
-	config_set_path('installedpackages/package', $pkgs);
 	write_config(sprintf(gettext("Intermediate config write during " .
-	    "package install for %s."), $pkg_info['name']));
+	    "package install for %s."), $pkg_info['name']), false, true);
 	update_status($to_output);
 
 	if (($pkgid = get_package_id($package_name)) == -1) {
@@ -819,7 +818,7 @@ function install_package_xml($package_name) {
 		    "\n\n"));
 
 		uninstall_package($package_name);
-		write_config($changedesc);
+		write_config($changedesc, false, true);
 		logger(LOG_ERR, localize_text("Failed to install package: %s.",
 		    $pkg_info['name']));
 		update_status(gettext("Failed to install package.") . "\n");
@@ -834,7 +833,7 @@ function install_package_xml($package_name) {
 		    "Installation aborted.") ."\n");
 
 		uninstall_package($package_name);
-		write_config($changedesc);
+		write_config($changedesc, false, true);
 		logger(LOG_ERR, localize_text("Failed to install package: %s.",
 		    $pkg_info['name']));
 		update_status(gettext("Failed to install package.") . "\n");
@@ -873,7 +872,7 @@ function install_package_xml($package_name) {
 			    basename($pkg_config['include_file'])) . "\n");
 
 			uninstall_package($package_name);
-			write_config($changedesc);
+			write_config($changedesc, false, true);
 			logger(LOG_ERR, localize_text(
 			    "Failed to install package: %s.",
 			    $pkg_info['name']));
@@ -1048,7 +1047,7 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 		 *	Same is done during installation.
 		 */
 		write_config(sprintf(gettext("Intermediate config write " .
-		    "during package removal for %s."), $package_name));
+		    "during package removal for %s."), $package_name), false, true);
 
 		/*
 		 * If a require exists, include it. this will

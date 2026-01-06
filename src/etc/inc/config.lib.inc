@@ -636,7 +636,7 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
 
 	/* re-read configuration */
 	/* NOTE: We assume that the file can be parsed since we wrote it. */
-	config_read_file(true);
+	config_read_file(true, false);
 
 	if ($write_config_only) {
 		return config_get_path('');
@@ -1275,14 +1275,19 @@ function config_write_file() {
 			return gettext("Config contents could not be saved. Could not create temporary file!");
 		}
 		$result = safe_write_file(g_get('cf_conf_path') . "/config.xml", dump_xml_config($tmp_config, g_get('xml_rootobj')));
-		unlock($lockkey);
 
 		if (!$result) {
+			unlock($lockkey);
 			return sprintf(gettext('Unable to open %1$s for writing.'), g_get('cf_conf_path') . '/config.xml');
 		}
 
 		// Configuration file has been replaced, remove the config cache.
 		unlink_if_exists(g_get('tmp_path') . '/config.cache');
+
+		// Release the config lock only after the cache is removed to
+		// indicate to parallel scripts that the cache, if read while
+		// the config is still being written, would be outdated.
+		unlock($lockkey);
 
 		// success
 		return true;
@@ -1306,7 +1311,9 @@ function config_read_file(bool $use_backup = false, bool $use_cache = true) {
 		$cache_file_path = g_get('tmp_path') . '/config.cache';
 		$config_file_path = g_get('conf_path') . '/config.xml';
 
-		if ($_use_cache && file_exists($cache_file_path) && (filesize($cache_file_path) > 0)) {
+		// The cache is considered outdated while the config is being written.
+		if ($_use_cache && file_exists($cache_file_path) && (filesize($cache_file_path) > 0) &&
+		    !file_exists(g_get('tmp_path') . '/config.lock')) {
 			$cache_modified_time = filemtime($cache_file_path);
 			$config_modified_time = 0;
 			if (file_exists($config_file_path) && (filesize($config_file_path) > 0)) {

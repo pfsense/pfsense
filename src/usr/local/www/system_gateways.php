@@ -52,6 +52,13 @@ if ($_POST['save']) {
 }
 
 if ($_POST['apply']) {
+	$routes_apply_file = g_get('tmp_path') . '/.system_routes.apply';
+	if (file_exists($routes_apply_file)) {
+		foreach (unserialize_data(file_get_contents($routes_apply_file), []) as $toapply) {
+			mwexec("{$toapply}");
+		}
+		@unlink($routes_apply_file);
+	}
 
 	$retval = 0;
 

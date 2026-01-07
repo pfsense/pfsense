@@ -749,12 +749,12 @@ function saveAlias($post, $id) {
 				}
 				$srid++;
 			}
-			if ($reload_static_route && file_exists($g['tmp_path'] . '/.system_routes.apply')) {
-				$toapplylist = unserialize_data(file_get_contents($g['tmp_path'] . '/.system_routes.apply'), []);
-				foreach ($toapplylist as $toapply) {
+			$routes_apply_file = g_get('tmp_path') . '/.system_routes.apply';
+			if ($reload_static_route && file_exists($routes_apply_file)) {
+				foreach (unserialize_data(file_get_contents($routes_apply_file), []) as $toapply) {
 					mwexec("{$toapply}");
 				}
-				@unlink($g['tmp_path'] . '/.system_routes.apply');
+				@unlink($routes_apply_file);
 
 				$retval = system_routing_configure();
 				$retval |= filter_configure();

@@ -142,9 +142,8 @@ if ($_POST['save']) {
 		}
 	}
 
-	$overlaps = array_intersect($current_targets, $new_targets);
-	$overlaps = array_diff($overlaps, $old_targets);
-	if (count($overlaps)) {
+	$overlaps = array_intersect($new_targets, array_diff($current_targets, $old_targets));
+	if (!$_POST['disabled'] && count($overlaps)) {
 		$input_errors[] = gettext("A route to these destination networks already exists") . ": " . implode(", ", $overlaps);
 	}
 
@@ -197,8 +196,7 @@ if ($_POST['save']) {
 					if (is_ipaddrv6($dts)) {
 						$family = "-inet6";
 					}
-					$route = route_get($dts, '', true);
-					if (!count($route)) {
+					if (!count(route_get($dts, '', true))) {
 						continue;
 					}
 					$toapplylist[] = "/sbin/route delete " .

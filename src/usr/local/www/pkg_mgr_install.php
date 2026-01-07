@@ -591,6 +591,12 @@ ob_flush();
 if (!isvalidpid($gui_pidfile) && $confirmed && !$completed) {
 	/* Write out configuration to create a backup prior to pkg install. */
 	if ($firmwareupdate) {
+		foreach ($repos as $repo) {
+			if ($repo['name'] == $_POST['fwbranch']) {
+				config_set_path('system/pkg_repo_conf_path', $repo['name']);
+				break;
+			}
+		}
 		write_config(gettext("Creating restore point before upgrade."));
 	} else {
 		write_config(gettext("Creating restore point before package installation."));

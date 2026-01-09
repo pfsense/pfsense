@@ -3240,47 +3240,46 @@
 		 * Private Function (added 12 July 05) [beta]
 		 *   Return Error, Set Last Error, and Die.
 		 */
-		function _error($errorNumber = '1') {
-			$err_str = '(' . gettext('ERROR!') . ') ';
-			$err_str_r53 = 'Route 53: (' . gettext('Error') . ') ';
+		function _error($errorNumber = 1) {
+			$log_priority = LOG_ERR;
 			switch ($errorNumber) {
 				case 0:
-					break;
+					$this->lastError = null;
+					return;
 				case 2:
-					$error = $err_str . gettext('No Dynamic DNS Service provider was selected.');
+					$error = gettext('No Dynamic DNS Service provider was selected.');
 					break;
 				case 3:
-					$error = $err_str . gettext('No Username Provided.');
+					$error = gettext('No Username Provided.');
 					break;
 				case 4:
-					$error = $err_str . gettext('No Password Provided.');
+					$error = gettext('No Password Provided.');
 					break;
 				case 5:
-					$error = $err_str . gettext('No Hostname Provided.');
+					$error = gettext('No Hostname Provided.');
 					break;
 				case 6:
-					$error = $err_str . gettext('The Dynamic DNS Service provided is not yet supported.');
+					$error = gettext('The Dynamic DNS Service provided is not yet supported.');
 					break;
 				case 7:
-					$error = $err_str . gettext('No Update URL Provided.');
+					$error = gettext('No Update URL Provided.');
 					break;
 				case 8:
-					$status = $err_str_r53 . gettext("Invalid ZoneID");
+					$error = gettext("Invalid ZoneID");
 					break;
 				case 9:
-					$status = $err_str_r53 . gettext("Invalid TTL");
+					$error = gettext("Invalid TTL");
 					break;
 				case 10:
+					$log_priority = LOG_INFO;
 					$error = "({$this->_FQDN}): " . sprintf(gettext("No change in my IP address and/or %s days has not passed. Not updating dynamic DNS entry."), $this->_dnsMaxCacheAgeDays);
 					break;
 				default:
-					$error = $err_str . gettext('Unknown Response.');
-					/* FIXME: $data isn't in scope here */
-					/* $this->_debug($data); */
+					$error = gettext('Unknown Response.');
 					break;
 			}
 			$this->lastError = $error;
-			logger(LOG_ERR, $error, LOG_PREFIX_DDNS);
+			logger($log_priority, $error, LOG_PREFIX_DDNS);
 		}
 
 		/*

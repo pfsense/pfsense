@@ -128,8 +128,8 @@ $priv_list['page-status-systemlogs-openvpn']['match'] = array();
 $priv_list['page-status-systemlogs-openvpn']['match'][] = "status_logs.php?logfile=openvpn";
 
 $priv_list['page-status-systemlogs-ppp'] = array();
-$priv_list['page-status-systemlogs-ppp']['name'] = gettext("WebCfg - Status: System Logs: IPsec VPN");
-$priv_list['page-status-systemlogs-ppp']['descr'] = gettext("Allow access to the 'Status: System Logs: IPsec VPN' page.");
+$priv_list['page-status-systemlogs-ppp']['name'] = gettext("WebCfg - Status: System Logs: PPP");
+$priv_list['page-status-systemlogs-ppp']['descr'] = gettext("Allow access to the 'Status: System Logs: PPP' page.");
 $priv_list['page-status-systemlogs-ppp']['match'] = array();
 $priv_list['page-status-systemlogs-ppp']['match'][] = "status_logs.php?logfile=ppp";
 

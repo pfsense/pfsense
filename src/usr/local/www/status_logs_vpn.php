@@ -27,8 +27,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-logs-pptpvpn
-##|*NAME=Status: Logs: VPN
-##|*DESCR=Allow access to the 'Status: Logs: VPN' page.
+##|*NAME=Status: Logs: PPPoE/L2TP Server
+##|*DESCR=Allow access to the 'Status: Logs: PPPoE/L2TP Server' page.
 ##|*MATCH=status_logs_vpn.php*
 ##|-PRIV
 
@@ -41,7 +41,7 @@ Build a list of allowed log files so we can reject others to prevent the page
 from acting on unauthorized files.
 */
 $allowed_logs = array(
-	"vpn" => array("name" => gettext("VPN Logins"),
+	"vpn" => array("name" => gettext("PPPoE/L2TP Logins"),
 		    "shortcut" => "poes"),
 	"poes" => array("name" => gettext("PPPoE Service"),
 		    "shortcut" => "pppoes"),
@@ -83,7 +83,7 @@ if ($filtertext) {
 	$filtertextmeta="?filtertext=$filtertext";
 }
 
-$pgtitle = array(gettext("Status"), gettext("System Logs"), gettext("VPN"), gettext($allowed_logs[$logfile]["name"]));
+$pgtitle = array(gettext("Status"), gettext("System Logs"), gettext("PPPoE/L2TP Server"), gettext($allowed_logs[$logfile]["name"]));
 $pglinks = array("", "status_logs.php", "status_logs_vpn.php", "@self");
 include("head.inc");
 

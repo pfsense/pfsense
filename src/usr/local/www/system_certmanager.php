@@ -138,6 +138,7 @@ switch ($act) {
 	case 'edit':
 		/* Editing a certificate, so populate values */
 		$pconfig['descr'] = $thiscert['descr'];
+		$pconfig['autorenew']  = ($thiscert['autorenew'] == 'enabled');
 		$pconfig['cert'] = base64_decode($thiscert['crt']);
 		$pconfig['key'] = base64_decode($thiscert['prv']);
 		break;
@@ -441,6 +442,7 @@ if ($_POST['save'] == gettext("Save")) {
 		}
 
 		$cert['descr'] = $pconfig['descr'];
+		$cert['autorenew'] = ($pconfig['autorenew'] == 'yes') ? "enabled" : "disabled";
 
 		switch($pconfig['method']) {
 			case 'existing':
@@ -765,6 +767,29 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 			htmlspecialchars(cert_get_subject($pconfig['cert'], false))
 		))->addClass('toggle-edit collapse');
 	}
+
+	$form->add($section);
+
+	$section = new Form_Section("Automatic Renewal");
+	$section->addClass('toggle-internal');
+	if (($act == 'edit') &&
+	    is_cert_locally_renewable($thiscert)) {
+		$section->addClass('toggle-edit');
+	}
+	$section->addClass('collapse');
+
+	$section->addInput(new Form_Checkbox(
+		'autorenew',
+		'Auto Renew',
+		'Automatically renew this certificate before it would expire.',
+		$pconfig['autorenew']
+	))->setHelp('When enabled, the certificate will renew automatically once it reaches ' .
+		'approximately 1/3 of its remaining lifetime using current recommended ' .
+		'Strict Security settings.%1$s%1$s' .
+		'This is the best practice for server certificates as the change should be ' .
+		'seamless to clients in most cases, such as for OpenVPN or Mobile IPsec.%1$s%1$s' .
+		'In most cases this should not be used on user certificates as those need further ' .
+		'action after being renewed, such as delivering the new certificates to users.', '<br/>');
 
 	$form->add($section);
 
@@ -1439,14 +1464,18 @@ foreach (config_get_path('cert', []) as $cert):
 ?>
 				<tr>
 					<td>
-						<?=$name?><br />
+						<?=$name?>
+						<?php if ($cert['autorenew'] == 'enabled'): ?>
+							<i class="fa-solid fa-rotate" title="<?=gettext('Auto-Renews')?>"></i>
+						<?php endif ?>
+						<br />
 						<?php if ($cert['type']): ?>
 							<i><?=$cert_types[$cert['type']]?></i><br />
-						<?php endif?>
+						<?php endif ?>
 						<?php if (is_array($purpose)): ?>
 							CA: <b><?=$purpose['ca']?></b><br/>
 							<?=gettext("Server")?>: <b><?=$purpose['server']?></b><br/>
-						<?php endif?>
+						<?php endif ?>
 					</td>
 					<td><?=$caname?></td>
 					<td>

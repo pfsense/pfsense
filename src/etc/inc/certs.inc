@@ -1884,6 +1884,79 @@ function cert_renew(& $cert_config, $reusekey = true, $strictsecurity = false, $
 	return true;
 }
 
+/****f* certs/cert_renew_auto
+ * NAME
+ *   cert_renew_auto - Automatically renew eligible certificates
+ * INPUTS
+ *   None
+ * RESULT
+ *   Renews compatible certificates configured for auto-renew.
+ ******/
+
+function cert_renew_auto() {
+	$notifications = array();
+	foreach (config_get_path('cert', []) as $cert) {
+		if (!is_array($cert) || empty($cert)) {
+			continue;
+		}
+		/* If auto-renew is not enabled for this certificate, or it
+		   cannot be renewed locally, skip it. */
+		if (($cert['autorenew'] != 'enabled') ||
+		    !is_cert_locally_renewable($cert)){
+			continue;
+		}
+
+		/* Fetch and analyze expiration */
+		$lifetime = cert_get_lifetime($cert);
+		$expiredays = cert_get_lifetime($cert, true);
+		/* If the result is null, then the lifetime data is missing, so skip the invalid entry. */
+		if ($expiredays === null) {
+			continue;
+		}
+
+		# Flag for renewal at 1/3 the lifetime, rounded up to err on the side of caution.
+		$renewaldays = ceil($lifetime / 3);
+
+		if ($expiredays <= $renewaldays) {
+			/* It's time to renew! */
+
+			/* Use this function to get a reference in the expected format */
+			$cert_item_config = lookup_cert($cert['refid']);
+			$torenew = &$cert_item_config['item'];
+			$torenew_config = [
+				'path' => "cert/{$cert_item_config['idx']}",
+				'item' => &$torenew
+			];
+
+			/* Attempt the renewal */
+			$old_serial = cert_get_serial($torenew['crt']);
+			/* Auto-renew assumes retaining the same key, following strict security, and changing serials */
+			if (cert_renew($torenew_config, true, true, false)) {
+				$new_serial = cert_get_serial($torenew['crt']);
+				$message = localize_text("Auto-renewed certificate %s (%s) - Serial %s -> %s",
+							$torenew['descr'],
+							$torenew['refid'],
+							$old_serial,
+							$new_serial);
+				logger(LOG_NOTICE, $message);
+				write_config($message);
+				cert_restart_services(cert_get_all_services($torenew['refid']));
+				$notifications[] = $message;
+			} else {
+				$message = localize_text("ERROR auto-renewing certificate %s (%s)",
+							$torenew['descr'],
+							$torenew['refid']);
+				logger(LOG_ERR, $message);
+				$notifications[] = $message;
+			}
+		}
+	}
+	if (!empty($notifications)) {
+		$message = implode("\n", $notifications);
+		file_notice("Certificate Auto-Renew", $message, "Certificate Manager");
+	}
+}
+
 /****f* certs/cert_get_all_services
  * NAME
  *   cert_get_all_services - Locate services using a given certificate
@@ -2129,21 +2202,24 @@ function cert_get_lifetime($cert, $untilexpire = false) {
  * INPUTS
  *   $lifetime: Total lifetime of certificate
  *   $expiredays: Number of days until the certificate expires (See cert_get_lifetime())
+ *   $autorenew: Boolean reflecting whether the cert has autorenew enabled.
  * RESULT
  *   An array of two entries:
  *   0/$lrclass: A bootstrap name for use with classes like text-<x>
  *   1/$expstring: A text analysis describing the expiration timeframe.
  ******/
 
-function cert_analyze_lifetime($lifetime, $expiredays) {
+function cert_analyze_lifetime($lifetime, $expiredays, $autorenew = false) {
 	global $g;
 	/* Number of days at which to warn of expiration. */
-	$max_warning_days = config_get_path('notifications/certexpire/expiredays', g_get('default_cert_expiredays'));
+	$max_expirewarning_days = config_get_path('notifications/certexpire/expiredays', g_get('default_cert_expiredays'));
 	# Take the lesser of 1/3 the lifetime remaining (minus one day) or the max warning days.
 	# This avoids warning too soon for short-lived certs
-	$warning_days = min(((int) ($lifetime / 3) - 1), $max_warning_days);
+	$expirewarning_days = min(((int) ($lifetime / 3) - 1), $max_expirewarning_days);
+	# Flag for renewal at 1/3 the lifetime, rounded up to err on the side of caution.
+	$renewaldays = ceil($lifetime / 3);
 
-	if ($expiredays > $warning_days) {
+	if ($expiredays > $expirewarning_days) {
 		/* Not expiring soon */
 		$lrclass = 'normal';
 		$expstring = gettext("%d %s until expiration");
@@ -2156,8 +2232,21 @@ function cert_analyze_lifetime($lifetime, $expiredays) {
 		$lrclass = 'danger';
 		$expstring = gettext("Expired %d %s ago");
 	}
-	$days = (abs($expiredays) == 1) ? gettext('day') : gettext('days');
-	$expstring = sprintf($expstring, abs($expiredays), $days);
+	$edays = (abs($expiredays) == 1) ? gettext('day') : gettext('days');
+	$expstring = sprintf($expstring, abs($expiredays), $edays);
+
+	if ($autorenew) {
+		$untilrenew = $expiredays - $renewaldays;
+		if ($expiredays >= $renewaldays) {
+			$renewalstring .= gettext(", %d %s until auto-renewal");
+		} else {
+			$lrclass = 'warning';
+			$renewalstring .= gettext(", auto-renewal overdue %d %s ago");
+		}
+		$rdays = (abs($untilrenew) == 1) ? gettext('day') : gettext('days');
+		$expstring .= sprintf($renewalstring, abs($untilrenew), $rdays);
+	}
+
 	return array($lrclass, $expstring);
 }
 
@@ -2186,7 +2275,7 @@ function cert_print_dates($cert) {
 	/* Get the expiration days */
 	$expiredays = cert_get_lifetime($cert, true);
 	/* Analyze the lifetime value */
-	list($lrclass, $expstring) = cert_analyze_lifetime(cert_get_lifetime($cert), $expiredays);
+	list($lrclass, $expstring) = cert_analyze_lifetime(cert_get_lifetime($cert), $expiredays, ($cert['autorenew'] == 'enabled'));
 	/* Output the dates, with a tooltip showing days until expiration, and
 	 * a visual indication of warning/expired status. */
 	?>
@@ -2337,7 +2426,7 @@ function cert_print_infoblock($cert) {
 
 		/* Lifetime before certificate expires (days from now to end) */
 		$expiredays = cert_get_lifetime($cert, true);
-		list($lrclass, $expstring) = cert_analyze_lifetime($lifetime, $expiredays);
+		list($lrclass, $expstring) = cert_analyze_lifetime($lifetime, $expiredays, ($cert['autorenew'] == 'enabled'));
 		$certextinfo .= '<b>' . gettext("Lifetime Remaining: ") . '</b> ';
 		$certextinfo .= "<span class=\"text-{$lrclass}\">{$expstring}</span>";
 		$certextinfo .= '<br/>';
@@ -2402,10 +2491,11 @@ function cert_notify_expiring() {
 		if ($expiredays === null) {
 			continue;
 		}
-		list($lrclass, $expstring) = cert_analyze_lifetime(cert_get_lifetime($cert), $expiredays);
+		list($lrclass, $expstring) = cert_analyze_lifetime(cert_get_lifetime($cert), $expiredays, ($cert['autorenew'] == 'enabled'));
 		/* Only notify if the certificate is expiring soon, or has
 		 * already expired */
-		if ($lrclass != 'normal') {
+		if (($lrclass == 'danger') ||
+		    ($lrclass == 'warning')) {
 			$notify_string = (array_key_exists('serial', $cert)) ? gettext('Certificate Authority') : gettext('Certificate');
 			$notify_string .= ": {$cert['descr']} ({$cert['refid']}): {$expstring}";
 			$notifications[] = $notify_string;
@@ -2884,6 +2974,25 @@ function cert_chain_has_weak_digest($cert) {
 	return $weak;
 }
 
+/* Check if an RSA certificate has a key which is considered weak and may be
+ * rejected by OpenSSL */
+function cert_has_weak_rsa_key($cert) {
+	global $cert_strict_values;
+	$res_key = openssl_pkey_get_private(base64_decode($cert['prv']));
+	$key_details = openssl_pkey_get_details($res_key);
+	/* Validate key type, assume RSA if it cannot be read. */
+	if (is_array($key_details) && array_key_exists('type', $key_details)) {
+		$private_key_type = $key_details['type'];
+	} else {
+		$private_key_type = OPENSSL_KEYTYPE_RSA;
+	}
+	if (($key_details['type'] == OPENSSL_KEYTYPE_RSA) &&
+	    ($key_details['bits'] < $cert_strict_values['min_private_key_bits'])) {
+		return true;
+	}
+	return false;
+}
+
 function cert_check_digest_compatibility($type, $cert, $consumer) {
 	$nonweak_consumers = [
 		'ca'   => ['HTTPS'],
@@ -2917,6 +3026,9 @@ function cert_create_selfsigned($descr = '', $hostname = '', $log = true) {
 	$cert = [];
 	$cert['refid'] = uniqid();
 	$cert['descr'] = "{$descr} ({$cert['refid']})";
+	/* Enable auto-renew for all self-signed certs.
+	 * See https://redmine.pfsense.org/issues/16607 */
+	$cert['autorenew'] = 'enabled';
 
 	if (empty($hostname)) {
 		/* Find the system hostname, append unique refid */

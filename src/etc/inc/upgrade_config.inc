@@ -7227,6 +7227,80 @@ function upgrade_241_to_242() {
 }
 
 /*
+ * Certificate Updates
+ *   Checks for invalid, expired, or weak GUI certificates and renews or
+ *   replaces them as needed.
+ *
+ *   Also configures auto-renew for any compatible GUI certificate.
+ */
+function upgrade_242_to_243() {
+	/* Check GUI if it is set for HTTPS */
+	if (config_get_path('system/webgui/protocol') == "https" &&
+	    !empty(config_get_path('system/webgui/ssl-certref'))) {
+		$cert_item_config = lookup_cert(config_get_path('system/webgui/ssl-certref'));
+		$cert = &$cert_item_config['item'];
+
+		/* Variables to track possible actions and actions taken */
+		$isweak = false;
+		$canrenew = false;
+		$renewed = false;
+
+		/* Check if the GUI certificate is invalid */
+		if (!is_array($cert) ||
+		    !$cert['crt'] ||
+		    !$cert['prv']) {
+			/* The GUI certificate is invalid, force a new one */
+			$isweak = true;
+		} else {
+			/* Cert appears to be valid */
+			if (is_cert_locally_renewable($cert)) {
+				$canrenew = true;
+				/* Enable auto-renew for any GUI cert which can
+				 * be locally renewed.
+				 */
+				$cert['autorenew'] = 'enabled';
+				config_set_path("cert/{$cert_item_config['idx']}", $cert);
+			}
+		}
+
+		/* If the certificate is expired or weak, we want a new one */
+		if ((cert_get_lifetime($cert, true) <= 0) ||
+		    cert_has_weak_rsa_key($cert)) {
+			$isweak = true;
+		}
+
+		/* If the certificate needs replaced, and renewal is possible,
+		 * attempt to renew.
+		 */
+		if ($isweak &&
+		    $canrenew) {
+			$torenew_config = [
+				'path' => "cert/{$cert_item_config['idx']}",
+				'item' => &$cert
+			];
+			$renewed = cert_renew($torenew_config, true, true, false);
+		}
+
+		/* If renewal failed or the certificate was not renewable,
+		 * then make a new certificate.
+		 */
+		if ($isweak &&
+		    !$renewed) {
+			$cert = cert_create_selfsigned('', '', false);
+
+			if (is_array($cert) && !empty($cert)) {
+				$renewed = true;
+			}
+		}
+
+		if ($renewed) {
+			config_set_path('system/webgui/ssl-certref', $cert['refid']);
+			file_notice("GUI", gettext("The GUI HTTPS certificate has been renewed or replaced with a secure default."));
+		}
+	}
+}
+
+/*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next
  * config version was already taken by newer pfSense.

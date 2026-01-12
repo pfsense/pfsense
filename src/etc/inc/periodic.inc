@@ -28,6 +28,7 @@ require_once("notices.inc");
 function periodic_daily() {
 
 	require_once("certs.inc");
+	cert_renew_auto();
 	cert_notify_expiring();
 
 	/* Allow packages to define and execute daily tasks */

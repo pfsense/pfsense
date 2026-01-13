@@ -7166,7 +7166,9 @@ function upgrade_240_to_241() {
 	if ($override_nat64_prefix) {
 		config_set_path('system/allow_nat64_prefix_override', true);
 	}
+}
 
+function upgrade_241_to_242() {
 	/**
 	 * "match quick" rules did not work correctly. Remove "quick" from
 	 * existing "match" rules to retain the expected behavior. See:
@@ -7198,9 +7200,7 @@ function upgrade_240_to_241() {
 		}
 		file_notice('config.xml', gettext('Firewall "match quick" rules were changed, see system logs for details.'));
 	}
-}
 
-function upgrade_241_to_242() {
 	/**
 	 * It was previously possible to enable specific remote logging
 	 * categories in addition to having "Everything" selected. The options

@@ -2202,8 +2202,6 @@ function session_auth() {
 		return false;
 	}
 
-	$log_priority = config_path_enabled('system/webgui', 'quietlogin') ? LOG_NOTICE : LOG_EMERG;
-
 	/* Validate incoming login request */
 	$attributes = array('nas_identifier' => 'webConfigurator-' . gethostname());
 	if (isset($_POST['login']) && !empty($_POST['usernamefld'])) {

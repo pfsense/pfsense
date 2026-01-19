@@ -83,8 +83,8 @@ if ($view == 'summary') { $view_title = gettext("Summary View"); }
 $rulenum = getGETPOSTsettingvalue('getrulenum', null);
 
 if ($rulenum) {
-	list($rulenum, $tracker, $type) = explode(',', $rulenum);
-	$rule = find_rule_by_number($rulenum, $tracker, $type);
+	list($rulenum, $subrulenum, $tracker, $type) = explode(',', $rulenum);
+	$rule = find_rule_by_number($rulenum, $subrulenum, $tracker, $type);
 	$rule = $rule['match'] ?? 'unavailable';
 	echo gettext("The rule that triggered this action is") . ":\n\n{$rule}";
 	exit;
@@ -199,7 +199,7 @@ if (!$rawfilter) {
 		if ($filterdescriptions === "1") {
 ?>
 					<td style="white-space:normal;">
-			<?=find_rule_by_number_buffer($filterent['rulenum'], $filterent['tracker'], $filterent['act'])?>
+			<?=find_rule_by_number_buffer($filterent['rulenum'], $filterent['subrulenum'], $filterent['tracker'], $filterent['act'])?>
 					</td>
 <?php
 		}
@@ -267,7 +267,7 @@ if (!$rawfilter) {
 ?>
 				<tr>
 					<td colspan="2" />
-					<td colspan="4"><?=find_rule_by_number_buffer($filterent['rulenum'], $filterent['tracker'], $filterent['act'])?></td>
+					<td colspan="4"><?=find_rule_by_number_buffer($filterent['rulenum'], $filterent['subrulenum'], $filterent['tracker'], $filterent['act'])?></td>
 				</tr>
 <?php
 		}

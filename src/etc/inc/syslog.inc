@@ -1272,7 +1272,7 @@ function parse_firewall_log_line($line) {
 		}
 	} else {
 		if (g_get('debug')) {
-			logger(LOG_DEBUG, localize_text("There was a error parsing rule number: %s.", $flent['rulenum']));
+			logger(LOG_DEBUG, localize_text("There was a error parsing rule number: %s.", (is_numericint($flent['subrulenum']) ? "{$flent['rulenum']},{$flent['subrulenum']}" : $flent['rulenum'])));
 		}
 		return "";
 	}
@@ -1303,11 +1303,12 @@ function get_port_with_service($port, $proto) {
 	return ':' . $portstr;
 }
 
-function find_rule_by_number($rulenum, $trackernum, $type="block") {
+function find_rule_by_number($rulenr, $subrulenr, $trackernum, $type="block") {
 	$result = [
 		'match' => null,
 		'associated' => null
 	];
+	$rulenum = (is_numericint($subrulenr) ? $subrulenr : $rulenr);
 
 	/* Passing arbitrary input to grep could be a Very Bad Thing(tm) */
 	if (!is_numeric($rulenum) || !is_numeric($trackernum)) {
@@ -1330,7 +1331,7 @@ function find_rule_by_number($rulenum, $trackernum, $type="block") {
 		$lookup_pattern = "/^@{$rulenum}\b.*/m";
 		$pf_output = $pf_miniupnpd_output;
 	} else {
-		static $pf_rules_output = exec_command('/sbin/pfctl -vvPsr');
+		static $pf_rules_output = exec_command('/sbin/pfctl -vvPsr | grep ^@');
 		if ($trackernum == '0') {
 			// Find rules with a matching rule number and type.
 			$lookup_pattern = "/^@{$rulenum} {$type} .*/m";
@@ -1435,8 +1436,10 @@ function buffer_rules_clear() {
 	unset($GLOBALS['buffer_rules_rdr']);
 }
 
-function find_rule_by_number_buffer($rulenum, $trackernum, $type) {
+function find_rule_by_number_buffer($rulenr, $subrulenr, $trackernum, $type) {
 	global $g, $buffer_rules_rdr, $buffer_rules_normal;
+
+	$rulenum = (is_numericint($subrulenr) ? $subrulenr : $rulenr);
 
 	if ($trackernum == "0") {
 		$lookup_key = "@{$rulenum}";
@@ -1517,7 +1520,7 @@ function handle_ajax() {
 					$icon_act = "fa-solid fa-check text-success";
 				}
 
-				$btn = '<i class="' . $icon_act . ' icon-pointer" title="' . $log_row['act'] . '/' . $log_row['reason'] .'/'. $log_row['tracker'] . '" onclick="javascript:getURL(\'status_logs_filter.php?getrulenum=' . $log_row['rulenum'] . ',' . $log_row['tracker'] . ',' . $log_row['act'] . '\', outputrule);"></i>';
+				$btn = '<i class="' . $icon_act . ' icon-pointer" title="' . $log_row['act'] . '/' . $log_row['reason'] .'/'. $log_row['tracker'] . '" onclick="javascript:getURL(\'status_logs_filter.php?getrulenum=' . $log_row['rulenum'] . ',' . $log_row['subrulenum'] . ',' . $log_row['tracker'] . ',' . $log_row['act'] . '\', outputrule);"></i>';
 				$new_rules .= "{$btn}||{$log_row['time']}||{$log_row['interface']}||{$log_row['srcip']}||{$log_row['srcport']}||{$log_row['dstip']}||{$log_row['dstport']}||{$log_row['proto']}||{$log_row['version']}||" . time() . "||\n";
 			}
 		}
@@ -1546,7 +1549,7 @@ function print_syslog_rule_action($rule) {
 			break;
 	}
 
-	$rules = find_rule_by_number($rule['rulenum'], $rule['tracker'], $action);
+	$rules = find_rule_by_number($rule['rulenum'], $rule['subrulenum'], $rule['tracker'], $action);
 	if (isset($rules['match']) && ($action == 'block') && preg_match('/^@\d+ block return /', $rules['match'])) {
 		// "reject" action is not supported - filterlog writes it as 'block' - check the rule itself.
 		$action = 'reject';

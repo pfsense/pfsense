@@ -4,6 +4,7 @@
 	<name>miniupnpd</name>
 	<version>20100712</version>
 	<include_file>/usr/local/pkg/miniupnpd.inc</include_file>
+	<addedit_string>UPnP IGD &amp; PCP: saved settings</addedit_string>
 	<menu>
 		<name>UPnP IGD &amp; PCP</name>
 		<tooltiptext>Set service settings such as interfaces to listen on.</tooltiptext>

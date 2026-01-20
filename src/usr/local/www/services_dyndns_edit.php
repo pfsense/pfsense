@@ -663,13 +663,16 @@ events.push(function() {
 				hideInput('zoneid', false);
 				hideInput('ttl', false);
 				break;
+			case "dnsmadeeasy":
 			case "domeneshop":
 			case "domeneshop-v6":
 			case "dreamhost":
 			case "dreamhost-v6":
 			case "dyfi":
+			case "infomaniak":
 			case "nicru":
 			case "nicru-v6":
+			case "strato":
 				hideInput('mx', true);
 				hideCheckbox('wildcard', true);
 				break;
@@ -708,11 +711,6 @@ events.push(function() {
 				hideCheckbox('wildcard', true);
 				hideInput('zoneid', false);
 				hideInput('ttl', false);
-				break;
-			case "strato":
-			case "dnsmadeeasy":
-				hideInput('mx', true);
-				hideCheckbox('wildcard', true);
 				break;
 			default:
 		}

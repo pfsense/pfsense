@@ -258,7 +258,8 @@ function staticrouteAlias($id) {
 	$referenced_by = array();
 	$alias_name = config_get_path('aliases/alias/' . $id . '/name');
 
-	if (config_get_path('aliases/alias/' . $id . '/type') != 'host') {
+	if ((config_get_path('aliases/alias/' . $id . '/type') != 'host') &&
+	    (config_get_path('aliases/alias/' . $id . '/type') != 'network')) {
 		return false;
 	}
 
@@ -708,6 +709,10 @@ function saveAlias($post, $id) {
 		}
 
 		write_config(gettext("Edited a firewall alias."));
+
+		// Refresh alias cache. Needed for any further processing that
+		// uses $aliastable such as system_staticroutes_configure().
+		alias_make_table();
 
 		/* restart related OpenVPN instances, see https://redmine.pfsense.org/issues/2668
 		 * reload related static routes, see https://redmine.pfsense.org/issues/7547 */

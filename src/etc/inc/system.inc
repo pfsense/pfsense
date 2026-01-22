@@ -145,8 +145,8 @@ function system_get_sysctls() {
 
 	//sort alphabetically
 	$tunablenames = array_column($disp_sysctl, 'tunable');
-    array_multisort($tunablenames, SORT_ASC, SORT_NATURAL, $disp_sysctl);
-    unset($tunablenames);
+	array_multisort($tunablenames, SORT_ASC, SORT_NATURAL, $disp_sysctl);
+	unset($tunablenames);
 
 	return $disp_sysctl;
 }

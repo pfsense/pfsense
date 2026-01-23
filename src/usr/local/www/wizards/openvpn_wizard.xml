@@ -233,6 +233,14 @@
 			<bindstofield>ovpnserver->step2->ldap_extended_query</bindstofield>
 		</field>
 		<field>
+			<name>ldap_groups_from_basedn</name>
+			<displayname>Groups from Base DN</displayname>
+			<type>checkbox</type>
+			<typehint>Search for user groups within the Base DN.</typehint>
+			<description>If not checked, groups are looked up in the same container/path user is found.</description>
+			<bindstofield>ovpnserver->step2->ldap_groups_from_basedn</bindstofield>
+		</field>
+		<field>
 			<name>userdn</name>
 			<displayname>LDAP Bind User DN</displayname>
 			<type>input</type>

@@ -114,10 +114,10 @@ function cData_attr($parser, $data) {
 		}
 
 		if (is_string($ptr)) {
-			$ptr .= html_entity_decode($data);
+			$ptr .= html_entity_decode($data, ENT_QUOTES | ENT_SUBSTITUTE | ENT_XML1);
 		} else {
 			if (trim($data, " ") != "") {
-				$ptr = html_entity_decode($data);
+				$ptr = html_entity_decode($data, ENT_QUOTES | ENT_SUBSTITUTE | ENT_XML1);
 				$havedata++;
 			}
 		}

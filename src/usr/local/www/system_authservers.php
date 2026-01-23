@@ -153,6 +153,7 @@ if ($act == "edit") {
 			$pconfig['ldap_authcn'] = $a_server[$id]['ldap_authcn'];
 			$pconfig['ldap_extended_enabled'] = $a_server[$id]['ldap_extended_enabled'];
 			$pconfig['ldap_extended_query'] = $a_server[$id]['ldap_extended_query'];
+			$pconfig['ldap_groups_from_basedn'] = $a_server[$id]['ldap_groups_from_basedn'];
 			$pconfig['ldap_binddn'] = $a_server[$id]['ldap_binddn'];
 			$pconfig['ldap_bindpw'] = $a_server[$id]['ldap_bindpw'];
 			$pconfig['ldap_attr_user'] = $a_server[$id]['ldap_attr_user'];
@@ -326,6 +327,7 @@ if ($_POST['save']) {
 			$server['ldap_authcn'] = $pconfig['ldapauthcontainers'];
 			$server['ldap_extended_enabled'] = $pconfig['ldap_extended_enabled'];
 			$server['ldap_extended_query'] = $pconfig['ldap_extended_query'];
+			$server['ldap_groups_from_basedn'] = $pconfig['ldap_groups_from_basedn'];
 			$server['ldap_attr_user'] = $pconfig['ldap_attr_user'];
 			$server['ldap_attr_group'] = $pconfig['ldap_attr_group'];
 			$server['ldap_attr_member'] = $pconfig['ldap_attr_member'];
@@ -679,6 +681,13 @@ $group->add(new Form_Input(
 ))->setHelp('Example (MSAD): memberOf=CN=Groupname,OU=MyGroups,DC=example,DC=com<br>Example (2307): |(&(objectClass=posixGroup)(cn=Groupname)(memberUid=*))(&(objectClass=posixGroup)(cn=anotherGroup)(memberUid=*))');
 
 $section->add($group);
+
+$section->addInput(new Form_Checkbox(
+	'ldap_groups_from_basedn',
+	'Groups from Base DN',
+	'Search for user groups within the Base DN.',
+	$pconfig['ldap_groups_from_basedn']
+))->setHelp('If not checked, groups are looked up in the same container/path user is found.');
 
 $section->addInput(new Form_Checkbox(
 	'ldap_anon',

@@ -478,6 +478,7 @@ function step12_submitphpaction() {
 			$auth['ldap_authcn'] = $pconfig['step2']['authscope'];
 			$auth['ldap_extended_enabled'] = isset($pconfig['step2']['ldap_extended_enabled']);
 			$auth['ldap_extended_query'] = $pconfig['step2']['ldap_extended_query'];
+			$auth['ldap_groups_from_basedn'] = $pconfig['step2']['ldap_groups_from_basedn'];
 			$auth['ldap_binddn'] = $pconfig['step2']['userdn'];
 			$auth['ldap_bindpw'] = $pconfig['step2']['passdn'];
 			$auth['ldap_attr_user'] = $pconfig['step2']['nameattr'];

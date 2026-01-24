@@ -7678,7 +7678,7 @@ function is_stf_interface($inf) {
 	}
 }
 
-function restart_interface_services($interface, $ipv6type = "") {
+function restart_interface_services($interface, $ipv6type = "", $force = false) {
 
 	services_unbound_configure(true, $interface);
 
@@ -7686,9 +7686,7 @@ function restart_interface_services($interface, $ipv6type = "") {
 	services_snmpd_configure($interface);
 	vpn_l2tp_configure($interface);
 
-	if (substr(config_get_path("interfaces/{$interface}/if",""), 0, 4) != "ovpn") {
-		openvpn_resync_all($interface);
-	}
+	openvpn_resync_all($interface, '', $force);
 	ipsec_force_reload($interface);
 
 	/* restart RADVD to announce correct IPv6 prefix

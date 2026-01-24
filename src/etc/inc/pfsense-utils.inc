@@ -4812,6 +4812,88 @@ function fix_config_artifacts() {
 	}
 
 	/**
+	 * MSS clamping is not performed by OpenVPN when DCO is enabled.
+	 * Tunnels configured with a non-default MTU must configure both the
+	 * MTU and MSS values in the interface assignment.
+	 */
+
+	// Remove MTU and MSS custom options for tunnels with a proper interface
+	// assginment. These are set automatically when the service restarts.
+	$openvpn_dco_interfaces = [];
+	foreach (['openvpn/openvpn-server', 'openvpn/openvpn-client'] as $config_path) {
+		// Find OpenVPN tunnels with DCO and tun-mtu.
+		foreach (array_get_path($conf, $config_path, []) as $idx => $tunnel_config) {
+			if (!isset($tunnel_config['dco']) || ($tunnel_config['dco'] != 'enabled') ||
+			    isset($tunnel_config['disable']) | empty($tunnel_config['custom_options'])) {
+				continue;
+			}
+
+			$changed = false;
+			$custom_options = array_filter(explode(';', $tunnel_config['custom_options']));
+			foreach ($custom_options as $idx => &$option) {
+				$option = trim($option);
+				if (!str_starts_with($option, 'tun-mtu ') && !str_starts_with($option, 'mssfix')) {
+					continue;
+				}
+				unset($option[$idx]);
+				$changed = true;
+			}
+			unset($option);
+
+			if ($changed) {
+				if ($config_path == 'openvpn/openvpn-server') {
+					$interface_name = "ovpns{$tunnel_config['vpnid']}";
+					$description = localize_text(
+						'%s (Server ID:%s)',
+						$tunnel_config['description'], strval($tunnel_config['vpnid'])
+					);
+				} else {
+					$interface_name = "ovpnc{$tunnel_config['vpnid']}";
+					$description = localize_text(
+						'%s (Client ID:%s)',
+						$tunnel_config['description'], strval($tunnel_config['vpnid'])
+					);
+				}
+				$openvpn_dco_interfaces[$interface_name] = [
+					'path' => "{$config_path}/{$idx}/custom_options",
+					'value' => implode(';', $custom_options),
+					'description' => $description
+				];
+			}
+		}
+	}
+	foreach (array_get_path($conf, 'interfaces') as $interface_label => $interface_config) {
+		if (!isset($openvpn_dco_interfaces[array_get_path($interface_config, 'if', '')])) {
+			continue;
+		}
+		if (!array_path_enabled($interface_config, $interface_label) || empty($interface_config['mss'])) {
+			continue;
+		}
+
+		// Update custom options.
+		array_set_path($conf,
+			$openvpn_dco_interfaces[$interface_config['if']]['path'],
+			$openvpn_dco_interfaces[$interface_config['if']]['value']
+		);
+		$conf_write = true;
+
+		// Don't trigger a notice for tunnels already configured correctly.
+		unset($openvpn_dco_interfaces[$interface_config['if']]);
+	}
+
+	// File the notice.
+	if (!empty($openvpn_dco_interfaces)) {
+		file_notice('OpenVPN',
+			localize_text(
+				'The following OpenVPN tunnels have a non-default MTU or MSS configuration ' .
+				'with DCO enabled. This requires setting both MTU and MSS values in the ' .
+				'assigned interface configuration (Interfaces > Interface Assignments): %s',
+				implode(', ', $openvpn_dco_interfaces)
+			)
+		);
+	}
+
+	/**
 	 * ===================================================================
 	 * Write the fixed configuration.
 	 * ===================================================================

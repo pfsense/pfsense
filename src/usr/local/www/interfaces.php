@@ -468,7 +468,7 @@ if ($_POST['apply']) {
 				} else {
 					interface_bring_down($ifapply, true, $ifcfgo);
 				}
-				restart_interface_services($ifapply, array_get_path($ifcfgo, 'ifcfg/ipaddrv6'));
+				restart_interface_services($ifapply, array_get_path($ifcfgo, 'ifcfg/ipaddrv6'), true);
 				$mtu = config_get_path("interfaces/{$ifapply}/mtu");
 				if (interface_has_clones($realif) &&
 				    ($mtu && ($mtu != $ifmtu)) ||
@@ -2091,13 +2091,20 @@ if (!is_pseudo_interface($intrealname, true)) {
 	$section->addInput($macaddress);
 }
 
+$mtu_help_text = 'If this field is blank, the adapter\'s default MTU will be used. ' .
+	'This is typically 1500 bytes but can vary in some circumstances.';
+if (str_starts_with($realifname, 'ovpn')) {
+	$mtu_help_text = sprintf(
+		$mtu_help_text . '%s%sNote%s: MSS must also be set when using OpenVPN DCO and a non-default MTU.',
+		'<br/>', '<b>', '</b>'
+	);
+}
 $mtuInput = $section->addInput(new Form_Input(
 	'mtu',
 	'MTU',
 	'number',
 	array_get_path($pconfig, 'mtu'),
-))->setHelp('If this field is blank, the adapter\'s default MTU will be used. ' .
-			'This is typically 1500 bytes but can vary in some circumstances.');
+))->setHelp($mtu_help_text);
 /* Do not allow MTU changes for interfaces in a bridge */
 if ($bridged) {
 	$mtuInput->setDisabled();

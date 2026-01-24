@@ -994,6 +994,20 @@ function openvpn_reconfigure($mode, $settings) {
 		default:
 	}
 
+	// OpenVPN needs to know about the configured MTU otherwise it uses its own default.
+	foreach (config_get_path('interfaces', []) as $interface_config) {
+		if (!isset($interface_config['if']) || ($interface_config['if'] != $devname)) {
+			continue;
+		}
+		if (!isset($interface_config['enable'])) {
+			break;
+		}
+		if (is_numericint($interface_config['mtu'])) {
+			$conf .= "tun-mtu {$interface_config['mtu']}\n";
+		}
+		break;
+	}
+
 	// server specific settings
 	if ($mode == 'server') {
 
@@ -1877,7 +1891,7 @@ function openvpn_resync($mode, $settings) {
 }
 
 // Resync and restart all VPNs
-function openvpn_resync_all($interface = "", $protocol = "") {
+function openvpn_resync_all($interface = "", $protocol = "", $force = false) {
 	global $g;
 
 	if ($interface <> "") {
@@ -1909,7 +1923,7 @@ function openvpn_resync_all($interface = "", $protocol = "") {
 					$settings['interface']));
 			}
 
-			if ($ip_change || $gw_group_change) {
+			if ($force || $ip_change || $gw_group_change) {
 				if (!$dirs) {
 					openvpn_create_dirs();
 				}

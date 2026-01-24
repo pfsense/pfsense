@@ -71,7 +71,7 @@ if (isset($id) && config_get_path('aliases/alias/' . $id)) {
 	$pconfig['detail'] = config_get_path('aliases/alias/' . $id . '/detail');
 	$pconfig['address'] = config_get_path('aliases/alias/' . $id . '/address');
 	$pconfig['type'] = config_get_path('aliases/alias/' . $id . '/type');
-	$pconfig['descr'] = html_entity_decode(config_get_path('aliases/alias/' . $id . '/descr'));
+	$pconfig['descr'] = config_get_path('aliases/alias/' . $id . '/descr');
 
 	if (preg_match("/urltable/i", config_get_path('aliases/alias/' . $id . '/type'))) {
 		$pconfig['address'] = config_get_path('aliases/alias/' . $id . '/url');

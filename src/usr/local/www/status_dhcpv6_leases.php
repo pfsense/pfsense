@@ -197,7 +197,7 @@ foreach (config_get_path('interfaces', []) as $ifname => $ifarr) {
 		$slease['duid'] = $static['duid'];
 		$slease['start'] = "";
 		$slease['end'] = "";
-		$slease['hostname'] = htmlentities($static['hostname']);
+		$slease['hostname'] = $static['hostname'];
 		$slease['act'] = $static_string;
 		if (in_array($slease['ip'], array_keys($ndpdata))) {
 			$slease['online'] = $online_string;

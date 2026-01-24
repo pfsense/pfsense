@@ -69,7 +69,7 @@ if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 
 if (isset($id) && $a_schedules[$id]) {
 	$pconfig['name'] = $a_schedules[$id]['name'];
-	$pconfig['descr'] = html_entity_decode($a_schedules[$id]['descr']);
+	$pconfig['descr'] = $a_schedules[$id]['descr'];
 	$pconfig['timerange'] = $a_schedules[$id]['timerange'];
 	$pconfig['schedlabel'] = $a_schedules[$id]['schedlabel'];
 	$getSchedule = true;

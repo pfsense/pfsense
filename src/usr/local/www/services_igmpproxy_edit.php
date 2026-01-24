@@ -49,7 +49,7 @@ if ($this_igmpproxy_config) {
 	$pconfig['threshold'] = $this_igmpproxy_config['threshold'];
 	$pconfig['type'] = $this_igmpproxy_config['type'];
 	$pconfig['address'] = $this_igmpproxy_config['address'];
-	$pconfig['descr'] = html_entity_decode($this_igmpproxy_config['descr']);
+	$pconfig['descr'] = $this_igmpproxy_config['descr'];
 }
 
 if ($_POST['save']) {

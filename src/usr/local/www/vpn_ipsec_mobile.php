@@ -301,7 +301,7 @@ if ($_POST['save']) {
 		config_set_path('ipsec/client/radiusaccounting', ($pconfig['radiusaccounting'] == 'yes') ? "enabled" : "disabled");
 
 		if (!empty($pconfig['user_source'])) {
-			config_set_path('ipsec/client/user_source', htmlentities(implode(",", $pconfig['user_source']),ENT_COMPAT,'UTF-8'));
+			config_set_path('ipsec/client/user_source', implode(",", $pconfig['user_source']));
 		} else {
 			config_del_path('ipsec/client/user_source');
 		}

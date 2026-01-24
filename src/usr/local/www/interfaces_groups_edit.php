@@ -61,7 +61,7 @@ if ($this_ifgroup_config) {
 
 	$pconfig['ifname'] = $this_ifgroup_config['ifname'];
 	$pconfig['members'] = $this_ifgroup_config['members'];
-	$pconfig['descr'] = html_entity_decode($this_ifgroup_config['descr']);
+	$pconfig['descr'] = $this_ifgroup_config['descr'];
 }
 
 $ifname_allowed_chars_text = gettext("Only letters (A-Z), digits (0-9) and '_' are allowed.");

@@ -83,7 +83,7 @@ if ($this_qinq_config) {
 	$pconfig['tag_type'] = $this_vlan_config['tag_type'];
 	$pconfig['tag'] = $this_qinq_config['tag'];
 	$pconfig['members'] = $this_qinq_config['members'];
-	$pconfig['descr'] = html_entity_decode($this_qinq_config['descr']);
+	$pconfig['descr'] = $this_qinq_config['descr'];
 	$pconfig['autogroup'] = isset($this_qinq_config['autogroup']);
 	$pconfig['autoadjustmtu'] = isset($this_qinq_config['autoadjustmtu']);
 }

@@ -84,24 +84,14 @@ if ($_REQUEST['getupdatestatus']) {
 		exit;
 	}
 
-	/* If $_REQUEST['getupdatestatus'] == 2, force update */
-	$system_version = get_system_pkg_version(false,
-		($_REQUEST['getupdatestatus'] == 1),
-		false, /* get upgrades from other repos */
-		true /* see https://redmine.pfsense.org/issues/15055 */
-	);
+	$system_version = get_system_pkg_version(($_REQUEST['getupdatestatus'] == 1), false);
 
 	unset($error);
-	if ($system_version === false || !is_array($system_version)) {
+	if (isset($system_version['pkg_version_error'])) {
 		$error = gettext("<i>Unable to check for updates</i>");
 	}
-	if (isset($system_version['pkg_busy']) ||
-	    isset($system_version['pkg_version_error'])) {
+	if (isset($system_version['pkg_busy'])) {
 		$error = gettext("<i>Update system is busy, try again later</i>");
-	}
-	if (!isset($system_version['version']) ||
-	    !isset($system_version['installed_version'])) {
-		$error = gettext("<i>Error in version information</i>");
 	}
 	if (isset($error)) {
 		print($error);

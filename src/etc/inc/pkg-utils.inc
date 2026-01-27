@@ -1284,18 +1284,30 @@ function stop_packages() {
 
 /* Identify which meta package is installed */
 function get_meta_pkg_name() {
-	global $g;
-
-	/* XXX: Use pkg annotation */
-	if (is_pkg_installed(g_get('product_name'))) {
-		return g_get('product_name');
-	}
+	$product_name = g_get('product_name');
 	foreach (g_get('alternativemetaports') as $suffix) {
-		if (is_pkg_installed(g_get('product_name') . '-' . $suffix)) {
-			return g_get('product_name') . '-' . $suffix;
+		if (is_pkg_installed("{$product_name}-{$suffix}")) {
+			return "{$product_name}-{$suffix}";
 		}
 	}
+	if (is_pkg_installed($product_name)) {
+		return $product_name;
+	}
 	return false;
+}
+
+function get_core_pkg_names() {
+	$product_name = g_get('product_name');
+
+	// This query mirrors pfSense-upgrade logic.
+	$rc = pkg_exec("query -e \"%n ~ {$product_name}-kernel-* || %n ~ {$product_name}-base*\" %n", $stdout, $stderr);
+	if ($rc != 0) {
+		return false;
+	}
+	// Clean up the output.
+	$stdout = implode(' ', array_filter(explode(PHP_EOL, $stdout)));
+
+	return $stdout;
 }
 
 /* Identify which package has the product dependencies */
@@ -1328,19 +1340,18 @@ function get_base_pkg_name() {
 }
 
 /* Verify if system needs updating from selected repo or upgrading from available repos (meta package or base) */
-function get_system_pkg_version($baseonly = false, $use_cache = true, $updates_only = true, $update_cache = false) {
-	global $g;
+function get_system_pkg_version($use_cache = true, $updates_only = true) {
+	$result = ['pkg_use_cache' => $use_cache];
 
 	if (!get_dnsavailable()) {
 		$result['pkg_version_error'] = "DNS servers not available";
-		return ($result);
+		return $result;
 	}
 
+	// Check the cache; pfSense-upgrade returns 2 when there's a new version.
 	$cache_file = g_get('version_cache_file');
 	$rc_file = $cache_file . '.rc';
-
-	$result['pkg_use_cache'] = $use_cache;
-
+	$product_name = g_get('product_name');
 	$rc = "";
 	if ($use_cache && file_exists($rc_file) &&
 	    (time()-filemtime($rc_file) < g_get('version_cache_refresh'))) {
@@ -1348,71 +1359,74 @@ function get_system_pkg_version($baseonly = false, $use_cache = true, $updates_o
 	}
 
 	if ($rc == "2") {
+		// A new version was previously detected, no need to check again.
 		$output = @file_get_contents($cache_file);
 	} else if ($rc != "0") {
-		$output = exec("/usr/local/sbin/{$g['product_name']}-upgrade ".
-		    ($updates_only?'-c':'-C') , $_gc, $rc);
-		if ($rc == 75) {
-			$result['pkg_busy'] = "1";
-		}
-		if ($rc != 0 && $rc != 2) {
-			$result['pkg_version_error'] = "{$g['product_name']}-upgrade error: $rc";
-			return ($result);
+		// Check for new versions and update the cache.
+		// "-c" (updates) checks active repo
+		// "-C" (upgrades) checks alternative repos.
+		$output = exec(
+			"/usr/local/sbin/{$product_name}-upgrade ".
+		    ($updates_only?'-c':'-C'),
+			$_gc, $rc
+		);
+		if (($rc != 0) && ($rc != 2)) {
+			if ($rc == 75) {
+				$result['pkg_busy'] = "1";
+			}
+			$result['pkg_version_error'] = "{$product_name}-upgrade error: {$rc}";
+			return $result;
 		}
 
-		/* Update cache if it succeeded */
-		if ($update_cache && ($rc == 0 || $rc == 2)) {
-			@file_put_contents($cache_file, $output);
-			@file_put_contents($rc_file, $rc);
-		}
+		// Update the cache on success.
+		@file_put_contents($cache_file, $output);
+		@file_put_contents($rc_file, $rc);
 	}
-
-	/* pfSense-upgrade returns 2 when there is a new version */
-	if ($rc == "2") {
+	if (strval($rc) == "2") {
+		// Get the new version.
 		$new_version = explode(' ', $output)[0];
 	}
 
-	$base_pkg = get_base_pkg_name();
-	$dep_pkg = get_dep_pkg_name();
-
-	if (!$base_pkg || !$dep_pkg) {
-		$result['pkg_version_error'] = "no base pkg: $base_pkg:$dep_pkg";
-		return false;
+	$installed_packages = '';
+	if (isset($new_version)) {
+		// Check additional packages to mirror pfSense-upgrade's logic.
+		$installed_packages = implode(' ', array_filter([
+			get_core_pkg_names() ?: '',
+			get_meta_pkg_name() ?: ''
+		]));
+	} else {
+		// No need to check additional packages, just get the meta package version.
+		$installed_packages = get_meta_pkg_name();
+	}
+	if (empty($installed_packages)) {
+		$result['pkg_version_error'] = "no meta or core packages found";
+		return $result;
 	}
 
-	$info = get_pkg_info($base_pkg, true, true);
-
-	$pkg_info = array();
-	foreach ($info as $item) {
-		if ($item['name'] == $base_pkg) {
-			$pkg_info = $item;
-			break;
+	// Get the greatest version between packages.
+	$installed_version = null;
+	foreach (get_pkg_info($installed_packages, true, true) as $item) {
+		if (!isset($item['installed_version'])) {
+			continue;
+		} elseif (!isset($installed_version)) {
+			$installed_version = $item['installed_version'];
 		}
+		$installed_version = match (pkg_version_compare($installed_version, $item['installed_version'])) {
+			'<' => $item['installed_version'],
+			default => $installed_version,
+		};
+	}
+	if (!isset($installed_version)) {
+		$result['pkg_version_error'] = "could not determine system version";
+		return $result;
 	}
 
-	if (empty($pkg_info) || (!$baseonly && ($pkg_info['version'] ==
-	    $pkg_info['installed_version']))) {
-		$info = get_pkg_info($dep_pkg, true, true);
-
-		foreach ($info as $item) {
-			if ($item['name'] == $dep_pkg) {
-				$pkg_info = $item;
-				break;
-			}
-		}
-	}
-
-	if (empty($pkg_info)) {
-		return false;
-	}
-
-	$result = array(
-	    'version'           => $new_version ?: $pkg_info['version'],
-	    'installed_version' => $pkg_info['installed_version']
-	);
-
-	$result['pkg_version_compare'] = pkg_version_compare(
-	    $result['installed_version'], $result['version']);
+	// Only return version info on success.
+	$result = [
+		'version' => $new_version ?: $installed_version,
+		'installed_version' => $installed_version,
+	];
+	$result['pkg_version_compare'] = pkg_version_compare($result['installed_version'], $result['version']);
 
 	return $result;
 }

@@ -95,7 +95,7 @@ if ($_REQUEST['ajax']) {
 	// If this is an ajax call to get the installed and newest versions, call that function,
 	// JSON encode the result, print it and exit
 	if ($_REQUEST['getversion']) {
-		$firmwareversions = get_system_pkg_version(true, false);
+		$firmwareversions = get_system_pkg_version(false);
 		print(json_encode($firmwareversions));
 		exit;
 	}
@@ -838,6 +838,8 @@ function get_firmware_versions() {
 				$('#confirmlabel').text( "<?=$confirmlabel?>");
 				$('#pkgconfirm').show();
 			}
+		} else if (json && json.pkg_version_error) {
+			$('#uptodate').html('<span class="text-danger">' + 'Unable to check for updates' + "</span>" + "<br/>" + json.pkg_version_error);
 		} else {
 			$('#uptodate').html('<span class="text-danger">' + 'Unable to check for updates' + "</span>");
 		}

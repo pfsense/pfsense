@@ -763,8 +763,8 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 
 	if (!empty($pconfig['cert'])) {
 		$section->addInput(new Form_StaticText(
-			"Subject",
-			htmlspecialchars(cert_get_subject($pconfig['cert'], false))
+			"Identity",
+			htmlspecialchars(cert_get_identity($pconfig['cert'], false, true))
 		))->addClass('toggle-edit collapse');
 	}
 
@@ -1412,7 +1412,7 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 				<tr>
 					<th><?=gettext("Name")?></th>
 					<th><?=gettext("Issuer")?></th>
-					<th><?=gettext("Distinguished Name")?></th>
+					<th><?=gettext("Identity")?></th>
 					<th><?=gettext("In Use")?></th>
 
 					<th class="col-sm-2"><?=gettext("Actions")?></th>
@@ -1441,9 +1441,10 @@ foreach (config_get_path('cert', []) as $cert):
 			$caname = '<i>'. gettext("external").'</i>';
 		}
 
-		$subj = htmlspecialchars(cert_escape_x509_chars($subj, true));
+		$identity = cert_get_identity($cert['crt'], true, true);
 	} else {
 		$subj = "";
+		$identity = "";
 		$issuer = "";
 		$purpose = "";
 		$startdate = "";
@@ -1452,7 +1453,7 @@ foreach (config_get_path('cert', []) as $cert):
 	}
 
 	if ($cert['csr']) {
-		$subj = htmlspecialchars(cert_escape_x509_chars(csr_get_subject($cert['csr']), true));
+		$identity = cert_get_identity($cert['csr'], true, true);
 		$caname = "<em>" . gettext("external - signature pending") . "</em>";
 	}
 
@@ -1479,7 +1480,7 @@ foreach (config_get_path('cert', []) as $cert):
 					</td>
 					<td><?=$caname?></td>
 					<td>
-						<?=$subj?>
+						<?=htmlspecialchars($identity)?>
 						<?= cert_print_infoblock($cert); ?>
 						<?php cert_print_dates($cert);?>
 					</td>

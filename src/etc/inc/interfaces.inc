@@ -4552,13 +4552,6 @@ function interface_track6_configure($interface, $wancfg, $linkupevent = false) {
 		return;
 	}
 
-	/* always configure a link-local of fe80::1:1 on the track6 interfaces */
-	$realif = get_real_interface($interface);
-	$linklocal = find_interface_ipv6_ll($realif, true);
-	if (!empty($linklocal) && $linklocal != "fe80::1:1%{$realif}") {
-		mwexec("/sbin/ifconfig {$realif} inet6 fe80::1:1%{$realif} alias");
-	}
-
 	$trackcfg = config_get_path("interfaces/{$wancfg['track6-interface']}");
 	if (!isset($trackcfg['enable'])) {
 		logger(LOG_ERR, localize_text('Interface %1$s tracking non-existent interface %2$s', $interface, $wancfg['track6-interface']));

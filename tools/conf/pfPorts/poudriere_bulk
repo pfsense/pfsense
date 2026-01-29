@@ -31,8 +31,10 @@ net-mgmt/%%PRODUCT_NAME%%-pkg-softflowd
 net-mgmt/%%PRODUCT_NAME%%-pkg-Telegraf
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-agent6
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-agent7
+net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-agent74
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-proxy6
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-proxy7
+net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-proxy74
 net-mgmt/dhcp_probe
 net-mgmt/iprange
 net/%%PRODUCT_NAME%%-pkg-arping

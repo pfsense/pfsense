@@ -1119,6 +1119,12 @@ function pfSense_clear_globals() {
 	unset($config);
 }
 
+function log_invalid_config_path(string $path) {
+	g_set('debug', true, true);
+	logger(LOG_WARNING, localize_text('config warning: invalid path%s', " \"{$path}\""), LOG_PREFIX_CONFIG);
+	g_unset('debug');
+}
+
 /**
  * Initialize the leaf node as an array. Any scalars in the path, including the
  * leaf node, are overridden with an array.
@@ -1128,12 +1134,7 @@ function pfSense_clear_globals() {
 function config_init_path(string $path) {
 	// safety check in case $path was called with null keys
 	if (str_ends_with(trim($path), '/') || str_contains($path, '//')) {
-		$error_text = gettext('config warning: invalid path') . " \"{$path}\"";
-		$backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1);
-		if (isset($backtrace[0]) && isset($backtrace[0]['file'])) {
-			$error_text .= ' ' . gettext('at') . " {$backtrace[0]['file']}:{$backtrace[0]['line']}";
-		}
-		logger(LOG_ERR, $error_text, LOG_PREFIX_CONFIG);
+		log_invalid_config_path($path);
 		return false;
 	}
 	global $config;
@@ -1152,12 +1153,7 @@ function config_init_path(string $path) {
 function config_get_path(string $path, $default = null) {
 	// safety check in case $path was called with null keys
 	if (str_ends_with(trim($path), '/') || str_contains($path, '//')) {
-		$error_text = gettext('config warning: invalid path') . " \"{$path}\"";
-		$backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1);
-		if (isset($backtrace[0]) && isset($backtrace[0]['file'])) {
-			$error_text .= ' ' . gettext('at') . " {$backtrace[0]['file']}:{$backtrace[0]['line']}";
-		}
-		logger(LOG_ERR, $error_text, LOG_PREFIX_CONFIG);
+		log_invalid_config_path($path);
 		return $default;
 	}
 	global $config;
@@ -1178,12 +1174,7 @@ function config_get_path(string $path, $default = null) {
 function config_set_path(string $path, $value, $default = null) {
 	// safety check in case $path was called with null keys
 	if (str_contains($path, '//')) {
-		$error_text = gettext('config warning: invalid path') . " \"{$path}\"";
-		$backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1);
-		if (isset($backtrace[0]) && isset($backtrace[0]['file'])) {
-			$error_text .= ' ' . gettext('at') . " {$backtrace[0]['file']}:{$backtrace[0]['line']}";
-		}
-		logger(LOG_ERR, $error_text, LOG_PREFIX_CONFIG);
+		log_invalid_config_path($path);
 		return $default;
 	}
 	global $config;
@@ -1221,12 +1212,7 @@ function config_set_path(string $path, $value, $default = null) {
 function config_path_enabled(string $path, $enable_key = "enable", $default = false) {
 	// safety check in case $path was called with null keys
 	if (str_ends_with(trim($path), '/') || str_contains($path, '//')) {
-		$error_text = gettext('config warning: invalid path') . " \"{$path}\"";
-		$backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1);
-		if (isset($backtrace[0]) && isset($backtrace[0]['file'])) {
-			$error_text .= ' ' . gettext('at') . " {$backtrace[0]['file']}:{$backtrace[0]['line']}";
-		}
-		logger(LOG_ERR, $error_text, LOG_PREFIX_CONFIG);
+		log_invalid_config_path($path);
 		return $default;
 	}
 	global $config;
@@ -1244,12 +1230,7 @@ function config_path_enabled(string $path, $enable_key = "enable", $default = fa
 function config_del_path(string $path, $default = null) {
 	// safety check in case $path was called with null keys
 	if (str_ends_with(trim($path), '/') || str_contains($path, '//')) {
-		$error_text = gettext('config warning: invalid path') . " \"{$path}\"";
-		$backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1);
-		if (isset($backtrace[0]) && isset($backtrace[0]['file'])) {
-			$error_text .= ' ' . gettext('at') . " {$backtrace[0]['file']}:{$backtrace[0]['line']}";
-		}
-		logger(LOG_ERR, $error_text, LOG_PREFIX_CONFIG);
+		log_invalid_config_path($path);
 		return $default;
 	}
 	global $config;

@@ -89,9 +89,11 @@ if ($_REQUEST['getupdatestatus']) {
 	unset($error);
 	if (isset($system_version['pkg_version_error'])) {
 		$error = gettext("<i>Unable to check for updates</i>");
+		logger(LOG_WARNING, localize_text('Could not check for system updates: %s', $system_version['pkg_version_error']));
 	}
 	if (isset($system_version['pkg_busy'])) {
 		$error = gettext("<i>Update system is busy, try again later</i>");
+		logger(LOG_NOTICE, localize_text('Update system is busy: %s', $system_version['pkg_version_error']));
 	}
 	if (isset($error)) {
 		print($error);

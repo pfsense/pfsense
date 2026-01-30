@@ -7063,9 +7063,14 @@ function is_altq_capable($int) {
 			"sis", "sk", "ste", "stge", "ti", "tun", "txp", "udav",
 			"ural", "vge", "vlan", "vmx", "vr", "vte", "vtnet", "xl");
 
+	// These drivers have optional ALTQ support, which can be disabled
+	$optionally_capable = array("hn", "vtnet");
+
 	$int_family = remove_ifindex($int);
 
-	if (in_array($int_family, $capable)) {
+	if (in_array($int_family, $capable) && !in_array($int_family, $optionally_capable)) {
+		return true;
+	} elseif (in_array($int_family, $optionally_capable) && config_path_enabled('system','hn_altq_enable')) {
 		return true;
 	} elseif (stristr($int, "l2tp")) { /* VLANs are named $parent_$vlan now */
 		return true;

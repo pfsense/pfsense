@@ -143,10 +143,13 @@ function system_get_sysctls() {
 	}
 	unset($disp_cache);
 
-	//sort alphabetically
-	$tunablenames = array_column($disp_sysctl, 'tunable');
-	array_multisort($tunablenames, SORT_ASC, SORT_NATURAL, $disp_sysctl);
-	unset($tunablenames);
+	/* Sort alphabetically by tunable name */
+	array_multisort(
+		array_column($disp_sysctl, 'tunable'),
+		SORT_ASC,
+		SORT_NATURAL,
+		$disp_sysctl
+	);
 
 	return $disp_sysctl;
 }

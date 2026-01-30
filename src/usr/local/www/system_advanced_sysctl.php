@@ -70,6 +70,7 @@ if ($_POST['save'] == gettext("Save")) {
 $act = $_REQUEST['act'];
 
 if ($act == "edit") {
+	sortTunables();
 	if (is_numericint($id) && (config_get_path("sysctl/item/{$id}") !== null)) {
 		$pconfig['tunable'] = config_get_path('sysctl/item/' . $id . '/tunable');
 		$pconfig['value'] = config_get_path('sysctl/item/' . $id . '/value');

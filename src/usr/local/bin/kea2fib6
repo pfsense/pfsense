@@ -4,10 +4,12 @@
  * kea2fib6
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2025-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  */
+
+declare(strict_types=1);
 
 namespace kea2fib6;
 
@@ -83,8 +85,8 @@ final class KeaConfig extends Singleton
             );
         }
 
-        $this->config = \json_decode($configJson, true);
-        if (\json_last_error() !== JSON_ERROR_NONE) {
+        $tmpConfig = \json_decode($configJson, true);
+        if (!is_array($tmpConfig) || (\json_last_error() !== JSON_ERROR_NONE)) {
             throw new KeaConfigException(
                 \sprintf(
                     \gettext('Unable to parse Kea configuration file: %s'),
@@ -92,6 +94,7 @@ final class KeaConfig extends Singleton
                 )
             );
         }
+        $this->config = $tmpConfig;
 
         if (isset($this->config['Dhcp4'])) {
             $this->addressFamily = AddressFamily::INET;
@@ -542,7 +545,7 @@ $app->getDefinition()->addOptions([
     ),
 ]);
 
-$app->add(new FlushCommand());
-$app->add(new SyncCommand());
+$app->addCommand(new FlushCommand());
+$app->addCommand(new SyncCommand());
 
 $app->run();

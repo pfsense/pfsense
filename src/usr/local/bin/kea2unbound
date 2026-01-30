@@ -4,7 +4,7 @@
  * kea2unbound
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2024-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2024-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  */
@@ -794,7 +794,7 @@ $app->getDefinition()->addOptions([
     )
 ]);
 
-$app->add(new FlushCommand());
-$app->add(new SyncCommand());
+$app->addCommand(new FlushCommand());
+$app->addCommand(new SyncCommand());
 
 $app->run();

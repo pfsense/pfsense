@@ -4766,7 +4766,7 @@ function fix_config_artifacts() {
 
 	// Collect the broken rules.
 	$rule_trackers = [];
-	$rules = array_get_path($conf, 'filter/rule');
+	$rules = array_get_path($conf, 'filter/rule', []);
 	$rules_to_fix = [];
 	foreach ($rules as &$rule) {
 		// The tracker is required.
@@ -4813,6 +4813,7 @@ function fix_config_artifacts() {
 		array_set_path($conf, 'filter/rule', $rules);
 		$conf_write = true;
 	}
+	unset($rules, $rules_to_fix);
 
 	/**
 	 * MSS clamping is not performed by OpenVPN when DCO is enabled.
@@ -4865,7 +4866,7 @@ function fix_config_artifacts() {
 			}
 		}
 	}
-	foreach (array_get_path($conf, 'interfaces') as $interface_label => $interface_config) {
+	foreach (array_get_path($conf, 'interfaces', []) as $interface_label => $interface_config) {
 		if (!isset($openvpn_dco_interfaces[array_get_path($interface_config, 'if', '')])) {
 			continue;
 		}
@@ -4895,6 +4896,29 @@ function fix_config_artifacts() {
 			)
 		);
 	}
+
+	/**
+	 * The interface for Port Forwarding rules may be missing on some old
+	 * configurations. These rules default to the "wan" interface; specify
+	 * it explicitly since it's required.
+	 */
+	$changed = false;
+	$rules = array_get_path($conf, 'nat/rule', []);
+	foreach ($rules as &$rule) {
+		if (isset($rule['interface'])) {
+			continue;
+		}
+		$rule['interface'] = 'wan';
+		$changed = true;
+	}
+	unset($rule);
+
+	// Make the changes.
+	if ($changed) {
+		array_set_path($conf, 'nat/rule', $rules);
+		$conf_write = true;
+	}
+	unset($rules);
 
 	/**
 	 * ===================================================================

@@ -430,11 +430,11 @@ EOD;
 	}
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
 		$syslogconf .= "local5.{$log_level_nginx}							{$g['varlog_path']}/nginx.log\n";
-		$syslogconf .= "*.{$log_level_system};kern.debug;lpr.info;mail.crit;news.err;local0.none;local3.none;local4.none;local7.none;security.*;auth.info;authpriv.info;daemon.none	{$g['varlog_path']}/system.log\n";
+		$syslogconf .= "*.{$log_level_system};kern.debug;lpr.info;mail.crit;news.err;local0.none;local3.none;local4.none;local7.none;security.*;auth.info;authpriv.info;daemon.info	{$g['varlog_path']}/system.log\n";
 		$syslogconf .= "*.emerg								*\n";
 	}
 	if (!$remote_log_all && config_path_enabled('syslog', 'system')) {
-		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.emerg;*.{$log_level_system};kern.debug;lpr.info;mail.crit;news.err;local0.none;local3.none;local4.none;local7.none;security.*;auth.info;authpriv.info;daemon.none");
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.emerg;*.{$log_level_system};kern.debug;lpr.info;mail.crit;news.err;local0.none;local3.none;local4.none;local7.none;security.*;auth.info;authpriv.info;daemon.info");
 	}
 
 	$log_level_all = $log_level_default ?: '*';

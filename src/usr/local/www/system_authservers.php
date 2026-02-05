@@ -165,6 +165,7 @@ if ($act == "edit") {
 			$pconfig['ldap_allow_unauthenticated'] = isset($a_server[$id]['ldap_allow_unauthenticated']);
 			$pconfig['ldap_rfc2307'] = isset($a_server[$id]['ldap_rfc2307']);
 			$pconfig['ldap_rfc2307_userdn'] = isset($a_server[$id]['ldap_rfc2307_userdn']);
+			$pconfig['ldap_rfc2307_basedn_groups'] = isset($a_server[$id]['ldap_rfc2307_basedn_groups']);
 
 			if (!$pconfig['ldap_binddn'] || !$pconfig['ldap_bindpw']) {
 				$pconfig['ldap_anon'] = true;
@@ -357,6 +358,11 @@ if ($_POST['save']) {
 				$server['ldap_rfc2307_userdn'] = true;
 			} else {
 				unset($server['ldap_rfc2307_userdn']);
+			}
+			if ($pconfig['ldap_rfc2307_basedn_groups'] == "yes") {
+				$server['ldap_rfc2307_basedn_groups'] = true;
+			} else {
+				unset($server['ldap_rfc2307_basedn_groups']);
 			}
 
 
@@ -750,15 +756,22 @@ $section->addInput(new Form_Checkbox(
 	'object rather than using groups listed on user object. Leave unchecked '.
 	'for Active Directory style group membership (RFC 2307bis).');
 
-$group = new Form_Group('RFC 2307 User DN');
-$group->addClass('ldap_rfc2307_userdn');
+$group = new Form_Group('');
+$group->addClass('ldap_rfc2307');
 
 $group->add(new Form_Checkbox(
 	'ldap_rfc2307_userdn',
+	null,
 	'RFC 2307 user DN',
-	'RFC 2307 Use DN for username search.',
 	$pconfig['ldap_rfc2307_userdn']
 ))->setHelp('Use DN for username search, i.e. "(member=CN=Username,CN=Users,DC=example,DC=com)".');
+
+$group->add(new Form_Checkbox(
+	'ldap_rfc2307_basedn_groups',
+	null,
+	'RFC 2307 group Base DN',
+	$pconfig['ldap_rfc2307_basedn_groups']
+))->setHelp('Use Base DN for group search.');
 
 $section->add($group);
 
@@ -1035,7 +1048,7 @@ events.push(function() {
 
 	hideClass('ldapanon', $('#ldap_anon').prop('checked'));
 	hideClass('extended', !$('#ldap_extended_enabled').prop('checked'));
-	hideClass('ldap_rfc2307_userdn', !$('#ldap_rfc2307').prop('checked'));
+	hideClass('ldap_rfc2307', !$('#ldap_rfc2307').prop('checked'));
 	set_required_port_fields();
 
 	if ($('#ldap_port').val() == "")
@@ -1079,7 +1092,7 @@ events.push(function() {
 	});
 
 	$('#ldap_rfc2307').click(function () {
-		hideClass('ldap_rfc2307_userdn', !this.checked);
+		hideClass('ldap_rfc2307', !this.checked);
 	});
 
 	$('#radius_srvcs').on('change', function() {

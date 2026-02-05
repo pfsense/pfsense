@@ -1806,6 +1806,7 @@ function radius_backed($username, $password, $authcfg, &$attributes = array()) {
 	// Create our instance
 	$classname = 'Auth_RADIUS_' . $radius_protocol;
 	$rauth = new $classname($username, $password);
+	$rauth->useMsgAuth = !isset($authcfg['disable_radius_msg_auth']);
 
 	/* Add new servers to our instance */
 	foreach ($radiusservers as $radsrv) {

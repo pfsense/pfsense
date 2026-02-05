@@ -7300,6 +7300,24 @@ function upgrade_242_to_243() {
 	}
 }
 
+function upgrade_243_to_244() {
+	/**
+	 * The RADIUS Message Authenticator attribute is now supported and
+	 * enabled by default. Avoid breaking old configurations.
+	 */
+	$changed = false;
+	$authentication_servers = config_get_path("system/authserver", []);
+	foreach ($authentication_servers as &$server) {
+		if ($server["type"] == 'radius') {
+			$server['disable_radius_msg_auth'] = true;
+			$changed = true;
+		}
+	}
+	if ($changed) {
+		config_set_path("system/authserver", $authentication_servers);
+	}
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

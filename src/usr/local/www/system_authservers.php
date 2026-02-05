@@ -180,6 +180,7 @@ if ($act == "edit") {
 			$pconfig['radius_acct_port'] = $a_server[$id]['radius_acct_port'];
 			$pconfig['radius_secret'] = $a_server[$id]['radius_secret'];
 			$pconfig['radius_timeout'] = $a_server[$id]['radius_timeout'];
+			$pconfig['disable_radius_msg_auth'] = isset($a_server[$id]['disable_radius_msg_auth']);
 
 			if ($pconfig['radius_auth_port'] &&
 				$pconfig['radius_acct_port']) {
@@ -389,6 +390,12 @@ if ($_POST['save']) {
 
 			if ($pconfig['radius_secret']) {
 				$server['radius_secret'] = $pconfig['radius_secret'];
+			}
+
+			if ($pconfig['disable_radius_msg_auth'] == "yes") {
+				$server['disable_radius_msg_auth'] = true;
+			} else {
+				unset($server['disable_radius_msg_auth']);
 			}
 
 			if ($pconfig['radius_timeout']) {
@@ -842,6 +849,13 @@ $section->addInput(new Form_Input(
 	'password',
 	$pconfig['radius_secret']
 ));
+
+$section->addInput(new Form_Checkbox(
+	'disable_radius_msg_auth',
+	'Disable Message Authenticator',
+	'Omit the RADIUS Message Authenticator attribute',
+	$pconfig['disable_radius_msg_auth']
+))->setHelp('Removes the RADIUS Message Authenticator attribute from Access Requests. This option may be necessary for legacy systems (default: unchecked).');
 
 $section->addInput(new Form_Select(
 	'radius_srvcs',

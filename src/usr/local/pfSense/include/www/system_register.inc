@@ -3,7 +3,7 @@
  * system_register.inc
  *
  * part of pfSense plus (https://www.netgate.com)
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  */
 

@@ -3721,36 +3721,18 @@ function timeout($timer = 9) {
  * NAME
  *   msort - sort array
  * INPUTS
- *   $array to be sorted, field to sort by, direction of sort
+ *   $array to be sorted, field to sort by, direction of sort, sort flags
  * RESULT
  *   returns newly sorted array
  ******/
-function msort($array, $id = "id", $sort_ascending = true) {
-	$temp_array = array();
-	if (!is_array($array)) {
-		return $temp_array;
-	}
-	while (count($array)>0) {
-		$lowest_id = 0;
-		$index = 0;
-		foreach ($array as $item) {
-			if (isset($item[$id])) {
-				if ($array[$lowest_id][$id]) {
-					if (strtolower($item[$id]) < strtolower($array[$lowest_id][$id])) {
-						$lowest_id = $index;
-					}
-				}
-			}
-			$index++;
-		}
-		$temp_array[] = $array[$lowest_id];
-		$array = array_merge(array_slice($array, 0, $lowest_id), array_slice($array, $lowest_id + 1));
-	}
-	if ($sort_ascending) {
-		return $temp_array;
-	} else {
-		return array_reverse($temp_array);
-	}
+function msort($array, $id = "id", $sort_order = SORT_ASC, $sort_flags = SORT_NATURAL | SORT_FLAG_CASE) {
+	array_multisort(
+		array_column($array, $id),
+		$sort_order,
+		$sort_flags,
+		$array
+	);
+	return $array;
 }
 
 /****f* util/is_URL

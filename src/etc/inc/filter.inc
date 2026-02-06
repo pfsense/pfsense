@@ -4947,18 +4947,18 @@ function filter_rules_generate() {
 			'135  neighbrsol      Neighbor solicitation' . PHP_EOL .
 			'136  neighbradv      Neighbor advertisement'
 		);
-		$rules_temp[] = "pass {$log_preferences['default_pass']} quick inet6 proto ipv6-icmp from any to any icmp6-type {1,2,135,136} ridentifier {$increment_tracker()} keep state";
+		$rules_temp[] = "pass {$log_preferences['default_pass']} quick inet6 proto ipv6-icmp from any to any icmp6-type {1,2,135,136} keep state ridentifier {$increment_tracker()} {$make_rule_label_string("ICMPv6 operation")}";
 		$PFConfig->set_config(PFCONFIG_FILTER_ICMPV6_REQUIRED['id'],
 			$rules_temp,
 		);
 
 		$rules_temp = [];
-		$rules_temp[] = "pass out {$log_preferences['default_pass']} quick inet6 proto ipv6-icmp from fe80::/10 to fe80::/10 icmp6-type {129,133,134,135,136} ridentifier {$increment_tracker()} keep state";
-		$rules_temp[] = "pass out {$log_preferences['default_pass']} quick inet6 proto ipv6-icmp from fe80::/10 to ff02::/16 icmp6-type {129,133,134,135,136} ridentifier {$increment_tracker()} keep state";
-		$rules_temp[] = "pass in {$log_preferences['default_pass']} quick inet6 proto ipv6-icmp from fe80::/10 to fe80::/10 icmp6-type {128,133,134,135,136} ridentifier {$increment_tracker()} keep state";
-		$rules_temp[] = "pass in {$log_preferences['default_pass']} quick inet6 proto ipv6-icmp from ff02::/16 to fe80::/10 icmp6-type {128,133,134,135,136} ridentifier {$increment_tracker()} keep state";
-		$rules_temp[] = "pass in {$log_preferences['default_pass']} quick inet6 proto ipv6-icmp from fe80::/10 to ff02::/16 icmp6-type {128,133,134,135,136} ridentifier {$increment_tracker()} keep state";
-		$rules_temp[] = "pass in {$log_preferences['default_pass']} quick inet6 proto ipv6-icmp from :: to ff02::/16 icmp6-type {128,133,134,135,136} ridentifier {$increment_tracker()} keep state";
+		$rules_temp[] = "pass out {$log_preferences['default_pass']} quick inet6 proto ipv6-icmp from fe80::/10 to fe80::/10 icmp6-type {129,133,134,135,136} keep state ridentifier {$increment_tracker()} {$make_rule_label_string("ICMPv6 operation")}";
+		$rules_temp[] = "pass out {$log_preferences['default_pass']} quick inet6 proto ipv6-icmp from fe80::/10 to ff02::/16 icmp6-type {129,133,134,135,136} keep state ridentifier {$increment_tracker()} {$make_rule_label_string("ICMPv6 operation")}";
+		$rules_temp[] = "pass in {$log_preferences['default_pass']} quick inet6 proto ipv6-icmp from fe80::/10 to fe80::/10 icmp6-type {128,133,134,135,136} keep state ridentifier {$increment_tracker()} {$make_rule_label_string("ICMPv6 operation")}";
+		$rules_temp[] = "pass in {$log_preferences['default_pass']} quick inet6 proto ipv6-icmp from ff02::/16 to fe80::/10 icmp6-type {128,133,134,135,136} keep state ridentifier {$increment_tracker()} {$make_rule_label_string("ICMPv6 operation")}";
+		$rules_temp[] = "pass in {$log_preferences['default_pass']} quick inet6 proto ipv6-icmp from fe80::/10 to ff02::/16 icmp6-type {128,133,134,135,136} keep state ridentifier {$increment_tracker()} {$make_rule_label_string("ICMPv6 operation")}";
+		$rules_temp[] = "pass in {$log_preferences['default_pass']} quick inet6 proto ipv6-icmp from :: to ff02::/16 icmp6-type {128,133,134,135,136} keep state ridentifier {$increment_tracker()} {$make_rule_label_string("ICMPv6 operation")}";
 		$PFConfig->set_config(PFCONFIG_FILTER_ICMPV6_ESSENTIAL['id'],
 			$rules_temp,
 			'Allow only bare essential icmpv6 packets (NS, NA, and RA, echoreq, echorep)'
@@ -5658,13 +5658,14 @@ function filter_rules_generate() {
 }
 
 function filter_rules_spoofcheck_generate($ifname, $ifcfg) {
-	global $tracker, $log_preferences;
+	global $log_preferences;
 	if (config_path_enabled('system','developerspew')) {
 		$mt = microtime();
 		echo "filter_rules_spoofcheck_generate() being called for {$ifname} at {$mt}\n";
 	}
-	$ipfrules = "antispoof {$log_preferences['default_block']} for \${$ifcfg['descr']} ridentifier {$tracker}\n";
-	$tracker++;
+	$increment_tracker = 'filter_rule_tracker';
+	$make_rule_label_string = 'make_rule_label_string';
+	$ipfrules = "antispoof {$log_preferences['default_block']} for \${$ifcfg['descr']} ridentifier {$increment_tracker()} {$make_rule_label_string("antispoof protection")}\n";
 
 	return $ipfrules;
 }
@@ -5892,6 +5893,7 @@ function filter_process_carp_rules() {
 	}
 
 	$increment_tracker = 'filter_rule_tracker';
+	$make_rule_label_string = 'make_rule_label_string';
 	$lines = "";
 	/* Only add CARP rules if there are CARP VIPs
 	 * https://redmine.pfsense.org/issues/13908 */
@@ -5900,8 +5902,8 @@ function filter_process_carp_rules() {
 		    is_array($vip) &&
 		    ($vip['mode'] == 'carp')) {
 			$lines .= "\n# CARP rules\n";
-			$lines .= "block in {$log_preferences['default_block']} quick proto carp from (self) to any ridentifier {$increment_tracker()}\n";
-			$lines .= "pass {$log_preferences['default_pass']} quick proto carp ridentifier {$increment_tracker()} no state\n";
+			$lines .= "block in {$log_preferences['default_block']} quick proto carp from (self) to any ridentifier {$increment_tracker()} {$make_rule_label_string("CARP operation")}\n";
+			$lines .= "pass {$log_preferences['default_pass']} quick proto carp no state ridentifier {$increment_tracker()} {$make_rule_label_string("CARP operation")}\n";
 			break;
 		}
 	}

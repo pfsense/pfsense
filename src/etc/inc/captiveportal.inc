@@ -2739,7 +2739,8 @@ function filter_captiveportal_rdr() {
 function filter_captiveportal_pass() {
 	global $g, $FilterIflist;
 
-	$captiveportal_increment = 'filter_captiveportal_tracker';
+	$increment_tracker = 'filter_captiveportal_tracker';
+	$make_rule_label_string = 'make_rule_label_string';
 
 	$rules = '';
 	foreach (config_get_path('captiveportal', []) as $cpzone => $cpcfg) {
@@ -2761,12 +2762,12 @@ function filter_captiveportal_pass() {
 				$cpip = get_interface_ip($cpifgrp);
 				if (is_ipaddrv4($cpip)) {
 					foreach ($rdr_ports as list($portalias, $cprdrport)) {						/* pass non-authenticated clients to captive portal */
-						$rules .= "pass in quick on {$realif} proto tcp from any to <{$cpips}> port {$portalias} ridentifier {$captiveportal_increment()} keep state(sloppy)\n";
+						$rules .= "pass in quick on {$realif} proto tcp from any to <{$cpips}> port {$portalias} keep state(sloppy) ridentifier {$increment_tracker()} {$make_rule_label_string("Captive Portal operation")}\n";
 						/* without this rule captive portal doesn't show login page after manual disconnect */
-						$rules .= "pass out quick on {$realif} proto tcp from {$cpip} port {$portalias} to any flags any ridentifier {$captiveportal_increment()} keep state(sloppy)\n";
+						$rules .= "pass out quick on {$realif} proto tcp from {$cpip} port {$portalias} to any flags any keep state(sloppy) ridentifier {$increment_tracker()} {$make_rule_label_string("Captive Portal operation")}\n";
 					}
 					/* block non-authenticated clients access to internet */
-					$rules .= "block in quick on {$realif} from any to ! <{$cpips}> ! tagged {$authtag} ridentifier {$captiveportal_increment()}\n";
+					$rules .= "block in quick on {$realif} from any to ! <{$cpips}> ! tagged {$authtag} ridentifier {$increment_tracker()} {$make_rule_label_string("Captive Portal operation")}\n";
 				}
 			}
 		}

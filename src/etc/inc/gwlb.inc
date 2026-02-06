@@ -1427,11 +1427,13 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 				$fallback = $gwname;
 			}
 		}
-		if (empty($set_dfltgwname) && !empty($fallback)) {
-			logger(LOG_NOTICE, localize_text("No default gateway available for %s, use the first one configured. '%s'", $ipprotocol, $fallback));
-			$set_dfltgwname = $fallback;
-		} else {
-			logger(LOG_ERR, localize_text("No default gateway found"));
+		if (empty($set_dfltgwname)) {
+			if (!empty($fallback)) {
+				logger(LOG_NOTICE, localize_text("No default gateway available for %s, use the first one configured. '%s'", $ipprotocol, $fallback));
+				$set_dfltgwname = $fallback;
+			} else {
+				logger(LOG_ERR, localize_text("No default gateway found"));
+			}
 		}
 	} else {
 		// a gwgroup is selected

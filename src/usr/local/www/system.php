@@ -543,13 +543,11 @@ $section->addInput(new Form_Input(
 	['placeholder' => 'home.arpa, example.com, home, office, private, etc.']
 ))->setHelp('Domain name for the firewall.%1$s%1$s' .
 	'Do not end the domain name with \'.local\' as the final part (Top Level Domain, TLD). ' .
-	'The \'local\' TLD is %2$swidely used%3$s by mDNS (e.g. Avahi, Bonjour, Rendezvous, Airprint, Airplay) ' .
+	'The \'local\' TLD is widely used by mDNS (e.g. Avahi, Bonjour, Rendezvous, Airprint, Airplay) ' .
 	'and some Windows systems and networked devices. ' .
 	'These will not network correctly if the router uses \'local\' as its TLD. ' .
 	'Alternatives such as \'home.arpa\', \'local.lan\', or \'mylocal\' are safe.',
-	'<br/>',
-	'<a target="_blank" href="https://www.unbound.net/pipermail/unbound-users/2011-March/001735.html">',
-	'</a>'
+	'<br/>'
 );
 
 $form->add($section);

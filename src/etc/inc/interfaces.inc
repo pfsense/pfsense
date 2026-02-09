@@ -2973,7 +2973,7 @@ EOD;
 
 function interfaces_sync_setup() {
 
-	if (config_get_path('system/developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "interfaces_sync_setup() being called $mt\n";
 	}
@@ -3046,7 +3046,7 @@ function interfaces_sync_setup() {
 
 function interface_proxyarp_configure($interface = "") {
 	global $g;
-	if (config_get_path('system/developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "interface_proxyarp_configure() being called $mt\n";
 	}
@@ -3158,7 +3158,7 @@ function interface_vip_cleanup($interface, $inet = "all", $type = VIP_ALL) {
 }
 
 function interfaces_vips_configure($interface = "") {
-	if (config_get_path('system/developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "interfaces_vips_configure() being called $mt\n";
 	}
@@ -3240,7 +3240,7 @@ function interface_ipalias_configure(&$vip) {
 }
 
 function interface_carp_configure(&$vip, $maintenancemode_only = false, $ipalias_reload = false) {
-	if (config_get_path('system/developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "interface_carp_configure() being called $mt\n";
 	}
@@ -7364,7 +7364,7 @@ function get_vip_descr($ipaddress) {
 }
 
 function interfaces_staticarp_configure($if) {
-	if (config_get_path('system/developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "interfaces_staticarp_configure($if) being called $mt\n";
 	}

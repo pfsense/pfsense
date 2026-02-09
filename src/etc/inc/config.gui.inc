@@ -45,10 +45,14 @@ require_once("crypt.inc");
 /* if /debugging exists, lets set debug
    so we can output more information */
 if (file_exists("/debugging")) {
-	g_set('debug', true);
+	g_set('debug', true, true);
 }
 
 config_read_file(true, true);
+
+if (config_path_enabled('system', 'developerspew')) {
+	g_set('debug', true, true);
+}
 
 /* make alias table (for faster lookups) */
 alias_make_table();

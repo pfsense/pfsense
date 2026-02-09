@@ -197,7 +197,7 @@ function clear_all_log_files($restart = false) {
 
 function system_syslogd_start($sighup = false) {
 	global $g;
-	if (config_path_enabled('system','developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "system_syslogd_start() being called $mt\n";
 	}

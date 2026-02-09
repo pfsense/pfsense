@@ -246,7 +246,7 @@ function set_sysctl_config($oid, $value) {
 function system_resolvconf_generate($dynupdate = false) {
 	global $g;
 
-	if (config_path_enabled('system', 'developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "system_resolvconf_generate() being called $mt\n";
 	}
@@ -652,7 +652,7 @@ function system_hosts_entries($dnscfg) {
 
 function system_hosts_generate() {
 	global $g;
-	if (config_path_enabled('system', 'developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "system_hosts_generate() being called $mt\n";
 	}
@@ -1635,7 +1635,7 @@ function system_get_dhcpleases($dnsavailable=null) {
 }
 
 function system_hostname_configure() {
-	if (config_path_enabled('system', 'developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "system_hostname_configure() being called $mt\n";
 	}
@@ -1653,7 +1653,7 @@ function system_hostname_configure() {
 }
 
 function system_routing_configure($interface = "") {
-	if (config_path_enabled('system', 'developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "system_routing_configure() being called $mt\n";
 	}
@@ -1890,7 +1890,7 @@ function delete_static_route($id, $delete = false) {
 }
 
 function system_routing_enable() {
-	if (config_path_enabled('system', 'developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "system_routing_enable() being called $mt\n";
 	}
@@ -1984,7 +1984,7 @@ function system_webgui_start() {
 function get_dns_nameservers($add_v6_brackets = false, $hostns=true) {
 	$dns_nameservers = array();
 
-	if (config_path_enabled('system', 'developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "get_dns_nameservers() being called $mt\n";
 	}
@@ -2039,7 +2039,7 @@ function system_generate_nginx_config($filename,
 
 	global $g;
 
-	if (config_path_enabled('system', 'developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "system_generate_nginx_config() being called $mt\n";
 	}
@@ -2362,7 +2362,7 @@ function system_get_timezone_list() {
 
 function system_timezone_configure() {
 	global $g;
-	if (config_path_enabled('system', 'developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "system_timezone_configure() being called $mt\n";
 	}
@@ -3080,7 +3080,7 @@ function system_reboot_cleanup() {
 }
 
 function system_do_shell_commands($early = 0) {
-	if (config_path_enabled('system', 'developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "system_do_shell_commands() being called $mt\n";
 	}
@@ -3107,7 +3107,7 @@ function system_do_shell_commands($early = 0) {
 
 function system_dmesg_save() {
 	global $g;
-	if (config_path_enabled('system', 'developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "system_dmesg_save() being called $mt\n";
 	}
@@ -3144,7 +3144,7 @@ function system_dmesg_save() {
 }
 
 function system_set_harddisk_standby() {
-	if (config_path_enabled('system', 'developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "system_set_harddisk_standby() being called $mt\n";
 	}
@@ -3178,7 +3178,7 @@ function system_set_harddisk_standby() {
 }
 
 function system_setup_sysctl() {
-	if (config_path_enabled('system', 'developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "system_setup_sysctl() being called $mt\n";
 	}
@@ -3191,7 +3191,7 @@ function system_setup_sysctl() {
 }
 
 function system_disable_arp_wrong_if() {
-	if (config_path_enabled('system', 'developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "system_disable_arp_wrong_if() being called $mt\n";
 	}
@@ -3202,7 +3202,7 @@ function system_disable_arp_wrong_if() {
 }
 
 function system_enable_arp_wrong_if() {
-	if (config_path_enabled('system', 'developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "system_enable_arp_wrong_if() being called $mt\n";
 	}

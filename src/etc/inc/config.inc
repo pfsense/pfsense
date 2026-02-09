@@ -54,7 +54,7 @@ ini_set("memory_limit", get_php_default_memory($ARCH) . 'M');
 /* if /debugging exists, lets set debug
    so we can output more information */
 if (file_exists("/debugging")) {
-	g_set('debug', true);
+	g_set('debug', true, true);
 }
 
 if (is_platform_booting() && is_cli_sapi() &&
@@ -128,6 +128,10 @@ if (is_platform_booting() && is_cli_sapi() &&
 }
 
 config_read_file(true, true);
+
+if (config_path_enabled('system', 'developerspew')) {
+	g_set('debug', true, true);
+}
 
 /* set timezone */
 $timezone = config_get_path('system/timezone');

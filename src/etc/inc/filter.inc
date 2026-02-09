@@ -769,7 +769,7 @@ function is_bogonsv6_used($force = false) {
 }
 
 function filter_pflog_start(bool $restart = false) {
-	if (config_path_enabled('system','developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "filter_pflog_start() being called $mt\n";
 	}
@@ -796,7 +796,7 @@ function filter_pflog_start(bool $restart = false) {
 
 /* reload filter async */
 function filter_configure() {
-	if (config_path_enabled('system','developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "filter_configure() being called $mt\n";
 	}
@@ -907,7 +907,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	/* invalidate interface cache */
 	get_interface_arr(true);
 
-	if (config_path_enabled('system','developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "filter_configure_sync() being called $mt\n";
 	}
@@ -1150,7 +1150,7 @@ function reload_filter() {
 	@file_put_contents("{$g['tmp_path']}/rules.limits", $PFConfig->get_config_from_categories([PFCONFIG_OPTION_LIMITS['id']]));
 	mwexec("/sbin/pfctl -Of {$g['tmp_path']}/rules.limits");
 
-	if (config_path_enabled('system','developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "pfctl being called at $mt\n";
 	}
@@ -1158,13 +1158,13 @@ function reload_filter() {
 	for ($pfctl_try = 1; $pfctl_try <= 10; $pfctl_try++) {
 		unset($rules_loading, $rules_error);
 		$rules_result = exec("/sbin/pfctl -o basic -f {$g['tmp_path']}/rules.debug 2>&1", $rules_error, $rules_loading);
-		if (config_path_enabled('system','developerspew')) {
+		if (g_get('debug')) {
 			$mt = microtime();
 			echo "pfctl done at $mt\n";
 		}
 		if ($rules_loading == 0) {
 			// continue when successful
-			if (config_path_enabled('system','developerspew') && $pfctl_try > 1) {
+			if (g_get('debug') && $pfctl_try > 1) {
 				file_notice("filter_load", sprintf(gettext('pf was busy but succeeded after %s tries'), $pfctl_try), "Filter Reload", "");
 			}
 			break;
@@ -1618,7 +1618,7 @@ function filter_generate_aliases() {
 	global $PFConfig;
 	global $g, $FilterIflist, $after_filter_configure_run, $vpns_list;
 
-	if (config_path_enabled('system','developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "filter_generate_aliases() being called $mt\n";
 	}
@@ -2229,7 +2229,7 @@ function filter_get_direct_networks_list($returnsubnetsonly = true) {
 
 function filter_generate_optcfg_array() {
 	global $FilterIflist;
-	if (config_path_enabled('system','developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "filter_generate_optcfg_array() being called $mt\n";
 	}
@@ -4270,7 +4270,7 @@ function filter_generate_user_rule($rule) {
 	global $g, $FilterIflist, $GatewaysList, $vpns_list, $use_floating_states_for_ipsec;
 	global $dummynet_name_list, $vlanprio_values, $time_based_rules;
 
-	if (config_path_enabled('system','developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "filter_generate_user_rule() being called $mt\n";
 	}
@@ -4868,7 +4868,7 @@ function filter_rules_generate() {
 	$rfc1918_increment = 'filter_rfc1918_tracker';
 
 	update_filter_reload_status(gettext("Creating default rules"));
-	if (config_path_enabled('system','developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "filter_rules_generate() being called $mt\n";
 	}
@@ -5659,7 +5659,7 @@ function filter_rules_generate() {
 
 function filter_rules_spoofcheck_generate($ifname, $ifcfg) {
 	global $log_preferences;
-	if (config_path_enabled('system','developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "filter_rules_spoofcheck_generate() being called for {$ifname} at {$mt}\n";
 	}
@@ -5871,7 +5871,7 @@ function filter_tdr_month($schedule) {
 function filter_setup_logging_interfaces() {
 	global $FilterIflist;
 
-	if (config_path_enabled('system','developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "filter_setup_logging_interfaces() being called $mt\n";
 	}
@@ -5887,7 +5887,7 @@ function filter_setup_logging_interfaces() {
 
 function filter_process_carp_rules() {
 	global $log_preferences;
-	if (config_path_enabled('system','developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "filter_process_carp_rules() being called $mt\n";
 	}
@@ -5914,7 +5914,7 @@ function filter_process_carp_rules() {
 function filter_generate_ipsec_rules() {
 	global $FilterIflist, $tracker, $log_preferences;
 
-	if (config_path_enabled('system','developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "filter_generate_ipsec_rules() being called $mt\n";
 	}

@@ -1084,7 +1084,7 @@ function pfSense_clear_globals() {
 
 		if (!$is_user_code) {
 			if (($errortype == "error") ||
-			    (config_path_enabled('system','developerspew') &&
+			    (g_get('debug') &&
 			    ($errortype = "warning"))) {
 				print('<pre style="white-space: pre-wrap;">' . htmlentities($errorstr) . '</pre>');
 				logger(LOG_ERR, $errorstr);

@@ -2858,7 +2858,7 @@ function mwexec($command, $nologentry = false, $clearsigmask = false, $backgroun
 		// run in foreground, and (optionally) log if nonzero return
 		$outputarray = array();
 		exec("$command 2>&1", $outputarray, $retval);
-		if (($retval <> 0) && (!$nologentry || config_path_enabled('system', 'developerspew'))) {
+		if (($retval <> 0) && (!$nologentry || g_get('debug'))) {
 			logger(LOG_INFO, localize_text("The command '%1\$s' returned exit code '%2\$d', the output was '%3\$s' ", $command, $retval, implode(" ", $outputarray)));
 		}
 	}

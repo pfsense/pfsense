@@ -2552,8 +2552,8 @@ function cert_notify_expiring() {
  ******/
 
 function ca_setup_trust_store() {
-	/* This directory is trusted by OpenSSL on FreeBSD by default */
-	$trust_store_directory = '/usr/local/etc/ssl/certs';
+	/* Source for local CA certificates which will be trusted after "certctl rehash" runs */
+	$trust_store_directory = '/usr/local/share/certs/trusted';
 
 	/* Create the directory if it does not already exist, and clean it up if it does. */
 	safe_mkdir($trust_store_directory);

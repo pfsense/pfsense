@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2005-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005-2006 Colin Smith (ethethlay@gmail.com)
  * All rights reserved.
  *
@@ -148,13 +148,17 @@ function stop_service($name) {
 	}
 }
 
-function restart_service($name) {
+function restart_service($name, string $pid = '', int $timeout = 1) {
 	if (empty($name)) {
 		return;
 	}
 
 	if (is_service_running($name)) {
 		stop_service($name);
+	}
+
+	if (strlen($pid) > 0) {
+		sigkillbypid($pid, "TERM", $timeout);
 	}
 	start_service($name);
 

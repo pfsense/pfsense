@@ -3,7 +3,7 @@
  * system_advanced_firewall.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,6 +37,7 @@ $state_policy_options = [
 function getSystemAdvancedFirewall($json = false) {
 	$pconfig = array();
 
+	$pconfig['allow_nat64_prefix_override'] = config_path_enabled('system', 'allow_nat64_prefix_override');
 	$pconfig['adaptiveend'] = config_get_path('system/adaptiveend');
 	$pconfig['adaptivestart'] = config_get_path('system/adaptivestart');
 	$pconfig['aliasesresolveinterval'] = config_get_path('system/aliasesresolveinterval');
@@ -217,6 +218,11 @@ function saveSystemAdvancedFirewall($post, $json = false) {
 	}
 
 	if (!$input_errors) {
+		if ($post['allow_nat64_prefix_override'] == "yes") {
+			config_set_path('system/allow_nat64_prefix_override', true);
+		} else {
+			config_del_path('system/allow_nat64_prefix_override');
+		}
 
 		if ($post['disablefilter'] == "yes") {
 			config_set_path('system/disablefilter', "enabled");

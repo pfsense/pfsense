@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2007 Scott Dale
  * Copyright (c) 2022-2024 Louis van Breda
  * All rights reserved.
@@ -280,8 +280,9 @@ if (!$_REQUEST['ajax']) {
 //DEBUG:		$date1 = new DateTime($date);
 
 		$rule = "no rule info available";
+		$filterent_rule_number = (is_numericint($filterent['subrulenum']) ? $filterent['subrulenum'] : $filterent['rulenum']);
 		foreach ($rulekeys as $actrule):
-			if ($actrule['rulenum'] == $filterent['rulenum']) {
+			if ($actrule['rulenum'] == $filterent_rule_number) {
 				$rawidx = $actrule['rawidx'];
 				$rule = $rule_lines[$rawidx];
 			break;
@@ -302,6 +303,7 @@ if (!$_REQUEST['ajax']) {
 
 	$resultarray[] = array(
 		'rulenum' => $filterent['rulenum'],
+		'subrulenum' => $filterent['subrulenum'],
 		'tracker' => $filterent['tracker'],
 		'act' => $filterent['act'],
 		'iconfn' => $iconfn,
@@ -332,7 +334,7 @@ if (!$_REQUEST['ajax']) {
 ?>
 
 		<tr>
-			<td><i class="<?=$resultent['iconfn']?>" style="cursor: pointer;" onclick="javascript:getURL('status_logs_filter.php?getrulenum=<?php echo "{$resultent['rulenum']},{$resultent['tracker']},{$resultent['act']}"; ?>', outputrule);"
+			<td><i class="<?=$resultent['iconfn']?>" style="cursor: pointer;" onclick="javascript:getURL('status_logs_filter.php?getrulenum=<?php echo "{$resultent['rulenum']},{$resultent['subrulenum']},{$resultent['tracker']},{$resultent['act']}"; ?>', outputrule);"
 			title="<?=gettext("Rule that triggered this action: ") . htmlspecialchars($resultent['rule'])?>">
 			</a></td>
 			<td title="<?=htmlspecialchars($resultent['time'])?>"><?=htmlspecialchars($resultent['time'])?></td>

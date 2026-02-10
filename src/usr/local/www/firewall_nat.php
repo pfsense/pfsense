@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -132,7 +132,7 @@ $show_system_alias_popup = (array_key_exists('webgui', $user_settings) && !$user
 $system_alias_specialnet = get_specialnet('', [SPECIALNET_IFNET, SPECIALNET_GROUP]);
 $system_aliases_ports = get_reserved_table_names('', 'port,url_ports,urltable_ports');
 $system_aliases_hosts = get_reserved_table_names('', 'host,network,url,urltable');
-foreach (config_get_path('nat/rule', []) as $natent):
+foreach (get_anynat_rules_list('rdr') as $natent):
 
 	// Display separator(s) for section beginning at rule n
 	if ($seprows[$nnats]) {
@@ -427,7 +427,7 @@ events.push(function() {
 </script>
 <?php
 
-if (count(config_get_path('nat/rule', [])) > 0) {
+if (count(get_anynat_rules_list('rdr')) > 0) {
 ?>
 <!-- Legend -->
 <div>

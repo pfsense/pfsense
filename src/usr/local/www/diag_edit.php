@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -69,13 +69,16 @@ if ($_POST['action']) {
 				print('|');
 				print_info_box(gettext("No file name specified."), 'danger');
 				print('|');
+			} elseif (!str_starts_with($_POST['file'], '/')) {
+				print('|');
+				print_info_box(gettext("Absolute file path required."), 'danger');
+				print('|');
 			} else {
 				$_POST['data'] = str_replace("\r", "", base64_decode($_POST['data']));
 				$ret = file_put_contents($_POST['file'], $_POST['data']);
 				if ($_POST['file'] == "/conf/config.xml" || $_POST['file'] == "/cf/conf/config.xml") {
-					if (file_exists("/tmp/config.cache")) {
-						unlink("/tmp/config.cache");
-					}
+					// Configuration file may have been manually modified by the user.
+					unlink_if_exists(g_get('tmp_path') . "/config.cache");
 					disable_security_checks();
 				}
 				if ($ret === false) {

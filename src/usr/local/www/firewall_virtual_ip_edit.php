@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005 Bill Marquette <bill.marquette@gmail.com>
  * All rights reserved.
  *
@@ -157,7 +157,7 @@ $section->addInput(new Form_Select(
 $section->addInput(new Form_Select(
 	'type',
 	'Address type',
-	(!isset($pconfig['subnet'])) ? 'single':'network',
+	$pconfig['type']?:'single',
 	array(
 		'single' => gettext('Single address'),
 		'network' => gettext('Network')

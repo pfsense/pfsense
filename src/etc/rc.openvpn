@@ -7,7 +7,7 @@
  * Copyright (c) 2009 Seth Mos <seth.mos@dds.nl>.
  * Copyright (c) 2007-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Originally part of m0n0wall (http://m0n0.ch/wall)
@@ -61,7 +61,7 @@ function openvpn_resync_if_needed ($mode, $ovpn_settings, $interface) {
 		}
 	}
 	if ($resync_needed == true) {
-		log_error("OpenVPN: Resync " . $mode_id . " " . $ovpn_settings['description']);
+		logger(LOG_INFO, localize_text("Resync %s %s", $mode_id, $ovpn_settings['description']), LOG_PREFIX_OPENVPN);
 		openvpn_resync($mode, $ovpn_settings);
 	}
 }
@@ -95,14 +95,14 @@ if (count(config_get_path("openvpn/openvpn-server", [])) ||
 	} else {
 		$log_text = "endpoints that may use " . $argument;
 	}
-	log_error("OpenVPN: One or more OpenVPN tunnel endpoints may have changed IP addresses. Reloading " . $log_text . ".");
+	logger(LOG_NOTICE, localize_text("One or more OpenVPN tunnel endpoints may have changed IP addresses. Reloading %s.", $log_text), LOG_PREFIX_OPENVPN);
 } else {
 	return;
 }
 
 $openvpnlck = try_lock('openvpn', 10);
 if (!$openvpnlck) {
-	log_error(gettext("Could not obtain openvpn lock for executing rc.openvpn for more than 10 seconds continuing..."));
+	logger(LOG_NOTICE, localize_text("Could not obtain openvpn lock for executing %s for more than 10 seconds continuing...", 'rc.openvpn'), LOG_PREFIX_OPENVPN);
 	unlock_force('openvpn');
 	$openvpnlck = lock('openvpn', LOCK_EX);
 }
@@ -128,7 +128,7 @@ foreach ($arg_array as $arg_element) {
 			continue;
 		}
 		if ($server['interface'] == $interface || empty($interface) ||
-		    (!empty($gwgroups) && in_array($server['interface'], $gwgroups))) {
+		    (in_array($server['interface'], $gwgroups))) {
 			openvpn_resync_if_needed('server', $server, $interface);
 		}
 	}
@@ -138,7 +138,7 @@ foreach ($arg_array as $arg_element) {
 			continue;
 		}
 		if ($client['interface'] == $interface || empty($interface) ||
-		    (!empty($gwgroups) && in_array($client['interface'], $gwgroups))) {
+		    (in_array($client['interface'], $gwgroups))) {
 			openvpn_resync_if_needed('client', $client, $interface);
 		}
 	}

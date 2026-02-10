@@ -18,18 +18,66 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
+LOG_PREFIX_DHCPC="DHCP Client"
+_logger() {
+	case "${1}" in
+	"LOG_EMERG")
+		loglvl="emerg"
+		logpri="EMERGENCY"
+		;;
+	"LOG_ALERT")
+		loglvl="alert"
+		logpri="ALERT"
+		;;
+	"LOG_CRIT")
+		loglvl="crit"
+		logpri="CRITICAL"
+		;;
+	"LOG_ERR")
+		loglvl="err"
+		logpri="ERROR"
+		;;
+	"LOG_WARNING")
+		loglvl="warning"
+		logpri="WARNING"
+		;;
+	"LOG_NOTICE")
+		loglvl="notice"
+		logpri="NOTICE"
+		;;
+	"LOG_INFO")
+		loglvl="info"
+		logpri="INFO"
+		;;
+	"LOG_DEBUG")
+		loglvl="debug"
+		logpri="DEBUG"
+		;;
+	*)
+		loglvl="debug"
+		logpri="DEBUG"
+		;;
+	esac
+
+	if [ -z "${2}" ]; then
+		logmsg=""
+	else
+		logmsg="${2}"
+	fi
+
+	if [ -x /usr/bin/logger ]; then
+		/usr/bin/logger -s -p "user.${loglvl}" -t dhclient "${logpri} [${LOG_PREFIX_DHCPC}] ${logmsg}"
+	else
+		echo "${logpri} [${LOG_PREFIX_DHCPC}] ${logmsg}"
+	fi
+}
+
 HOSTNAME=/bin/hostname
 ROUTE=/sbin/route
 ARP=/usr/sbin/arp
 IFCONFIG=/sbin/ifconfig
 
 LOCALHOST=127.0.0.1
-
-if [ -x /usr/bin/logger ]; then
-	LOGGER="/usr/bin/logger -s -p user.notice -t dhclient"
-else
-	LOGGER="echo"
-fi
 
 #
 # Helper functions that implement common actions.
@@ -40,7 +88,7 @@ check_hostname() {
 	if [ -z "$current_hostname" ] || \
 	   [ "$current_hostname" = "$old_host_name" -a \
 	     "$new_hostname" != "$old_host_name" ]; then
-		$LOGGER "New Hostname ($interface): $new_host_name"
+		_logger "LOG_NOTICE" "New Hostname (${interface}): ${new_host_name}"
 		$HOSTNAME "$new_host_name"
 	fi
 }
@@ -56,9 +104,9 @@ delete_old_address() {
 
 add_new_address() {
 
-	$LOGGER "Starting add_new_address()"
+	_logger "LOG_NOTICE" "Starting add_new_address()"
 
-	$LOGGER "ifconfig $interface inet $new_ip_address netmask $new_subnet_mask broadcast $new_broadcast_address $medium"
+	_logger "LOG_NOTICE" "ifconfig ${interface} inet ${new_ip_address} netmask ${new_subnet_mask} broadcast ${new_broadcast_address} ${medium}"
 
 	eval $IFCONFIG "$interface" \
 		inet "$new_ip_address" \
@@ -66,10 +114,10 @@ add_new_address() {
 		broadcast "$new_broadcast_address" \
 		"$medium"
 
-	$LOGGER "New IP Address ($interface): $new_ip_address"
-	$LOGGER "New Subnet Mask ($interface): $new_subnet_mask"
-	$LOGGER "New Broadcast Address ($interface): $new_broadcast_address"
-	$LOGGER "New Routers ($interface): $new_routers"
+	_logger "LOG_NOTICE" "New IP Address (${interface}): ${new_ip_address}"
+	_logger "LOG_NOTICE" "New Subnet Mask (${interface}): ${new_subnet_mask}"
+	_logger "LOG_NOTICE" "New Broadcast Address (${interface}): ${new_broadcast_address}"
+	_logger "LOG_NOTICE" "New Routers (${interface}): ${new_routers}"
 
 
 	# This is necessary otherwise dpinger will try to ping all 1s address
@@ -121,7 +169,7 @@ fill_classless_routes() {
 }
 
 delete_old_routes() {
-	$LOGGER "Deleting old routes"
+	_logger "LOG_NOTICE" "Deleting old routes"
 
 	if [ -n "$old_classless_routes" ]; then
 		fill_classless_routes "$old_classless_routes"
@@ -162,7 +210,7 @@ delete_old_routes() {
 }
 
 add_new_routes() {
-	$LOGGER "Adding new routes to interface: $interface"
+	_logger "LOG_NOTICE" "Adding new routes to interface: ${interface}"
 
 	# RFC 3442: If the DHCP server returns both a Classless Static
 	# Routes option and a Router option, the DHCP client MUST ignore
@@ -174,7 +222,7 @@ add_new_routes() {
 	# Classless Static Routes option are provided.
 	if [ -n "$new_classless_routes" ]; then
 		fill_classless_routes "$new_classless_routes"
-		$LOGGER "New Classless Static Routes ($interface): $classless_routes"
+		_logger "LOG_NOTICE" "New Classless Static Routes (${interface}): ${classless_routes}"
 		set $classless_routes
 		while [ $# -gt 1 ]; do
 			if [ "0.0.0.0" = "$2" ]; then
@@ -195,7 +243,7 @@ add_new_routes() {
 		for router in $new_routers; do
 			if [ "$new_ip_address" = "$router" ] || [ "$router" = "255.255.255.255" ]; then
 				$ROUTE add default -iface "$interface"
-				echo $ROUTE add default -iface "$interface" | $LOGGER
+				_logger "LOG_NOTICE" "${ROUTE} add default -iface \"${interface}\""
 				# NOTE: Do not activate this for all ones address since pf(4) will try to forward packets to it.
 				if [ "$new_ip_address" = "$router" ]; then
 					echo "$router" > "/tmp/${interface}_router"
@@ -207,10 +255,10 @@ add_new_routes() {
 				#  but it will prevent route troubles if the router is outside of the subnet
 				#  this is useful for captive subnets or similar gateway out-of-subnet situations
 				$ROUTE add -host "$router" -iface "$interface"
-				echo $ROUTE add -host "$router" -iface "$interface" | $LOGGER
+				_logger "LOG_NOTICE" "${ROUTE} add -host \"${router}\" -iface \"${interface}\""
 
 				$ROUTE add default "$router"
-				echo $ROUTE add default "$router" | $LOGGER
+				_logger "LOG_NOTICE" "${ROUTE} add default \"${router}\""
 				echo "$router" > "/tmp/${interface}_router"
 				/bin/rm -f "/tmp/${interface}_router.last"
 			fi
@@ -222,7 +270,7 @@ add_new_routes() {
 	fi
 
 	if [ -n "$new_static_routes" ]; then
-		$LOGGER "New Static Routes ($interface): $new_static_routes"
+		_logger "LOG_NOTICE" "New Static Routes (${interface}): ${new_static_routes}"
 		set $new_static_routes
 		while [ $# -gt 1 ]; do
 			$ROUTE add "$1" "$2"
@@ -236,7 +284,7 @@ add_new_routes() {
 }
 
 add_new_resolv_conf() {
-	$LOGGER "Creating resolv.conf"
+	_logger "LOG_NOTICE" "Creating resolv.conf"
 	if [ -f "/var/etc/nameserver_$interface" ]; then
 		# Remove old entries
 		for nameserver in `cat "/var/etc/nameserver_$interface"`; do
@@ -273,7 +321,7 @@ exit_status=0
 
 # Invoke the local dhcp client enter hooks, if they exist.
 if [ -f /etc/dhclient-enter-hooks ]; then
-	$LOGGER "dhclient-enter-hooks"
+	_logger "LOG_NOTICE" "dhclient-enter-hooks"
 	. /etc/dhclient-enter-hooks
 	# allow the local script to abort processing of this state
 	# local script must set exit_status variable to nonzero.
@@ -282,7 +330,7 @@ if [ -f /etc/dhclient-enter-hooks ]; then
 	fi
 fi
 
-$LOGGER "$reason"
+_logger "LOG_NOTICE" "${reason}"
 case $reason in
 MEDIUM)
 	eval "$IFCONFIG $interface $medium"
@@ -350,7 +398,7 @@ TIMEOUT)
 	add_new_address
 	/bin/sleep 1
 	if [ -n "$new_routers" ]; then
-		$LOGGER "New Routers ($interface): $new_routers"
+		_logger "LOG_NOTICE" "New Routers (${interface}): ${new_routers}"
 		set "$new_routers"
 		if /sbin/ping -q -c 1 -t 1 "$1"; then
 			if [ "$new_ip_address" != "$alias_ip_address" ]; then
@@ -372,7 +420,7 @@ esac
 
 # Invoke the local dhcp client exit hooks, if they exist.
 if [ -f /etc/dhclient-exit-hooks ]; then
-	$LOGGER "dhclient-exit-hooks"
+	_logger "LOG_NOTICE" "dhclient-exit-hooks"
 	. /etc/dhclient-exit-hooks
 	# allow the local script to abort processing of this state
 	# local script must set exit_status variable to nonzero.

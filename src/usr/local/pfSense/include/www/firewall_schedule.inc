@@ -3,7 +3,7 @@
  * firewall_schedule.inc.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,7 +35,7 @@ function deleteSchedule($post, $json = false) {
 		$referenced_by = false;
 		$schedule_name = $a_schedules[$id]['name'];
 
-		foreach (config_get_path('filter/rule', []) as $rule) {
+		foreach (get_filter_rules_list() as $rule) {
 			//check for this later once this is established
 			if ($rule['sched'] == $schedule_name) {
 				$referenced_by = $rule['descr'];

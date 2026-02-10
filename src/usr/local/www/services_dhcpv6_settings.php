@@ -3,7 +3,7 @@
  * services_dhcpv6_settings.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2024-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2024-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -88,7 +88,7 @@ if ($_POST['widgetkey']) {
 			}
 			fclose($fd_pic);
 			if (!$data) {
-				log_error("Warning, could not read file " . $_FILES['pictfile']['tmp_name']);
+				logger(LOG_ERR, localize_text("Could not read file %s", $_FILES['pictfile']['tmp_name']));
 				die("Could not read temporary file");
 			} else {
 				// Make sure they upload an image and not some other file

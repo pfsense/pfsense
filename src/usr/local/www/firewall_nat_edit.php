@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -430,16 +430,12 @@ if (isset($id) && config_get_path("nat/rule/{$id}") && (!isset($_POST['dup']) ||
 	$rulelist = array('' => gettext('None'), 'pass' => gettext('Pass'));
 	$rule_association = 'associated-rule-id';
 
-	if (is_array(config_get_path('filter/rule'))) {
-		filter_rules_sort();
+	foreach (get_filter_rules_list() as $filter_id => $filter_rule) {
+		if (isset($filter_rule['associated-rule-id'])) {
+			$rulelist[$filter_rule['associated-rule-id']] = sprintf(gettext('Rule %s'), $filter_rule['descr']);
 
-		foreach (config_get_path('filter/rule', []) as $filter_id => $filter_rule) {
-			if (isset($filter_rule['associated-rule-id'])) {
-				$rulelist[$filter_rule['associated-rule-id']] = sprintf(gettext('Rule %s'), $filter_rule['descr']);
-
-				if ($filter_rule['associated-rule-id'] == $pconfig['associated-rule-id']) {
-					$hlpstr = '<a href="firewall_rules_edit.php?id=' . $filter_id . '">' . gettext("View the filter rule") . '</a><br />';
-				}
+			if ($filter_rule['associated-rule-id'] == $pconfig['associated-rule-id']) {
+				$hlpstr = '<a href="firewall_rules_edit.php?id=' . $filter_id . '">' . gettext("View the filter rule") . '</a><br />';
 			}
 		}
 	}

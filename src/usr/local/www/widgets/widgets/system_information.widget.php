@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2007 Scott Dale
  * All rights reserved.
  *
@@ -84,24 +84,16 @@ if ($_REQUEST['getupdatestatus']) {
 		exit;
 	}
 
-	/* If $_REQUEST['getupdatestatus'] == 2, force update */
-	$system_version = get_system_pkg_version(false,
-		($_REQUEST['getupdatestatus'] == 1),
-		false, /* get upgrades from other repos */
-		true /* see https://redmine.pfsense.org/issues/15055 */
-	);
+	$system_version = get_system_pkg_version(($_REQUEST['getupdatestatus'] == 1), false);
 
 	unset($error);
-	if ($system_version === false || !is_array($system_version)) {
+	if (isset($system_version['pkg_version_error'])) {
 		$error = gettext("<i>Unable to check for updates</i>");
+		logger(LOG_WARNING, localize_text('Could not check for system updates: %s', $system_version['pkg_version_error']));
 	}
-	if (isset($system_version['pkg_busy']) ||
-	    isset($system_version['pkg_version_error'])) {
+	if (isset($system_version['pkg_busy'])) {
 		$error = gettext("<i>Update system is busy, try again later</i>");
-	}
-	if (!isset($system_version['version']) ||
-	    !isset($system_version['installed_version'])) {
-		$error = gettext("<i>Error in version information</i>");
+		logger(LOG_NOTICE, localize_text('Update system is busy: %s', $system_version['pkg_version_error']));
 	}
 	if (isset($error)) {
 		print($error);
@@ -460,7 +452,7 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 			<th><?=gettext("MBUF Usage");?></th>
 			<td>
 				<?php
-					get_mbuf($mbufstext, $mbufusage);
+					get_mbuf();
 				?>
 				<div class="progress">
 					<div id="mbufPB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$mbufusage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$mbufusage?>%">
@@ -653,8 +645,7 @@ function stats(x) {
 	updateCpuFreq(values[7]);
 	updateLoadAverage(values[8]);
 	updateMbuf(values[9]);
-	updateMbufMeter(values[10]);
-	updateStateMeter(values[11]);
+	updateStateMeter(values[10]);
 }
 
 function updateMemory(x) {
@@ -667,17 +658,18 @@ function updateMemory(x) {
 }
 
 function updateMbuf(x) {
+	mbufsTotal = x.split('/')[0];
+	mbufsMax= x.split('/')[1];
+	mbufsPercent = Math.floor((mbufsTotal / mbufsMax) * 100);
+
 	if ($('#mbuf')) {
 		$('[id="mbuf"]').html('(' + x + ')');
 	}
-}
-
-function updateMbufMeter(x) {
 	if ($('#mbufusagemeter')) {
-		$('[id="mbufusagemeter"]').html(x + '%');
+		$('[id="mbufusagemeter"]').html(mbufsPercent + '%');
 	}
 	if ($('#mbufPB')) {
-		setProgress('mbufPB', parseInt(x));
+		setProgress('mbufPB', mbufsPercent);
 	}
 }
 

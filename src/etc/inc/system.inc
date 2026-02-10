@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -142,6 +142,15 @@ function system_get_sysctls() {
 		$disp_sysctl[$sysctl] = array('tunable' => $sysctl, 'value' => $value, 'descr' => get_sysctl_descr($sysctl));
 	}
 	unset($disp_cache);
+
+	/* Sort alphabetically by tunable name */
+	array_multisort(
+		array_column($disp_sysctl, 'tunable'),
+		SORT_ASC,
+		SORT_NATURAL,
+		$disp_sysctl
+	);
+
 	return $disp_sysctl;
 }
 
@@ -237,7 +246,7 @@ function set_sysctl_config($oid, $value) {
 function system_resolvconf_generate($dynupdate = false) {
 	global $g;
 
-	if (config_path_enabled('system', 'developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "system_resolvconf_generate() being called $mt\n";
 	}
@@ -643,7 +652,7 @@ function system_hosts_entries($dnscfg) {
 
 function system_hosts_generate() {
 	global $g;
-	if (config_path_enabled('system', 'developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "system_hosts_generate() being called $mt\n";
 	}
@@ -684,8 +693,8 @@ function system_hosts_generate() {
 
 	$fd = fopen("{$g['etc_path']}/hosts", "w");
 	if (!$fd) {
-		log_error(gettext(
-		    "Error: cannot open hosts file in system_hosts_generate()."
+		logger(LOG_ERR, localize_text(
+		    "Cannot open hosts file in %s.", 'system_hosts_generate()'
 		    ));
 		return 1;
 	}
@@ -769,7 +778,7 @@ function system_dhcpleases_configure() {
 }
 
 function system_get_kea6status() {
-	$socket_path = g_get('varrun_path') . '/kea6-ctrl-socket';
+	$socket_path = g_get('varrun_path') . '/kea/kea6-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -813,7 +822,7 @@ out:
 }
 
 function system_get_kea4status() {
-	$socket_path = g_get('varrun_path') . '/kea4-ctrl-socket';
+	$socket_path = g_get('varrun_path') . '/kea/kea4-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -857,7 +866,7 @@ out:
 }
 
 function system_clear_all_kea4leases() {
-	$socket_path = g_get('varrun_path') . '/kea4-ctrl-socket';
+	$socket_path = g_get('varrun_path') . '/kea/kea4-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -885,7 +894,7 @@ function system_clear_all_kea4leases() {
 }
 
 function system_del_kea4lease(string $ip) {
-	$socket_path = g_get('varrun_path') . '/kea4-ctrl-socket';
+	$socket_path = g_get('varrun_path') . '/kea/kea4-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -918,7 +927,7 @@ function system_del_kea4lease(string $ip) {
 }
 
 function system_clear_all_kea6leases() {
-	$socket_path = g_get('varrun_path') . '/kea6-ctrl-socket';
+	$socket_path = g_get('varrun_path') . '/kea/kea6-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -946,7 +955,7 @@ function system_clear_all_kea6leases() {
 }
 
 function system_del_kea6lease(string $ip, string $type = 'IA_NA') {
-	$socket_path = g_get('varrun_path') . '/kea6-ctrl-socket';
+	$socket_path = g_get('varrun_path') . '/kea/kea6-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -984,7 +993,7 @@ function system_del_kea6lease(string $ip, string $type = 'IA_NA') {
 function system_get_kea6prefixes() {
 	$prefixes = [];
 
-	$socket_path = g_get('varrun_path') . '/kea6-ctrl-socket';
+	$socket_path = g_get('varrun_path') . '/kea/kea6-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -1132,7 +1141,7 @@ function system_get_kea6leases() {
 	$leases['lease'] = [];
 	$leases['failover'] = [];
 
-	$socket_path = g_get('varrun_path') . '/kea6-ctrl-socket';
+	$socket_path = g_get('varrun_path') . '/kea/kea6-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -1276,7 +1285,7 @@ function system_get_kea4leases() {
 	$leases['lease'] = [];
 	$leases['failover'] = [];
 
-	$socket_path = '/var/run/kea4-ctrl-socket';
+	$socket_path = g_get('varrun_path') . '/kea/kea4-ctrl-socket';
 	$rbuf = NULL;
 
 	if (!file_exists($socket_path)) {
@@ -1626,7 +1635,7 @@ function system_get_dhcpleases($dnsavailable=null) {
 }
 
 function system_hostname_configure() {
-	if (config_path_enabled('system', 'developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "system_hostname_configure() being called $mt\n";
 	}
@@ -1644,7 +1653,7 @@ function system_hostname_configure() {
 }
 
 function system_routing_configure($interface = "") {
-	if (config_path_enabled('system', 'developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "system_routing_configure() being called $mt\n";
 	}
@@ -1689,7 +1698,7 @@ function system_staticroutes_configure($interface = "", $update_dns = false) {
 			}
 
 			if (empty($gateways_arr[$rtent['gateway']])) {
-				log_error(sprintf(gettext("Static Routes: Gateway IP could not be found for %s"), $rtent['network']));
+				logger(LOG_ERR, localize_text("Static Routes: Gateway IP could not be found for %s", $rtent['network']));
 				continue;
 			}
 			$gateway = $gateways_arr[$rtent['gateway']];
@@ -1881,7 +1890,7 @@ function delete_static_route($id, $delete = false) {
 }
 
 function system_routing_enable() {
-	if (config_path_enabled('system', 'developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "system_routing_enable() being called $mt\n";
 	}
@@ -1920,7 +1929,7 @@ function system_webgui_start() {
 				config_set_path('system/webgui/ssl-certref', $cert['refid']);
 				write_config(sprintf(gettext("Generated new self-signed SSL/TLS certificate for HTTPS (%s)"), $cert['refid']));
 			} else {
-				log_error(sprintf(gettext("GUI certificate is not usable and there was an error creating a new self-signed certificate.")));
+				logger(LOG_ERR, localize_text("GUI certificate is not usable and there was an error creating a new self-signed certificate."), LOG_PREFIX_WEBGUI);
 			}
 		}
 		$crt = base64_decode($cert['crt']);
@@ -1975,7 +1984,7 @@ function system_webgui_start() {
 function get_dns_nameservers($add_v6_brackets = false, $hostns=true) {
 	$dns_nameservers = array();
 
-	if (config_path_enabled('system', 'developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "get_dns_nameservers() being called $mt\n";
 	}
@@ -2030,7 +2039,7 @@ function system_generate_nginx_config($filename,
 
 	global $g;
 
-	if (config_path_enabled('system', 'developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "system_generate_nginx_config() being called $mt\n";
 	}
@@ -2353,7 +2362,7 @@ function system_get_timezone_list() {
 
 function system_timezone_configure() {
 	global $g;
-	if (config_path_enabled('system', 'developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "system_timezone_configure() being called $mt\n";
 	}
@@ -2526,7 +2535,7 @@ function system_ntp_setup_gps($serialport) {
 			}
 		}
 		if ($found === false) {
-			log_error(gettext("Could not find correct GPS baud rate."));
+			logger(LOG_ERR, localize_text("Could not find correct GPS baud rate."), LOG_PREFIX_NTP);
 			return false;
 		}
 	}
@@ -2612,7 +2621,7 @@ function system_ntp_configure() {
 		@unlink("{$g['varrun_path']}/ntpd.pid");
 		@unlink("{$g['varetc_path']}/ntpd.conf");
 		@unlink("{$g['varetc_path']}/ntp.keys");
-		log_error("NTPD is disabled.");
+		logger(LOG_INFO, localize_text("NTPD is disabled."), LOG_PREFIX_NTP);
 		return;
 	}
 
@@ -2630,7 +2639,7 @@ function system_ntp_configure() {
 	if (config_get_path('ntpd/serverauth') == 'yes') {
 		$ntpkeyscfg = "{$ntp_keyid} " . strtoupper(config_get_path('ntpd/serverauthalgo')) . " " . base64_decode(config_get_path('ntpd/serverauthkey')) . "\n";
 		if (!@file_put_contents("{$g['varetc_path']}/ntp.keys", $ntpkeyscfg)) {
-			log_error(sprintf(gettext("Could not open %s/ntp.keys for writing"), g_get('varetc_path')));
+			logger(LOG_ERR, localize_text("Could not open %s for writing", g_get('varetc_path') . '/ntp.keys'), LOG_PREFIX_NTP);
 			return;
 		}
 	} else {
@@ -2956,7 +2965,7 @@ function system_ntp_configure() {
 	/* A leapseconds file is really only useful if this clock is stratum 1 */
 	$ntpcfg .= "\n";
 	if (!empty(config_get_path('ntpd/leapsec'))) {
-		$leapsec .= base64_decode(config_get_path('ntpd/leapsec'));
+		$leapsec = base64_decode(config_get_path('ntpd/leapsec'));
 		file_put_contents('/var/db/leap-seconds', $leapsec);
 		$ntpcfg .= "leapfile /var/db/leap-seconds\n";
 	}
@@ -2991,7 +3000,7 @@ function system_ntp_configure() {
 
 	/* open configuration for writing or bail */
 	if (!@file_put_contents("{$g['varetc_path']}/ntpd.conf", $ntpcfg)) {
-		log_error(sprintf(gettext("Could not open %s/ntpd.conf for writing"), g_get('varetc_path')));
+		logger(LOG_ERR, localize_text("Could not open %s for writing", g_get('varetc_path') . '/ntpd.conf'), LOG_PREFIX_NTP);
 		return;
 	}
 
@@ -3004,7 +3013,7 @@ function system_ntp_configure() {
 	mwexec("/usr/local/sbin/ntpd -g -c {$g['varetc_path']}/ntpd.conf -p {$g['varrun_path']}/ntpd.pid", false, true);
 
 	// Note that we are starting up
-	log_error("NTPD is starting up.");
+	logger(LOG_INFO, localize_text("NTPD is starting up."), LOG_PREFIX_NTP);
 
 	if (is_platform_booting()) {
 		echo gettext("done.") . "\n";
@@ -3047,6 +3056,7 @@ function system_reboot_cleanup() {
 	mwexec("/usr/local/bin/beep.sh stop");
 	require_once("captiveportal.inc");
 	$cps = config_get_path('captiveportal', []);
+
 	foreach ($cps as $cpzone=>$cp) {
 		if (!isset($cp['preservedb'])) {
 			/* send Accounting-Stop packet for all clients, termination cause 'Admin-Reboot' */
@@ -3058,10 +3068,8 @@ function system_reboot_cleanup() {
 		captiveportal_send_server_accounting('off');
 	}
 
-	if (count($cps)> 0) {
-		/* Remove the pipe database */
-		unlink_if_exists("{$g['vardb_path']}/captiveportaldn.rules");
-	}
+	/* Remove the pipe database */
+	unlink_if_exists("{$g['vardb_path']}/captiveportaldn.rules");
 
 	require_once("voucher.inc");
 	voucher_save_db_to_config();
@@ -3072,7 +3080,7 @@ function system_reboot_cleanup() {
 }
 
 function system_do_shell_commands($early = 0) {
-	if (config_path_enabled('system', 'developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "system_do_shell_commands() being called $mt\n";
 	}
@@ -3099,7 +3107,7 @@ function system_do_shell_commands($early = 0) {
 
 function system_dmesg_save() {
 	global $g;
-	if (config_path_enabled('system', 'developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "system_dmesg_save() being called $mt\n";
 	}
@@ -3136,7 +3144,7 @@ function system_dmesg_save() {
 }
 
 function system_set_harddisk_standby() {
-	if (config_path_enabled('system', 'developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "system_set_harddisk_standby() being called $mt\n";
 	}
@@ -3170,7 +3178,7 @@ function system_set_harddisk_standby() {
 }
 
 function system_setup_sysctl() {
-	if (config_path_enabled('system', 'developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "system_setup_sysctl() being called $mt\n";
 	}
@@ -3183,7 +3191,7 @@ function system_setup_sysctl() {
 }
 
 function system_disable_arp_wrong_if() {
-	if (config_path_enabled('system', 'developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "system_disable_arp_wrong_if() being called $mt\n";
 	}
@@ -3194,7 +3202,7 @@ function system_disable_arp_wrong_if() {
 }
 
 function system_enable_arp_wrong_if() {
-	if (config_path_enabled('system', 'developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "system_enable_arp_wrong_if() being called $mt\n";
 	}

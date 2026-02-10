@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -87,8 +87,8 @@ if ($_POST['save'] || $_POST['force']) {
 	$ddns_attr = array(
 		"cloudflare" => array("apex" => false, "wildcard" => false, "username_none" => true),
 		"cloudflare-v6" => array("apex" => false, "wildcard" => false, "username_none" => true),
-		"desec" => array("apex" => false, "wildcard" => false, "username_none" => true),
-		"desec-v6" => array("apex" => false, "wildcard" => false, "username_none" => true),
+		"desec" => array("apex" => false, "wildcard" => true, "username_none" => true),
+		"desec-v6" => array("apex" => false, "wildcard" => true, "username_none" => true),
 		"digitalocean" => array("apex" => true, "wildcard" => true, "username_none" => true),
 		"digitalocean-v6" => array("apex" => true, "wildcard" => true, "username_none" => true),
 		"dnsmadeeasy" => array("apex" => false, "wildcard" => false, "username_none" => true),
@@ -643,7 +643,6 @@ events.push(function() {
 			case 'desec-v6':
 				hideInput('username', true);
 				hideInput('mx', true);
-				hideCheckbox('wildcard', true);
 				break;
 			case "digitalocean":
 			case "digitalocean-v6":

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -350,6 +350,7 @@ $section->addInput(new Form_Select(
 	[
 		'' => 'Don\'t kill states from the firewall itself',
 		'all' => 'Kill all states for lower-priority gateways',
+		'policy' => 'Only kill policy routing states for lower-priority gateways',
 		'addrfamily' => 'Only kill states with the same address family as the gateway group',
 	]
 ))->setHelp('Controls the state killing behavior for the %1$ssystem\'s ' .
@@ -360,7 +361,7 @@ $section->addInput(new Form_Checkbox(
 	null,
 	'Don\'t kill policy routing states for lower-priority gateways',
 	$pconfig['keep_failover_states']
-))->setHelp('Controls the default state killing behavior for %1$sall gateway ' .
+))->setHelp('Controls the default state killing behavior for %1$sall failover gateway' .
 	'groups%2$s on gateway recovery. This only affects states created by ' .
 	'firewall rules with policy routing.', '<strong>', '</strong>');
 

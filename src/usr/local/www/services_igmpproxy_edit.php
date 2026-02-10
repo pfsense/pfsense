@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -49,7 +49,7 @@ if ($this_igmpproxy_config) {
 	$pconfig['threshold'] = $this_igmpproxy_config['threshold'];
 	$pconfig['type'] = $this_igmpproxy_config['type'];
 	$pconfig['address'] = $this_igmpproxy_config['address'];
-	$pconfig['descr'] = html_entity_decode($this_igmpproxy_config['descr']);
+	$pconfig['descr'] = $this_igmpproxy_config['descr'];
 }
 
 if ($_POST['save']) {

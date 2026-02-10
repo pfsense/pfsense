@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2006 Daniel S. Haischt
  * All rights reserved.
  *
@@ -445,7 +445,6 @@ if ($_POST['apply']) {
 		$input_errors[] = gettext("The settings have already been applied!");
 	} else {
 		$retval = 0;
-		unlink_if_exists(g_get('tmp_path') . '/config.cache');
 		clear_subsystem_dirty('interfaces');
 
 		$vlan_redo = [];
@@ -469,7 +468,7 @@ if ($_POST['apply']) {
 				} else {
 					interface_bring_down($ifapply, true, $ifcfgo);
 				}
-				restart_interface_services($ifapply, array_get_path($ifcfgo, 'ifcfg/ipaddrv6'));
+				restart_interface_services($ifapply, array_get_path($ifcfgo, 'ifcfg/ipaddrv6'), true);
 				$mtu = config_get_path("interfaces/{$ifapply}/mtu");
 				if (interface_has_clones($realif) &&
 				    ($mtu && ($mtu != $ifmtu)) ||
@@ -500,9 +499,17 @@ if ($_POST['apply']) {
 
 		$changes_applied = true;
 
-		if (is_subsystem_dirty('staticroutes') &&
-		    (system_routing_configure() == 0)) {
-			clear_subsystem_dirty('staticroutes');
+		if (is_subsystem_dirty('staticroutes')) {
+			$routes_apply_file = g_get('tmp_path') . '/.system_routes.apply';
+			if (file_exists($routes_apply_file)) {
+				foreach (unserialize_data(file_get_contents($routes_apply_file), []) as $toapply) {
+					mwexec("{$toapply}");
+				}
+				@unlink($routes_apply_file);
+			}
+		    if (system_routing_configure() == 0) {
+				clear_subsystem_dirty('staticroutes');
+			}
 		}
 
 		send_event("service reload packages");
@@ -2084,13 +2091,20 @@ if (!is_pseudo_interface($intrealname, true)) {
 	$section->addInput($macaddress);
 }
 
+$mtu_help_text = 'If this field is blank, the adapter\'s default MTU will be used. ' .
+	'This is typically 1500 bytes but can vary in some circumstances.';
+if (str_starts_with($realifname, 'ovpn')) {
+	$mtu_help_text = sprintf(
+		$mtu_help_text . '%s%sNote%s: MSS must also be set when using OpenVPN DCO and a non-default MTU.',
+		'<br/>', '<b>', '</b>'
+	);
+}
 $mtuInput = $section->addInput(new Form_Input(
 	'mtu',
 	'MTU',
 	'number',
 	array_get_path($pconfig, 'mtu'),
-))->setHelp('If this field is blank, the adapter\'s default MTU will be used. ' .
-			'This is typically 1500 bytes but can vary in some circumstances.');
+))->setHelp($mtu_help_text);
 /* Do not allow MTU changes for interfaces in a bridge */
 if ($bridged) {
 	$mtuInput->setDisabled();
@@ -2120,6 +2134,7 @@ if (count($mediaopts_list) > 0) {
 
 $form->add($section);
 
+// Static IPv4 Configuration
 $section = new Form_Section('Static IPv4 Configuration');
 $section->addClass('staticv4');
 
@@ -2155,115 +2170,7 @@ $section->add($group);
 
 $form->add($section);
 
-$section = new Form_Section('SLAAC IPv6 Configuration');
-$section->addClass('slaac');
-
-$section->addInput(new Form_Checkbox(
-	'slaacusev4iface',
-	'Use IPv4 connectivity as parent interface',
-	'IPv6 will use the IPv4 connectivity link (PPPoE)',
-	array_get_path($pconfig, 'slaacusev4iface'),
-));
-
-$form->add($section);
-
-$section = new Form_Section('Static IPv6 Configuration');
-$section->addClass('staticv6');
-
-$section->addInput(new Form_IpAddress(
-	'ipaddrv6',
-	'*IPv6 address',
-	array_get_path($pconfig, 'ipaddrv6'),
-	'V6'
-))->addMask('subnetv6', array_get_path($pconfig, 'subnetv6'), 128);
-
-$section->addInput(new Form_Checkbox(
-	'ipv6usev4iface',
-	'Use IPv4 connectivity as parent interface',
-	'IPv6 will use the IPv4 connectivity link (PPPoE)',
-	array_get_path($pconfig, 'ipv6usev4iface'),
-));
-
-$group = new Form_Group('IPv6 Upstream gateway');
-
-$group->add(new Form_Select(
-	'gatewayv6',
-	'IPv6 Upstream Gateway',
-	array_get_path($pconfig, 'gatewayv6'),
-	build_gatewayv6_list()
-));
-
-$group->add(new Form_Button(
-	'addgw6',
-	'Add a new gateway',
-	null,
-	'fa-solid fa-plus'
-))->setAttribute('type','button')->addClass('btn-success')->setAttribute('data-target', '#newgateway6')->setAttribute('data-toggle', 'modal');
-
-$group->setHelp('If this interface is an Internet connection, select an existing Gateway from the list or add a new one using the "Add" button.%s' .
-				'On local LANs the upstream gateway should be "none". ', '<br />');
-
-$section->add($group);
-$form->add($section);
-
-// Add new gateway modal pop-up for IPv6
-$modal = new Modal('New IPv6 Gateway', 'newgateway6', 'large');
-
-$modal->addInput(new Form_Checkbox(
-	'defaultgw6',
-	'Default',
-	'Default gateway',
-	array_set_path($gateway_settings6, 'defaultgw', (strtolower($if) == "wan")),
-));
-
-$modal->addInput(new Form_Input(
-	'gatewayname6',
-	'Gateway name',
-	'text',
-	array_set_path($gateway_settings6, 'name', $defgatewayname6),
-));
-
-$modal->addInput(new Form_IpAddress(
-	'gatewayip6',
-	'Gateway IPv6',
-	array_get_path($gateway_settings6, 'gateway'),
-	'V6'
-));
-
-$modal->addInput(new Form_Input(
-	'gatewaydescr6',
-	'Description',
-	'text',
-	array_get_path($gateway_settings6, 'descr')
-));
-
-$btnaddgw6 = new Form_Button(
-	'add6',
-	'Add',
-	null,
-	'fa-solid fa-plus'
-);
-
-$btnaddgw6->setAttribute('type','button')->addClass('btn-success');
-
-$btncnxgw6 = new Form_Button(
-	'cnx6',
-	'Cancel',
-	null,
-	'fa-solid fa-undo'
-);
-
-$btncnxgw6->setAttribute('type','button')->addClass('btn-warning');
-
-$modal->addInput(new Form_StaticText(
-	null,
-	$btnaddgw6 . $btncnxgw6
-));
-
-$form->add($modal);
-
-// ==== DHCP client configuration =============================
-
+// DHCP Client Configuration
 $section = new Form_Section('DHCP Client Configuration');
 $section->addClass('dhcp');
 
@@ -2465,8 +2372,406 @@ $section->addInput(new Form_Input(
 
 $form->add($section);
 
-// DHCP6 client config
+// PPP Configuration
+$section = new Form_Section('PPP Configuration');
+$section->addClass('ppp');
 
+$section->addInput(new Form_Select(
+	'country',
+	'Country',
+	array_get_path($pconfig, 'country'),
+	[]
+));
+
+$section->addInput(new Form_Select(
+	'provider_list',
+	'Provider',
+	array_get_path($pconfig, 'provider_list'),
+	[]
+));
+
+$section->addInput(new Form_Select(
+	'providerplan',
+	'Plan',
+	array_get_path($pconfig, 'providerplan'),
+	[]
+))->setHelp('Select to fill in service provider data.');
+
+$section->addInput(new Form_Input(
+	'ppp_username',
+	'Username',
+	'text',
+	array_get_path($pconfig, 'ppp_username'),
+	['autocomplete' => 'new-password']
+));
+
+$section->addPassword(new Form_Input(
+	'ppp_password',
+	'Password',
+	'password',
+	array_get_path($pconfig, 'ppp_password'),
+));
+
+$section->addInput(new Form_Input(
+	'phone',
+	'*Phone number',
+	'text',
+	array_get_path($pconfig, 'phone'),
+))->setHelp('Typically *99# for GSM networks and #777 for CDMA networks.');
+
+$section->addInput(new Form_Input(
+	'apn',
+	'Access Point Name',
+	'text',
+	array_get_path($pconfig, 'apn'),
+));
+
+
+function build_port_list() {
+	$list = ["" => "None"];
+
+	$portlist = glob("/dev/cua*");
+	$modems	  = glob("/dev/modem*");
+	$portlist = array_merge($portlist, $modems);
+
+	foreach ($portlist as $port) {
+		if (preg_match("/\.(lock|init)$/", $port)) {
+			continue;
+		}
+
+		$port = trim($port);
+		$list[$port] = $port;
+	}
+
+	return($list);
+}
+
+$section->addInput(new Form_Select(
+	'port',
+	"*Modem port",
+	array_get_path($pconfig, 'port'),
+	build_port_list()
+));
+
+$section->addInput(new Form_Button(
+	'btnadvppp',
+	'Advanced PPP',
+	array_path_enabled($pconfig, '', 'pppid') ? 'interfaces_ppps_edit.php?id=' . htmlspecialchars(array_get_path($pconfig, 'pppid')) : 'interfaces_ppps_edit.php',
+	'fa-solid fa-cog'
+))->setAttribute('type','button')->addClass('btn-info')->setAttribute('id')->setHelp('Create a new PPP configuration.');
+
+$form->add($section);
+
+// PPPoE Configuration
+$section = new Form_Section('PPPoE Configuration');
+$section->addClass('pppoe');
+
+$section->addInput(new Form_Input(
+	'pppoe_username',
+	'*Username',
+	'text',
+	array_get_path($pconfig, 'pppoe_username'),
+	['autocomplete' => 'new-password']
+));
+
+$section->addPassword(new Form_Input(
+	'pppoe_password',
+	'*Password',
+	'password',
+	array_get_path($pconfig, 'pppoe_password'),
+));
+
+$section->addInput(new Form_Input(
+	'provider',
+	'Service name',
+	'text',
+	array_get_path($pconfig, 'provider'),
+))->setHelp('This field can usually be left empty.');
+
+$section->addInput(new Form_Input(
+	'hostuniq',
+	'Host-Uniq',
+	'text',
+	array_get_path($pconfig, 'hostuniq'),
+))->setHelp('A unique host tag value for this PPPoE client. Leave blank unless a value is required by the service provider.');
+
+$section->addInput(new Form_Checkbox(
+	'pppoe_dialondemand',
+	'Dial on demand',
+	'Enable Dial-On-Demand mode ',
+	array_get_path($pconfig, 'pppoe_dialondemand'),
+	'enable'
+));
+
+$section->addInput(new Form_Input(
+	'pppoe_idletimeout',
+	'Idle timeout',
+	'number',
+	array_get_path($pconfig, 'pppoe_idletimeout'),
+	['min' => 0]
+))->setHelp('If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. ' .
+			'An idle timeout of zero disables this feature.');
+
+$section->addInput(new Form_Select(
+	'pppoe-reset-type',
+	'Periodic reset',
+	array_get_path($pconfig, 'pppoe-reset-type'),
+	['' => gettext('Disabled'), 'custom' => gettext('Custom'), 'preset' => gettext('Pre-set')]
+))->setHelp('Select a reset timing type.');
+
+$group = new Form_Group('Custom reset');
+$group->addClass('pppoecustom');
+
+$group->add(new Form_Input(
+	'pppoe_resethour',
+	null,
+	'number',
+	(strlen(array_get_path($pconfig, 'pppoe_resethour')) > 0) ? array_get_path($pconfig, 'pppoe_resethour'): "0",
+	['min' => 0, 'max' => 23]
+))->setHelp('Hour (0-23), blank for * (every)');
+
+$group->add(new Form_Input(
+	'pppoe_resetminute',
+	null,
+	'number',
+	(strlen(array_get_path($pconfig, 'pppoe_resetminute')) > 0) ? array_get_path($pconfig, 'pppoe_resetminute') : "0",
+	['min' => 0, 'max' => 59]
+))->setHelp('Minute (0-59), blank for * (every)');
+
+$group->add(new Form_Input(
+	'pppoe_resetdate',
+	null,
+	'text',
+	array_get_path($pconfig, 'pppoe_resetdate'),
+))->setHelp('Specific date (mm/dd/yyyy)');
+
+$group->setHelp('Leave the date field empty, for the reset to be executed each day at the time specified by the minutes and hour fields');
+
+$section->add($group);
+
+$group = new Form_MultiCheckboxGroup('cron based reset');
+$group->addClass('pppoepreset');
+
+$group->add(new Form_MultiCheckbox(
+	'pppoe_pr_preset_val',
+	null,
+	'Reset at each month ("0 0 1 * *")',
+	array_get_path($pconfig, 'pppoe_monthly'),
+	'monthly'
+))->displayAsRadio();
+
+$group->add(new Form_MultiCheckbox(
+	'pppoe_pr_preset_val',
+	null,
+	'Reset at each week ("0 0 * * 0")',
+	array_get_path($pconfig, 'pppoe_weekly'),
+	'weekly'
+))->displayAsRadio();
+
+$group->add(new Form_MultiCheckbox(
+	'pppoe_pr_preset_val',
+	null,
+	'Reset at each day ("0 0 * * *")',
+	array_get_path($pconfig, 'pppoe_daily'),
+	'daily'
+))->displayAsRadio();
+
+$group->add(new Form_MultiCheckbox(
+	'pppoe_pr_preset_val',
+	null,
+	'Reset at each hour ("0 * * * *")',
+	array_get_path($pconfig, 'pppoe_hourly'),
+	'hourly'
+))->displayAsRadio();
+
+$section->add($group);
+
+$section->addInput(new Form_Button(
+	'btnadvppp',
+	'Advanced and MLPPP',
+	array_path_enabled($pconfig, '', 'pppid') ? 'interfaces_ppps_edit.php?id=' . htmlspecialchars(array_get_path($pconfig, 'pppid')) : 'interfaces_ppps_edit.php',
+	'fa-solid fa-cog'
+))->setAttribute('type','button')->addClass('btn-info')->setAttribute('id')->setHelp('Click for additional PPPoE configuration options. Save first if changes have been made.');
+
+$form->add($section);
+
+// PPTP & L2TP Configuration
+$section = new Form_Section('PPTP/L2TP Configuration');
+$section->addClass('pptp');
+
+$section->addInput(new Form_Input(
+	'pptp_username',
+	'*Username',
+	'text',
+	array_get_path($pconfig, 'pptp_username'),
+	['autocomplete' => 'new-password']
+));
+
+$section->addPassword(new Form_Input(
+	'pptp_password',
+	'*Password',
+	'password',
+	array_get_path($pconfig, 'pptp_password'),
+));
+
+$group = new Form_Group('Shared Secret');
+
+$group->add(new Form_Input(
+	'l2tp_secret',
+	'*Secret',
+	'password',
+	array_get_path($pconfig, 'l2tp_secret'),
+))->setHelp('L2TP tunnel Shared Secret. Used to authenticate tunnel connection and encrypt ' .
+	    'important control packet contents. (Optional)');
+
+$group->addClass('l2tp_secret');
+$section->add($group);
+
+$section->addInput(new Form_IpAddress(
+	'pptp_local0',
+	'*Local IP address',
+	$_POST['pptp_local0'] ? $_POST['pptp_local0'] : array_get_path($pconfig, 'pptp_localip/0', []),
+	'V4'
+))->addMask('pptp_subnet0', $_POST['pptp_subnet0'] ? $_POST['pptp_subnet0'] : array_get_path($pconfig, 'pptp_subnet/0', []));
+
+$section->addInput(new Form_IpAddress(
+	'pptp_remote0',
+	'*Remote IP address',
+	$_POST['pptp_remote0'] ? $_POST['pptp_remote0'] : array_get_path($pconfig, 'pptp_remote/0', []),
+	'HOSTV4'
+));
+
+$section->addInput(new Form_Checkbox(
+	'pptp_dialondemand',
+	'Dial on demand',
+	'Enable Dial-On-Demand mode ',
+	array_get_path($pconfig, 'pptp_dialondemand'),
+	'enable'
+))->setHelp('This option causes the interface to operate in dial-on-demand mode, allowing it to be a virtual full time connection. ' .
+			'The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected.');
+
+$section->addInput(new Form_Input(
+	'pptp_idletimeout',
+	'Idle timeout (seconds)',
+	'number',
+	array_get_path($pconfig, 'pptp_idletimeout'),
+	['min' => 0]
+))->setHelp('If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. ' .
+			'An idle timeout of zero disables this feature.');
+
+if (array_path_enabled($pconfig, 'pptp_localip', '1') ||
+    array_path_enabled($pconfig, 'pptp_subnet', '1') |
+    array_path_enabled($pconfig, 'pptp_remote', '1')) {
+	$mlppp_text = gettext("There are additional Local and Remote IP addresses defined for MLPPP.") . "<br />";
+} else {
+	$mlppp_text = "";
+}
+
+$section->addInput(new Form_Button(
+	'btnadvppp',
+	'Advanced and MLPPP',
+	array_path_enabled($pconfig, '', 'pppid') ? 'interfaces_ppps_edit.php?id=' . htmlspecialchars(array_get_path($pconfig, 'pppid')) : 'interfaces_ppps_edit.php',
+	'fa-solid fa-cog'
+))->setAttribute('type','button')->addClass('btn-info')->setAttribute('id')->setHelp('%sClick for additional PPTP and L2TP configuration options. Save first if changes have been made.', $mlppp_text);
+
+$form->add($section);
+
+$section = new Form_Section('Static IPv6 Configuration');
+$section->addClass('staticv6');
+
+$section->addInput(new Form_IpAddress(
+	'ipaddrv6',
+	'*IPv6 address',
+	array_get_path($pconfig, 'ipaddrv6'),
+	'V6'
+))->addMask('subnetv6', array_get_path($pconfig, 'subnetv6'), 128);
+
+$section->addInput(new Form_Checkbox(
+	'ipv6usev4iface',
+	'Use IPv4 connectivity as parent interface',
+	'IPv6 will use the IPv4 connectivity link (PPPoE)',
+	array_get_path($pconfig, 'ipv6usev4iface'),
+));
+
+$group = new Form_Group('IPv6 Upstream gateway');
+
+$group->add(new Form_Select(
+	'gatewayv6',
+	'IPv6 Upstream Gateway',
+	array_get_path($pconfig, 'gatewayv6'),
+	build_gatewayv6_list()
+));
+
+$group->add(new Form_Button(
+	'addgw6',
+	'Add a new gateway',
+	null,
+	'fa-solid fa-plus'
+))->setAttribute('type','button')->addClass('btn-success')->setAttribute('data-target', '#newgateway6')->setAttribute('data-toggle', 'modal');
+
+$group->setHelp('If this interface is an Internet connection, select an existing Gateway from the list or add a new one using the "Add" button.%s' .
+				'On local LANs the upstream gateway should be "none". ', '<br />');
+
+$section->add($group);
+$form->add($section);
+
+// Add new gateway modal pop-up for IPv6
+$modal = new Modal('New IPv6 Gateway', 'newgateway6', 'large');
+
+$modal->addInput(new Form_Checkbox(
+	'defaultgw6',
+	'Default',
+	'Default gateway',
+	array_set_path($gateway_settings6, 'defaultgw', (strtolower($if) == "wan")),
+));
+
+$modal->addInput(new Form_Input(
+	'gatewayname6',
+	'Gateway name',
+	'text',
+	array_set_path($gateway_settings6, 'name', $defgatewayname6),
+));
+
+$modal->addInput(new Form_IpAddress(
+	'gatewayip6',
+	'Gateway IPv6',
+	array_get_path($gateway_settings6, 'gateway'),
+	'V6'
+));
+
+$modal->addInput(new Form_Input(
+	'gatewaydescr6',
+	'Description',
+	'text',
+	array_get_path($gateway_settings6, 'descr')
+));
+
+$btnaddgw6 = new Form_Button(
+	'add6',
+	'Add',
+	null,
+	'fa-solid fa-plus'
+);
+
+$btnaddgw6->setAttribute('type','button')->addClass('btn-success');
+
+$btncnxgw6 = new Form_Button(
+	'cnx6',
+	'Cancel',
+	null,
+	'fa-solid fa-undo'
+);
+
+$btncnxgw6->setAttribute('type','button')->addClass('btn-warning');
+
+$modal->addInput(new Form_StaticText(
+	null,
+	$btnaddgw6 . $btncnxgw6
+));
+
+$form->add($modal);
+
+// DHCP6 Client Configuration
 $section = new Form_Section('DHCP6 Client Configuration');
 $section->addClass('dhcp6');
 
@@ -2555,8 +2860,7 @@ $section->addInput(new Form_Input(
 
 $form->add($section);
 
-// DHCP6 client config - Advanced
-
+// DHCP6 Client Advanced Configuration
 $section = new Form_Section('Advanced DHCP6 Client Configuration');
 $section->addClass('dhcp6advanced');
 
@@ -2780,6 +3084,20 @@ $section->add($group);
 
 $form->add($section);
 
+// SLAAC IPv6 Configuration
+$section = new Form_Section('SLAAC IPv6 Configuration');
+$section->addClass('slaac');
+
+$section->addInput(new Form_Checkbox(
+	'slaacusev4iface',
+	'Use IPv4 connectivity as parent interface',
+	'IPv6 will use the IPv4 connectivity link (PPPoE)',
+	array_get_path($pconfig, 'slaacusev4iface'),
+));
+
+$form->add($section);
+
+// 6RD Configuration
 $section = new Form_Section('6RD Configuration');
 $section->addClass('_6rd');
 
@@ -2806,48 +3124,9 @@ $section->addInput(new Form_Select(
 
 $form->add($section);
 
-// Track IPv6 ointerface section
+// Track IPv6 Interface
 $section = new Form_Section('Track IPv6 Interface');
 $section->addClass('track6');
-
-function build_ipv6interface_list() {
-	global $form;
-
-	$list = ['' => ''];
-
-	$interfaces = get_configured_interface_with_descr(true);
-	$dynv6ifs = [];
-
-	foreach ($interfaces as $iface => $ifacename) {
-		switch (config_get_path("interfaces/{$iface}/ipaddrv6")) {
-			case "6to4":
-			case "6rd":
-			case "dhcp6":
-				array_set_path($dynv6ifs,
-					$iface,
-					[
-						'name' => $ifacename,
-						'ipv6_num_prefix_ids' => pow(2, (int) calculate_ipv6_delegation_length($iface)) - 1
-					]);
-				break;
-			default:
-				continue 2;
-		}
-	}
-
-	foreach ($dynv6ifs as $iface => $ifacedata) {
-		array_set_path($list, $iface, array_get_path($ifacedata, 'name'));
-
-		$form->addGlobal(new Form_Input(
-			'ipv6-num-prefix-ids-' . $iface,
-			null,
-			'hidden',
-			array_get_path($ifacedata, 'ipv6_num_prefix_ids')
-		));
-	}
-
-	return($list);
-}
 
 $section->addInput(new Form_Select(
 	'track6-interface',
@@ -2873,311 +3152,6 @@ $form->addGlobal(new Form_Input(
 	'hidden',
 	0
 ));
-
-$form->add($section);
-
-/// PPP section
-
-$section = new Form_Section('PPP Configuration');
-$section->addClass('ppp');
-
-$section->addInput(new Form_Select(
-	'country',
-	'Country',
-	array_get_path($pconfig, 'country'),
-	[]
-));
-
-$section->addInput(new Form_Select(
-	'provider_list',
-	'Provider',
-	array_get_path($pconfig, 'provider_list'),
-	[]
-));
-
-$section->addInput(new Form_Select(
-	'providerplan',
-	'Plan',
-	array_get_path($pconfig, 'providerplan'),
-	[]
-))->setHelp('Select to fill in service provider data.');
-
-$section->addInput(new Form_Input(
-	'ppp_username',
-	'Username',
-	'text',
-	array_get_path($pconfig, 'ppp_username'),
-	['autocomplete' => 'new-password']
-));
-
-$section->addPassword(new Form_Input(
-	'ppp_password',
-	'Password',
-	'password',
-	array_get_path($pconfig, 'ppp_password'),
-));
-
-$section->addInput(new Form_Input(
-	'phone',
-	'*Phone number',
-	'text',
-	array_get_path($pconfig, 'phone'),
-))->setHelp('Typically *99# for GSM networks and #777 for CDMA networks.');
-
-$section->addInput(new Form_Input(
-	'apn',
-	'Access Point Name',
-	'text',
-	array_get_path($pconfig, 'apn'),
-));
-
-
-function build_port_list() {
-	$list = ["" => "None"];
-
-	$portlist = glob("/dev/cua*");
-	$modems	  = glob("/dev/modem*");
-	$portlist = array_merge($portlist, $modems);
-
-	foreach ($portlist as $port) {
-		if (preg_match("/\.(lock|init)$/", $port)) {
-			continue;
-		}
-
-		$port = trim($port);
-		$list[$port] = $port;
-	}
-
-	return($list);
-}
-
-$section->addInput(new Form_Select(
-	'port',
-	"*Modem port",
-	array_get_path($pconfig, 'port'),
-	build_port_list()
-));
-
-$section->addInput(new Form_Button(
-	'btnadvppp',
-	'Advanced PPP',
-	array_path_enabled($pconfig, '', 'pppid') ? 'interfaces_ppps_edit.php?id=' . htmlspecialchars(array_get_path($pconfig, 'pppid')) : 'interfaces_ppps_edit.php',
-	'fa-solid fa-cog'
-))->setAttribute('type','button')->addClass('btn-info')->setAttribute('id')->setHelp('Create a new PPP configuration.');
-
-$form->add($section);
-
-// PPPoE configuration
-$section = new Form_Section('PPPoE Configuration');
-$section->addClass('pppoe');
-
-$section->addInput(new Form_Input(
-	'pppoe_username',
-	'*Username',
-	'text',
-	array_get_path($pconfig, 'pppoe_username'),
-	['autocomplete' => 'new-password']
-));
-
-$section->addPassword(new Form_Input(
-	'pppoe_password',
-	'*Password',
-	'password',
-	array_get_path($pconfig, 'pppoe_password'),
-));
-
-$section->addInput(new Form_Input(
-	'provider',
-	'Service name',
-	'text',
-	array_get_path($pconfig, 'provider'),
-))->setHelp('This field can usually be left empty.');
-
-$section->addInput(new Form_Input(
-	'hostuniq',
-	'Host-Uniq',
-	'text',
-	array_get_path($pconfig, 'hostuniq'),
-))->setHelp('A unique host tag value for this PPPoE client. Leave blank unless a value is required by the service provider.');
-
-$section->addInput(new Form_Checkbox(
-	'pppoe_dialondemand',
-	'Dial on demand',
-	'Enable Dial-On-Demand mode ',
-	array_get_path($pconfig, 'pppoe_dialondemand'),
-	'enable'
-));
-
-$section->addInput(new Form_Input(
-	'pppoe_idletimeout',
-	'Idle timeout',
-	'number',
-	array_get_path($pconfig, 'pppoe_idletimeout'),
-	['min' => 0]
-))->setHelp('If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. ' .
-			'An idle timeout of zero disables this feature.');
-
-$section->addInput(new Form_Select(
-	'pppoe-reset-type',
-	'Periodic reset',
-	array_get_path($pconfig, 'pppoe-reset-type'),
-	['' => gettext('Disabled'), 'custom' => gettext('Custom'), 'preset' => gettext('Pre-set')]
-))->setHelp('Select a reset timing type.');
-
-$group = new Form_Group('Custom reset');
-$group->addClass('pppoecustom');
-
-$group->add(new Form_Input(
-	'pppoe_resethour',
-	null,
-	'number',
-	(strlen(array_get_path($pconfig, 'pppoe_resethour')) > 0) ? array_get_path($pconfig, 'pppoe_resethour'): "0",
-	['min' => 0, 'max' => 23]
-))->setHelp('Hour (0-23), blank for * (every)');
-
-$group->add(new Form_Input(
-	'pppoe_resetminute',
-	null,
-	'number',
-	(strlen(array_get_path($pconfig, 'pppoe_resetminute')) > 0) ? array_get_path($pconfig, 'pppoe_resetminute') : "0",
-	['min' => 0, 'max' => 59]
-))->setHelp('Minute (0-59), blank for * (every)');
-
-$group->add(new Form_Input(
-	'pppoe_resetdate',
-	null,
-	'text',
-	array_get_path($pconfig, 'pppoe_resetdate'),
-))->setHelp('Specific date (mm/dd/yyyy)');
-
-$group->setHelp('Leave the date field empty, for the reset to be executed each day at the time specified by the minutes and hour fields');
-
-$section->add($group);
-
-$group = new Form_MultiCheckboxGroup('cron based reset');
-$group->addClass('pppoepreset');
-
-$group->add(new Form_MultiCheckbox(
-	'pppoe_pr_preset_val',
-	null,
-	'Reset at each month ("0 0 1 * *")',
-	array_get_path($pconfig, 'pppoe_monthly'),
-	'monthly'
-))->displayAsRadio();
-
-$group->add(new Form_MultiCheckbox(
-	'pppoe_pr_preset_val',
-	null,
-	'Reset at each week ("0 0 * * 0")',
-	array_get_path($pconfig, 'pppoe_weekly'),
-	'weekly'
-))->displayAsRadio();
-
-$group->add(new Form_MultiCheckbox(
-	'pppoe_pr_preset_val',
-	null,
-	'Reset at each day ("0 0 * * *")',
-	array_get_path($pconfig, 'pppoe_daily'),
-	'daily'
-))->displayAsRadio();
-
-$group->add(new Form_MultiCheckbox(
-	'pppoe_pr_preset_val',
-	null,
-	'Reset at each hour ("0 * * * *")',
-	array_get_path($pconfig, 'pppoe_hourly'),
-	'hourly'
-))->displayAsRadio();
-
-$section->add($group);
-
-$section->addInput(new Form_Button(
-	'btnadvppp',
-	'Advanced and MLPPP',
-	array_path_enabled($pconfig, '', 'pppid') ? 'interfaces_ppps_edit.php?id=' . htmlspecialchars(array_get_path($pconfig, 'pppid')) : 'interfaces_ppps_edit.php',
-	'fa-solid fa-cog'
-))->setAttribute('type','button')->addClass('btn-info')->setAttribute('id')->setHelp('Click for additional PPPoE configuration options. Save first if changes have been made.');
-
-$form->add($section);
-
-// PPTP & L2TP Configuration section
-$section = new Form_Section('PPTP/L2TP Configuration');
-$section->addClass('pptp');
-
-$section->addInput(new Form_Input(
-	'pptp_username',
-	'*Username',
-	'text',
-	array_get_path($pconfig, 'pptp_username'),
-	['autocomplete' => 'new-password']
-));
-
-$section->addPassword(new Form_Input(
-	'pptp_password',
-	'*Password',
-	'password',
-	array_get_path($pconfig, 'pptp_password'),
-));
-
-$group = new Form_Group('Shared Secret');
-
-$group->add(new Form_Input(
-	'l2tp_secret',
-	'*Secret',
-	'password',
-	array_get_path($pconfig, 'l2tp_secret'),
-))->setHelp('L2TP tunnel Shared Secret. Used to authenticate tunnel connection and encrypt ' .
-	    'important control packet contents. (Optional)');
-
-$group->addClass('l2tp_secret');
-$section->add($group);
-
-$section->addInput(new Form_IpAddress(
-	'pptp_local0',
-	'*Local IP address',
-	$_POST['pptp_local0'] ? $_POST['pptp_local0'] : array_get_path($pconfig, 'pptp_localip/0', []),
-	'V4'
-))->addMask('pptp_subnet0', $_POST['pptp_subnet0'] ? $_POST['pptp_subnet0'] : array_get_path($pconfig, 'pptp_subnet/0', []));
-
-$section->addInput(new Form_IpAddress(
-	'pptp_remote0',
-	'*Remote IP address',
-	$_POST['pptp_remote0'] ? $_POST['pptp_remote0'] : array_get_path($pconfig, 'pptp_remote/0', []),
-	'HOSTV4'
-));
-
-$section->addInput(new Form_Checkbox(
-	'pptp_dialondemand',
-	'Dial on demand',
-	'Enable Dial-On-Demand mode ',
-	array_get_path($pconfig, 'pptp_dialondemand'),
-	'enable'
-))->setHelp('This option causes the interface to operate in dial-on-demand mode, allowing it to be a virtual full time connection. ' .
-			'The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected.');
-
-$section->addInput(new Form_Input(
-	'pptp_idletimeout',
-	'Idle timeout (seconds)',
-	'number',
-	array_get_path($pconfig, 'pptp_idletimeout'),
-	['min' => 0]
-))->setHelp('If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. ' .
-			'An idle timeout of zero disables this feature.');
-
-if (array_path_enabled($pconfig, 'pptp_localip', '1') ||
-    array_path_enabled($pconfig, 'pptp_subnet', '1') |
-    array_path_enabled($pconfig, 'pptp_remote', '1')) {
-	$mlppp_text = gettext("There are additional Local and Remote IP addresses defined for MLPPP.") . "<br />";
-} else {
-	$mlppp_text = "";
-}
-
-$section->addInput(new Form_Button(
-	'btnadvppp',
-	'Advanced and MLPPP',
-	array_path_enabled($pconfig, '', 'pppid') ? 'interfaces_ppps_edit.php?id=' . htmlspecialchars(array_get_path($pconfig, 'pppid')) : 'interfaces_ppps_edit.php',
-	'fa-solid fa-cog'
-))->setAttribute('type','button')->addClass('btn-info')->setAttribute('id')->setHelp('%sClick for additional PPTP and L2TP configuration options. Save first if changes have been made.', $mlppp_text);
 
 $form->add($section);
 

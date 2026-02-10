@@ -5,7 +5,7 @@
 # part of pfSense (https://www.pfsense.org)
 # Copyright (c) 2004-2013 BSD Perimeter
 # Copyright (c) 2013-2016 Electric Sheep Fencing
-# Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+# Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
 # All rights reserved.
 #
 # originally based on m0n0wall (http://neon1.net/m0n0wall)
@@ -26,6 +26,84 @@
 
 #/bin/stty status '^T'
 #/bin/stty susp '^-' intr '^-' quit '^-'
+
+#
+# Get the active root dataset
+#
+# Example: pfSense/ROOT/default
+#
+_zfs_root_dataset()
+{
+	local _mountfrom _rootds
+
+	_mountfrom="$(/bin/kenv -q vfs.root.mountfrom)"
+	[ "${_mountfrom%%:*}" = "zfs" ] || return 1
+
+	_rootds="${_mountfrom##*:}"
+	[ -n "${_rootds}" ] || return 1
+
+	echo "${_rootds}"
+}
+
+#
+# Test if root on ZFS
+#
+_zfs_on_root()
+{
+	_zfs_root_dataset >/dev/null 2>&1
+}
+
+#
+# Get the ZFS pool that holds the root filesystem
+#
+# Example: pfSense
+#
+_zfs_root_pool()
+{
+	local _rootds _pool
+
+	_rootds="$(_zfs_root_dataset)"
+	_pool="${_rootds%%/*}"
+
+	[ -n "${_pool}" ] || return 1
+
+	echo "${_pool}"
+}
+
+#
+# Set a ZFS user property
+_zfs_set_prop()
+{
+	_zfs_on_root && \
+		/sbin/zfs set "${2}=${3}" "${1}" 1>/dev/null 2>&1
+}
+
+#
+# Unset a ZFS user property
+#
+_zfs_unset_prop()
+{
+	_zfs_on_root && \
+		/sbin/zfs inherit -r "${2}" "${1}" 1>/dev/null 2>&1
+}
+
+#
+# Get a ZFS user property
+#
+_zfs_get_prop()
+{
+	_zfs_on_root && \
+		/sbin/zfs get -H -o value "${2}" "${1}" 2>/dev/null
+}
+
+#
+# Test a ZFS user property for equality
+#
+_zfs_test_prop_eq()
+{
+	_zfs_on_root && \
+		[ "$(_zfs_get_prop "${1}" "${2}")" = "${3}" ]
+}
 
 #trap : 2
 #trap : 3
@@ -175,14 +253,13 @@ fi
 # Handle ZFS read-only case
 unset USE_ZFS
 if /sbin/kldstat -qm zfs; then
-	ZFSFSAVAILABLE=$(/sbin/zfs mount 2>/dev/null | wc -l)
-	if [ "$ZFSFSAVAILABLE" -eq 0 ]; then
+	if ! _zfs_on_root; then
 		/sbin/kldunload zfs
 	else
 		USE_ZFS=1
-		ZFSROOT=$(/sbin/zfs mount | /usr/bin/awk '$2 == "/" {print $1}')
-		if [ -n "$ZFSROOT" ]; then
-			/sbin/zfs set readonly=off "$ZFSROOT"
+		ZFSROOT="$(_zfs_root_dataset)"
+		if [ -n "${ZFSROOT}" ]; then
+			/sbin/zfs set readonly=off "${ZFSROOT}"
 		fi
 		/sbin/zfs mount -a
 		# If /bootpool is present, then there is an additional zfs pool to import
@@ -316,7 +393,7 @@ echo
 
 /sbin/conscontrol mute off >/dev/null
 
-SWAPDEVICE=`/bin/cat /etc/fstab | /usr/bin/grep swap | /usr/bin/awk '{ printf $1 }' | /usr/bin/head -n 1`
+SWAPDEVICE=`/bin/cat /etc/fstab | /usr/bin/grep swap | /usr/bin/awk '{ print $1 }' | /usr/bin/head -n 1`
 if [ -n "${SWAPDEVICE}" ]; then
 	/bin/rm -f /tmp/fstab.swap
 	if ! [ -c "${SWAPDEVICE}" ]; then
@@ -530,20 +607,20 @@ if [ -f "$varrunpath/booting" ]; then
 	/bin/rm "$varrunpath/booting"
 fi
 
+unset ZPOOL
 if [ -n "${USE_ZFS}" ]; then
+	ZPOOL="$(_zfs_root_pool)"
 	# Create ZFS reservation
 	if [ ! -f /.no_zfs_reservation ]; then
-		zpool list -o name pfSense > /dev/null 2>&1 && ZPOOL=pfSense
-		zpool list -o name zroot > /dev/null 2>&1 && ZPOOL=zroot
 		if [ -n "${ZPOOL}" ]; then
 			if ! zfs list -Hp -o name -t filesystem | grep -q "${ZPOOL}/reservation"; then
 				AVAIL=$( zfs list -Hpo avail "${ZPOOL}" )
 				RESSIZE=$( zfs list -Hpo avail,used "${ZPOOL}" | awk -v CONVFMT='%.0f' '{printf ( $1 + $2 ) * 0.1 "\n"}' )
 				if [ $(( AVAIL / 2 )) -gt "${RESSIZE}" ]; then
-					logger "Creating ZFS reservation of ${RESSIZE} bytes on ${ZPOOL}"
+					logger -p user.info "INFO Creating ZFS reservation of ${RESSIZE} bytes on ${ZPOOL}"
 					zfs create -o reservation="${RESSIZE}" "${ZPOOL}/reservation"
 				else
-					logger "Not enough space to create reservation on ${ZPOOL};  ${AVAIL} / 2 is not greater than ${RESSIZE} bytes"
+					logger -p user.err "ERROR Not enough space to create reservation on ${ZPOOL};  ${AVAIL} / 2 is not greater than ${RESSIZE} bytes"
 				fi
 			fi
 		fi
@@ -551,8 +628,6 @@ if [ -n "${USE_ZFS}" ]; then
 
 	# Enable zpool trimming
 	if [ ! -f /.no_zpool_autotrim ]; then
-		/sbin/zpool list -o name pfSense > /dev/null 2>&1 && ZPOOL=pfSense
-		/sbin/zpool list -o name zroot > /dev/null 2>&1 && ZPOOL=zroot
 		if [ -n "${ZPOOL}" ]; then
 			AUTOTRIM=$( /sbin/zpool get -H -o value autotrim "${ZPOOL}" )
 			if [ "${AUTOTRIM}" = "off" ]; then
@@ -564,10 +639,8 @@ if [ -n "${USE_ZFS}" ]; then
 		fi
 	fi
 
-	# Make sure the config dataset is always synced
-	if [ "$(/sbin/zfs get -H -o value sync pfSense/ROOT/default/cf)" != "always" ]; then
-		zfs set sync=always pfSense/ROOT/default/cf
-	fi
+	# Make sure the config dataset is "always" synced for safety
+	_zfs_set_prop "${ZFSROOT}/cf" sync always
 fi
 
 echo -n "Starting CRON... "
@@ -636,7 +709,7 @@ ARCH=`uname -m`
 echo "$product_label ${version}${version_patch} $ARCH $BUILDTIME"
 
 echo "Bootup complete"
-echo "Bootup complete" | /usr/bin/logger
+echo "NOTICE Bootup complete" | /usr/bin/logger -p user.notice
 
 /usr/local/bin/beep.sh start 2>&1 >/dev/null
 

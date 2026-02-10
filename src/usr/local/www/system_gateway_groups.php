@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2010 Seth Mos <seth.mos@dds.nl>
  * All rights reserved.
  *
@@ -42,6 +42,13 @@ $changedesc = gettext("Gateway Groups") . ": ";
 $pconfig = $_REQUEST;
 
 if ($_POST['apply']) {
+	$routes_apply_file = g_get('tmp_path') . '/.system_routes.apply';
+	if (file_exists($routes_apply_file)) {
+		foreach (unserialize_data(file_get_contents($routes_apply_file), []) as $toapply) {
+			mwexec("{$toapply}");
+		}
+		@unlink($routes_apply_file);
+	}
 
 	$retval = 0;
 
@@ -71,7 +78,7 @@ if (($_POST['act'] == "del") && $a_gateway_groups[$_POST['id']]) {
 		$input_errors[] = gettext('Cannot remove a gateway group that is being used as the default gateway.');
 	} else {
 		$changedesc .= sprintf(gettext("removed gateway group %s"), $_POST['id']);
-		foreach (config_get_path('filter/rule', []) as $idx => $rule) {
+		foreach (get_filter_rules_list() as $idx => $rule) {
 			if ($rule['gateway'] == $a_gateway_groups[$_REQUEST['id']]['name']) {
 				config_del_path("filter/rule/{$idx}/gateway");
 			}

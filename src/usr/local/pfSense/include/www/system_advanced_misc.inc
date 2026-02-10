@@ -3,7 +3,7 @@
  * system_advanced_misc.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -140,8 +140,7 @@ function getSystemAdvancedMiscCryptoModules() {
 			$crypto_modules = array(
 				'aesni' => gettext("AES-NI CPU-based Acceleration"),
 				'aesni_cryptodev' => gettext("AES-NI and BSD Crypto Device (aesni, cryptodev)"),
-				'cryptodev' => gettext("BSD Crypto Device (cryptodev)"),
-				'qat' => gettext("Intel QuickAssist (QAT)"),
+				'cryptodev' => gettext("BSD Crypto Device (cryptodev)")
 			);
 	}
 

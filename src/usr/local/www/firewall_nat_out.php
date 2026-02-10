@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -175,7 +175,7 @@ $system_aliases_hosts = get_reserved_table_names('', 'host,network,url,urltable'
 				<tbody class="user-entries">
 <?php
 			$i = 0;
-			foreach (config_get_path('nat/outbound/rule', []) as $natent):
+			foreach (get_anynat_rules_list('nat') as $natent):
 				$iconfn = "pass";
 				$textss = $textse = "";
 				$trclass = '';
@@ -328,9 +328,12 @@ $system_aliases_hosts = get_reserved_table_names('', 'host,network,url,urltable'
 
 						<td>
 <?php						if (isset($natent['staticnatport'])) { ?>
-							<i class="fa-solid fa-check" title="Keep Source Port Static"></i>
+							<i class="fa-solid fa-check" title="<?=gettext('Keep Source Port Static')?>"></i>
 <?php						} else { ?>
-							<i class="fa-solid fa-random" title="Randomize Source Port"></i>
+							<i class="fa-solid fa-random" title="<?=gettext('Randomize Source Port')?>"></i>
+<?php						} ?>
+<?php						if (isset($natent['eimnat'])) { ?>
+							<i class="fa-solid fa-arrows-to-circle" title="<?=gettext('Endpoint-Independent Mapping (UDP Only)')?>"></i>
 <?php						} ?>
 						</td>
 

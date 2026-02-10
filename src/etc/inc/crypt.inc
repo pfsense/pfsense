@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2008-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc. All rights reserved.
  * All rights reserved.
  *
@@ -64,7 +64,7 @@ define('PFS_OPENSSL_DEFAULT_ITERATIONS', '500000');
 			$result = crypt_data($val, $pass, $opt, true);
 		} else {
 			$result = "";
-			log_error(gettext("Failed to encrypt/decrypt data!"));
+			logger(LOG_ERR, localize_text("Failed to encrypt/decrypt data!"));
 		}
 
 		/* Cleanup */

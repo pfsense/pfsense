@@ -3,7 +3,7 @@
  * periodic.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,6 +28,7 @@ require_once("notices.inc");
 function periodic_daily() {
 
 	require_once("certs.inc");
+	cert_renew_auto();
 	cert_notify_expiring();
 
 	/* Allow packages to define and execute daily tasks */

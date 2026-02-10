@@ -9,11 +9,11 @@
 	/* MiniUPnPd */
 
 	function upnp_notice($msg) {
-		log_error("miniupnpd: {$msg}");
+		logger(LOG_NOTICE, localize_text("miniupnpd: %s", $msg));
 	}
 
 	function upnp_warn($msg) {
-		log_error("miniupnpd: {$msg}");
+		logger(LOG_WARNING, localize_text("miniupnpd: %s", $msg));
 	}
 
 	function upnp_running () {

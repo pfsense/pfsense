@@ -2,10 +2,10 @@
     "name": "pfsense/pfsense",
     "require": {
         "mikehaertl/php-shellcommand": "^1.7",
-        "symfony/cache": "^7.2",
-        "nette/utils": "^4.0",
-        "simplepie/simplepie": "^1.8",
-        "symfony/console": "^7.2"
+        "symfony/cache": "^8.0.5",
+        "nette/utils": "^4.1.1",
+        "simplepie/simplepie": "^1.9",
+        "symfony/console": "^8.0.4"
     },
     "autoload": {
         "psr-4": {
@@ -20,8 +20,8 @@
         "optimize-autoloader": true
     },
     "require-dev": {
-        "rector/rector": "^0.15",
-        "nikic/php-parser": "^4.15",
-        "phpunit/phpunit": "^9.5"
+        "rector/rector": "^2.3.5",
+        "nikic/php-parser": "^5.7.0",
+        "phpunit/phpunit": "^12.5.8"
     }
 }

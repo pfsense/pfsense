@@ -6,7 +6,7 @@
  * Copyright (c) 2008 Bill Marquette, Seth Mos
  * Copyright (c) 2008-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -279,7 +279,7 @@ function start_dpinger($gateway) {
 		$err = interface_wait_tentative(get_real_interface(
 		    $gateway['interface']));
 		if ($err == false) {
-			log_error(gettext("Timeout waiting for IPv6 address in tentative state.  dpinger will not run."));
+			logger(LOG_ERR, localize_text("Timeout waiting for IPv6 address in tentative state.  dpinger will not run."), LOG_PREFIX_GWMON);
 			return (false);
 		}
 	}
@@ -295,7 +295,7 @@ function setup_gateways_monitor() {
 	refresh_gateways(); // dynamic gateways may have changed so refresh the cache
 	$gateways_arr = get_gateways();
 	if (!is_array($gateways_arr)) {
-		log_error(gettext("No gateways to monitor. dpinger will not run."));
+		logger(LOG_INFO, localize_text("No gateways to monitor. dpinger will not run."), LOG_PREFIX_GWMON);
 		stop_dpinger();
 		return;
 	}
@@ -348,11 +348,11 @@ function setup_gateways_monitor() {
 			 */
 			if (!$skip_static_route && !isset($gateway['dpinger_dont_add_static_route']) && ($gateway['monitor'] != $gateway['gateway']) && is_ipaddrv4($gateway['gateway'])) {
 				if (interface_isppp_type($gateway['friendlyiface'])) {
-					log_error(sprintf(gettext('Removing static route for monitor %1$s and adding a new route through %2$s'), $gateway['monitor'], $gateway['interface']));
+					logger(LOG_INFO, localize_text('Removing static route for monitor %1$s and adding a new route through %2$s', $gateway['monitor'], $gateway['interface']), LOG_PREFIX_GWMON);
 					route_add_or_change($gateway['monitor'], '', $gateway['interface']);
 					system_staticroutes_configure($gateway['friendlyiface']);
 				} else {
-					log_error(sprintf(gettext('Removing static route for monitor %1$s and adding a new route through %2$s'), $gateway['monitor'], $gateway['gateway']));
+					logger(LOG_INFO, localize_text('Removing static route for monitor %1$s and adding a new route through %2$s', $gateway['monitor'], $gateway['gateway']), LOG_PREFIX_GWMON);
 					route_add_or_change($gateway['monitor'], $gateway['gateway']);
 				}
 			}
@@ -389,11 +389,11 @@ function setup_gateways_monitor() {
 
 			if (!$skip_static_route && !isset($gateway['dpinger_dont_add_static_route']) && ($gateway['gateway'] != $gateways_arr[$gwname]['monitor']) && is_ipaddrv6($gateway['gateway'])) {
 				if (interface_isppp_type($gateway['friendlyiface'])) {
-					log_error(sprintf(gettext('Removing static route for monitor %1$s and adding a new route through %2$s'), $gateway['monitor'], $gateway['interface']));
+					logger(LOG_INFO, localize_text('Removing static route for monitor %1$s and adding a new route through %2$s', $gateway['monitor'], $gateway['interface']), LOG_PREFIX_GWMON);
 					route_add_or_change($gateway['monitor'], '', $gateway['interface']);
 					system_staticroutes_configure($gateway['friendlyiface']);
 				} else {
-					log_error(sprintf(gettext('Removing static route for monitor %1$s and adding a new route through %2$s'), $gateway['monitor'], $gateway['gateway']));
+					logger(LOG_INFO, localize_text('Removing static route for monitor %1$s and adding a new route through %2$s', $gateway['monitor'], $gateway['gateway']), LOG_PREFIX_GWMON);
 					route_add_or_change($gateway['monitor'], $gateway['gateway']);
 				}
 			}
@@ -425,7 +425,7 @@ function setup_gateways_monitor() {
 		}
 
 		if (start_dpinger($gateway) != 0) {
-			log_error(sprintf(gettext("Error starting gateway monitor for %s"), $gateway['name']));
+			logger(LOG_ERR, localize_text("Error starting gateway monitor for %s", $gateway['name']), LOG_PREFIX_GWMON);
 		}
 	}
 	if (is_platform_booting()) {
@@ -436,18 +436,24 @@ function setup_gateways_monitor() {
 }
 
 /**
- * Looks for the highest priority failover tier that is currently online in a
- * failover gateway group. A failover tier is any tier number greater than the
- * lowest configured tier number. A failover gateway group must consist of at
- * least two different tiers.
+ * Looks for the highest priority tier that is currently online in a
+ * failover gateway group. A failover gateway group must consist of at
+ * least two different tiers. No distinction is made for two online
+ * gateways with the same tier (i.e. load balancing); in such a case then
+ * e.g. gateway recovery would kill states for all gateways on that tier.
  *
  * @param string $gateway_group Name of an existing failover gateway group
  *
- * @return int The tier number - returns 0 if no matches are found
+ * @return int The tier number - returns 0 if no online gateways were found
  * @return false Not a valid failover gateway group
  */
 function get_highest_failover_tier_online(?string $gateway_group): int|false {
 	if (empty($gateway_group)) {
+		return false;
+	}
+
+	global $GatewaysStatus;
+	if (empty($GatewaysStatus)) {
 		return false;
 	}
 
@@ -479,15 +485,9 @@ function get_highest_failover_tier_online(?string $gateway_group): int|false {
 			break;
 		}
 
-		if (!isset($gateways_states)) {
-			// get a list of all relevant gateway states
-			$gateways_states = return_gateways_status(true);
-		}
-
-		$highest_tier = min($group_tiers);
 		// remove offline gateways
 		foreach (array_keys($group_gateways) as $gateway_name) {
-			if ($gateways_states[$gateway_name]['status'] != 'online') {
+			if ($GatewaysStatus[$gateway_name]['status'] != 'online') {
 				unset($group_gateways[$gateway_name]);
 			}
 		}
@@ -497,14 +497,8 @@ function get_highest_failover_tier_online(?string $gateway_group): int|false {
 			return 0;
 		}
 
-		// highest online is highest tier
-		$highest_online_tier = min(array_values($group_gateways));
-		if ($highest_online_tier == $highest_tier) {
-			return 0;
-		}
-
 		// return the highest-priority failover tier of online gateways
-		return $highest_online_tier;
+		return min(array_values($group_gateways));
 	}
 
 	return false;
@@ -523,7 +517,7 @@ function remove_failover_states(?string $gateway_name = null): void {
 
 	// if killing states from the firewall itself, check for default failover gateway groups
 	$remove_states_default = config_get_path('system/remove_failover_states_default');
-	if ($remove_states_default) {
+	if ($remove_states_default && ($remove_states_default != 'policy')) {
 		$default_gateways = [];
 
 		$default_gateway4 = config_get_path('gateways/defaultgw4', '');
@@ -581,7 +575,7 @@ function remove_failover_states(?string $gateway_name = null): void {
 		}
 
 		// build a list of interfaces, used to kill states from the firewall itself
-		if ($remove_states_default && array_key_exists($group['name'], $default_gateways)) {
+		if ($remove_states_default && ($remove_states_default != 'policy') && array_key_exists($group['name'], $default_gateways)) {
 			// get the interfaces of the default gateway group
 			$default_gateways[$group['name']] = $gateway_interfaces;
 
@@ -600,12 +594,13 @@ function remove_failover_states(?string $gateway_name = null): void {
 		// avoid killing states for the higher-tier gateway(s)
 		$tiers_to_kill = array_diff($tiers_to_kill, [min($tiers_to_kill)]);
 		foreach ($tiers_to_kill as $tier) {
-			mwexec_bg('/sbin/pfctl -M -k label -k ' . escapeshellarg("gw{$tier}:{$group['name']}") . ' -q');
+			mwexec_bg('/sbin/pfctl -M -k label -k ' . escapeshellarg(make_rule_label_string("{$tier}:{$group['name']}", RULE_LABEL_KEY_GATEWAY, false)) . ' -q');
+			logger(LOG_NOTICE, localize_text("killed policy routing states for tier {$tier} in {$group['name']}"), LOG_PREFIX_GWMON);
 		}
 	}
 
 	// kill all states for the default failover gateway groups
-	if (!$remove_states_default) {
+	if (!$remove_states_default || ($remove_states_default == 'policy')) {
 		return;
 	}
 	foreach ($default_gateways as $gateway_name => $gateway_interfaces) {
@@ -616,14 +611,22 @@ function remove_failover_states(?string $gateway_name = null): void {
 		/* filtering for the address family allows states that have been created by user
 		   rules with a gateway of a different address family on the same interface to remain */
 		if ($remove_states_default == 'addrfamily') {
-			$host_prefix = ($gateway_name == $default_gateway4) ? '-k 0.0.0.0/0' : '-k ::/0';
+			if ($gateway_name == $default_gateway4) {
+				$host_prefix = '-k 0.0.0.0/0';
+				$log_message = 'IPv4';
+			} else {
+				$host_prefix = '-k ::/0';
+				$log_message = 'IPv6';
+			}
 		} elseif ($remove_states_default == 'all') {
 			$host_prefix = '-Fs';
+			$log_message = 'all';
 		} else {
 			continue;
 		}
 		foreach (array_keys($gateway_interfaces) as $gateway_interface) {
 			mwexec_bg('/sbin/pfctl -M -i ' . escapeshellarg($gateway_interface) . " {$host_prefix} -q");
+			logger(LOG_NOTICE, localize_text("killed {$log_message} states for the lower-priority gateway {$gateway_name} ({$gateway_interface})"), LOG_PREFIX_GWMON);
 		}
 	}
 }
@@ -645,12 +648,12 @@ function get_dpinger_status($gwitem, $proc) {
 	$timeoutcounter = 0;
 	while (true) {
 		if (!file_exists($proc['socket'])) {
-			log_error("dpinger: status socket {$proc['socket']} not found");
+			logger(LOG_ERR, localize_text("status socket %s not found", 'dpinger:', $proc['socket']), LOG_PREFIX_GWMON);
 			return false;
 		}
 		$fp = @stream_socket_client("unix://{$proc['socket']}", $errno, $errstr, 10);
 		if (!$fp) {
-			log_error(sprintf(gettext('dpinger: cannot connect to status socket %1$s - %2$s (%3$s)'), $proc['socket'], $errstr, $errno));
+			logger(LOG_ERR, localize_text('cannot connect to status socket %1$s - %2$s (%3$s)', $proc['socket'], $errstr, $errno), LOG_PREFIX_GWMON);
 			return false;
 		}
 
@@ -678,7 +681,7 @@ function get_dpinger_status($gwitem, $proc) {
 		} else {
 			$timeoutcounter++;
 			if ($timeoutcounter > 300) {
-				log_error(sprintf(gettext('dpinger: timeout while retrieving status for gateway %s'), $gwname));
+				logger(LOG_ERR, localize_text('timeout while retrieving status for gateway %s', $gwname), LOG_PREFIX_GWMON);
 				return false;
 			}
 			usleep(10000);
@@ -872,30 +875,21 @@ function return_gateways_status_text($byname = false, $brief = false) {
 }
 
 function compare_gateway_order_configured($a, $b) {
-	/* XXX WAN always has precedence */
-	if ($a['friendlyiface'] == "wan") {
-		return -1;
-	} elseif ($b['friendlyiface'] == "wan") {
-		return 1;
+	if ($a['friendlyiface'] == $b['friendlyiface']) {
+		return strcasecmp($a['name'], $b['name']);
 	}
-
-	if ($a['attribute'] === $b['attribute']) {
-		if ($a['attribute'] === 'system') {
-			$res = (($a['name'] < $b['name'])) ? -1 : 1;
-			return $res;
-		}
-		return 0;
-	}
-	if ($a['attribute'] === 'system' || $b['attribute'] === 'system') {
-		$res = (($b['attribute'] === 'system')) ? -1 : 1;
-		return $res;
-	}
-	$res = ($a['attribute'] < $b['attribute']) ? -1 : 1;
-	return $res;
+	return compare_interface_friendly_names($a['friendlyiface'], $b['friendlyiface']);
 }
 
 function order_gateways_as_configured($gateways_arr) {
 	uasort($gateways_arr, 'compare_gateway_order_configured');
+	$count = count($gateways_arr);
+	for ($i = 0; $i < $count; $i++) {
+		if ($gateway['attribute'] == 'system') {
+			continue;
+		}
+		$gateway['attribute'] = $i;
+	}
 	return $gateways_arr;
 }
 
@@ -1016,9 +1010,6 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 		}
 	}
 	unset($gateway);
-
-	//Sort the array by GW name before moving on.
-	ksort($gateways_arr, SORT_STRING | SORT_FLAG_CASE);
 
 	/* Loop through all interfaces with a gateway and add it to a array */
 	if ($disabled == false) {
@@ -1436,11 +1427,13 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 				$fallback = $gwname;
 			}
 		}
-		if (empty($set_dfltgwname) && !empty($fallback)) {
-			log_error(sprintf("Gateway, none 'available' for %s, use the first one configured. '%s'", $ipprotocol, $fallback));
-			$set_dfltgwname = $fallback;
-		} else {
-			log_error("Gateway, NONE AVAILABLE");
+		if (empty($set_dfltgwname)) {
+			if (!empty($fallback)) {
+				logger(LOG_NOTICE, localize_text("No default gateway available for %s, use the first one configured. '%s'", $ipprotocol, $fallback));
+				$set_dfltgwname = $fallback;
+			} else {
+				logger(LOG_ERR, localize_text("No default gateway found"));
+			}
 		}
 	} else {
 		// a gwgroup is selected
@@ -1463,18 +1456,18 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 				    ($gwgroupitem['gwip'] == $currentdefaultgwip)) {
 					$set_dfltgwname = $gwgroupitem['gw'];
 					$found_current = true;
-					if (config_path_enabled('system', 'gw-debug')) {
-						log_error("Keep current gateway, its already part of the group members.");
+					if (g_get('debug')) {
+						logger(LOG_DEBUG, localize_text("Keep current gateway, its already part of the group members."));
 					}
 					break;
 				}
 			}
 			if (!$found_current) {
 				$set_dfltgwname = $gwg_members[0]['gw'];
-				log_error(sprintf("Gateway, switch to: %s", $set_dfltgwname));
+				logger(LOG_NOTICE, localize_text("switch default gateway to: %s", $set_dfltgwname));
 			}
 		} else {
-			log_error("Gateway, NONE AVAILABLE");
+			logger(LOG_ERR, localize_text("No default gateway available"));
 		}
 	}
 	if (!empty($set_dfltgwname) && isset($gateways_arr[$set_dfltgwname])) {
@@ -1485,7 +1478,7 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 }
 
 function setdefaultgateway($gw) {
-	if (config_path_enabled('system', 'route-debug')) {
+	if (g_get('debug')) {
 		file_put_contents("/dev/console", "\n[".getmypid()."] SET DEF GW: {$gw['name']}");
 	}
 	$ipprotocol = $gw['ipprotocol'];
@@ -1509,7 +1502,7 @@ function setdefaultgateway($gw) {
 	}
 	$currentdefaultgwip = route_get_default($ipprotocol);
 	if ($currentdefaultgwip != $gw['gateway']) {
-		log_error("Default gateway setting {$gw['descr']} as default.");
+		logger(LOG_NOTICE, localize_text("Default gateway setting {$gw['descr']} as default."));
 
 		if ($ipprotocol == 'inet') {
 			$inet = '';
@@ -1528,7 +1521,7 @@ function setdefaultgateway($gw) {
 				    $gw['interface']);
 			}
 		}
-		if (config_path_enabled('system', 'route-debug')) {
+		if (g_get('debug')) {
 			file_put_contents("/dev/console", "\n[".getmypid()."] SET DEF GW: {$gw['name']} ({$gw['gateway']})");
 		}
 		route_add_or_change("default", $gw['gateway'], '', '',
@@ -1567,13 +1560,13 @@ function get_gwgroup_members_inner($group, $gateways_status, $gateways_arr, $vip
 				$gwdown = true;
 				switch ($status['substatus']) {
 					case "highloss":
-						$msg = sprintf(gettext('MONITOR: %1$s has packet loss, omitting from routing group %2$s'), $gwname, $group['name']);
+						$msg = sprintf(gettext('%1$s has packet loss, omitting from routing group %2$s'), $gwname, $group['name']);
 						break;
 					case "highdelay":
-						$msg = sprintf(gettext('MONITOR: %1$s has high latency, omitting from routing group %2$s'), $gwname, $group['name']);
+						$msg = sprintf(gettext('%1$s has high latency, omitting from routing group %2$s'), $gwname, $group['name']);
 						break;
 					default:
-						$msg = sprintf(gettext('MONITOR: %1$s is down, omitting from routing group %2$s'), $gwname, $group['name']);
+						$msg = sprintf(gettext('%1$s is down, omitting from routing group %2$s'), $gwname, $group['name']);
 				}
 			}
 			$statuschanged = false;
@@ -1583,7 +1576,7 @@ function get_gwgroup_members_inner($group, $gateways_status, $gateways_arr, $vip
 			if ($gwdown == true) {
 				if (!file_exists("/tmp/.down.{$gwname}")) {
 					@touch("/tmp/.down.{$gwname}");
-					$msg .= "\n".implode("|", $status);
+					$msg .= "; " . implode("|", $status);
 					$pluginparams['event'] = 'gateway.down';
 					$statuschanged = true;
 				}
@@ -1594,14 +1587,14 @@ function get_gwgroup_members_inner($group, $gateways_status, $gateways_arr, $vip
 				}
 				$tiers[$tier][] = $gwname;
 				if (unlink_if_exists("/tmp/.down.{$gwname}")) {
-					$msg = sprintf(gettext('MONITOR: %1$s is available now, adding to routing group %2$s'), $gwname, $group['name']);
-					$msg .= "\n".implode("|", $status);
+					$msg = sprintf(gettext('%1$s is available now, adding to routing group %2$s'), $gwname, $group['name']);
+					$msg .= "; " . implode("|", $status);
 					$pluginparams['event'] = 'gateway.up';
 					$statuschanged = true;
 				}
 			}
 			if ($statuschanged) {
-				log_error($msg);
+				logger(LOG_NOTICE, $msg);
 				notify_all_remote($msg);
 				if (isset($gateways_arr[$gwname]['interface'])) {
 					$pluginparams['interface'] = $gateways_arr[$gwname]['interface'];
@@ -1615,9 +1608,9 @@ function get_gwgroup_members_inner($group, $gateways_status, $gateways_arr, $vip
 	$tiers_count = count($tiers);
 	if ($tiers_count == 0) {
 		/* Oh dear, we have no members! Engage Plan B */
-		if (config_path_enabled('system', 'gw-debug') && (!is_platform_booting())) {
+		if (g_get('debug') && (!is_platform_booting())) {
 			$msg = sprintf(gettext('Gateways status could not be determined, considering all as up/active. (Group: %s)'), $group['name']);
-			log_error($msg);
+			logger(LOG_DEBUG, $msg);
 		}
 		$tiers = $backupplan;
 	}
@@ -1668,7 +1661,7 @@ function get_gwgroup_members_inner($group, $gateways_status, $gateways_arr, $vip
 		if (count($result) > 0) {
 			break;
 		} else {
-			log_error(sprintf(gettext('GATEWAYS: Group %1$s did not have any gateways up on tier %2$s!'), $group['name'], $tieridx));
+			logger(LOG_INFO, localize_text('Group %1$s did not have any gateways up on tier %2$s!', $group['name'], $tieridx));
 		}
 	}
 	// Add description field last to not influence the count() above
@@ -2015,10 +2008,6 @@ function gateway_is_gwgroup_member($name, $detail=false) {
 				}
 			}
 		}
-	}
-
-	if (empty($members)) {
-		return false;
 	}
 
 	return $members;

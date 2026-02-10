@@ -4,7 +4,7 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2016 Electric Sheep Fencing
- * Copyright (c) 2016-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2016-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -83,7 +83,7 @@ class pfsense_xmlrpc_client {
 		 * https://redmine.pfsense.org/issues/14182 */
 		if (empty($this->url) ||
 		    empty($this->logurl)) {
-			$this->error = "XMLRPC Synchronization is not configured.";
+			$this->error = localize_text("XMLRPC Synchronization is not configured.");
 			return;
 		}
 		$options = array(
@@ -98,10 +98,10 @@ class pfsense_xmlrpc_client {
 			$numberofruns++;
 			$this->error = null;
 
-			log_error(sprintf(gettext("Beginning XMLRPC sync data to %s."), $this->logurl));
+			logger(LOG_INFO, localize_text("Beginning XMLRPC sync data to %s.", $this->logurl), LOG_PREFIX_HA);
 			$cli = XML_RPC2_Client::create($this->url, $options);
 			if (!is_object($cli)) {
-				$this->error = sprintf(gettext("A communications error occurred while attempting XMLRPC sync with %s (pfsense.%s)."), $this->logurl, $method);
+				$this->error = localize_text("A communications error occurred while attempting XMLRPC sync with %s (%s).", $this->logurl, "pfsense.{$method}");
 			}
 			try {//restore_config_section
 				$REQUEST_URI = $_SERVER['REQUEST_URI'];
@@ -109,8 +109,8 @@ class pfsense_xmlrpc_client {
 				$resp = $cli->$method($parameter, $timeout);
 			} catch (XML_RPC2_FaultException $e) {
 				// The XMLRPC server returns a XMLRPC error
-				$this->error = "Exception calling XMLRPC method {$method} #" . $e->getFaultCode() . ' : ' . $e->getFaultString();
-				log_error($this->error);
+				$this->error = localize_text("Exception calling XMLRPC method %s #%s : %s", $method, $e->getFaultCode(), $e->getFaultString());
+				logger(LOG_ERR, $this->error, LOG_PREFIX_HA);
 				file_notice($this->filenotice, $this->error, "Communications error occurred", "");
 			} catch (XML_RPC2_CurlException $e) {
 				$previouserror = $e->getPrevious();// HTTP_Request2_ConnectionException
@@ -121,13 +121,13 @@ class pfsense_xmlrpc_client {
 					if (empty($errormsg) || (is_array($errormsg) && empty($errormsg[1]))) {
 						$errormsg = $e->getMessage();
 					}
-					$this->error = "A communications error occurred while attempting to call XMLRPC method {$method}: {$errormsg}";
+					$this->error = localize_text("A communications error occurred while attempting to call XMLRPC method %s: %s", $method, $errormsg);
 				} else {
-					$this->error = "CurlException calling XMLRPC method {$method} #" . $previouserror->getMessage();
+					$this->error = localize_text("CurlException calling XMLRPC method %s #%s", $method, $previouserror->getMessage());
 				}
 			} catch (Exception $e) {
 				// Other errors (HTTP or networking problems...)
-				$this->error = "Exception calling XMLRPC method {$method} # " . $e->getMessage();
+				$this->error = localize_text("Exception calling XMLRPC method %s # %s", $method, $e->getMessage());
 			} finally {
 				if (isset($REQUEST_URI)) {
 					// restore the unset variable to its previous state.
@@ -136,16 +136,16 @@ class pfsense_xmlrpc_client {
 			}
 
 			if (!is_array($resp) && trim($resp) == "Authentication failed") {
-				$this->error = "An authentication failure occurred while trying to access {$this->logurl} ({$method}).";
+				$this->error = localize_text("An authentication failure occurred while trying to access %s (%s).", $this->logurl, $method);
 			}
 			if (empty($this->error)) {
-				log_error(sprintf(gettext("XMLRPC reload data success with %s (pfsense.{$method})."), $this->logurl));
+				logger(LOG_INFO, localize_text("XMLRPC reload data success with %s (%s).", $this->logurl, "pfsense.{$method}"), LOG_PREFIX_HA);
 				return $resp;
 			} elseif ($numberofruns < $max_attempts) {
-				log_error(sprintf(gettext("Retrying XMLRPC Request due to error: %s"), $this->error));
+				logger(LOG_NOTICE, localize_text("Retrying XMLRPC Request due to error: %s", $this->error), LOG_PREFIX_HA);
 				sleep(1);
 			} else {
-				log_error($this->error);
+				logger(LOG_ERR, $this->error, LOG_PREFIX_HA);
 				file_notice($this->filenotice, $this->error, "XMLRPC Error", "");
 			}
 		}

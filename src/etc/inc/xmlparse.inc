@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -144,10 +144,10 @@ function cData($parser, $data) {
 		}
 
 		if (is_string($ptr)) {
-			$ptr .= html_entity_decode($data);
+			$ptr .= html_entity_decode($data, ENT_QUOTES | ENT_SUBSTITUTE | ENT_XML1);
 		} else {
 			if (trim($data, " ") != "") {
-				$ptr = html_entity_decode($data);
+				$ptr = html_entity_decode($data, ENT_QUOTES | ENT_SUBSTITUTE | ENT_XML1);
 				$havedata++;
 			}
 		}
@@ -196,21 +196,21 @@ function parse_xml_config_raw($cffile, $rootobj, $isstring = "false") {
 	xml_parser_set_option($xml_parser, XML_OPTION_SKIP_WHITE, 1);
 
 	if (!($fp = fopen($cffile, "r"))) {
-		log_error(gettext("Error: could not open XML input") . "\n");
+		logger(LOG_CRIT, localize_text("Could not open XML input",), LOG_PREFIX_CONFIG);
 		return -1;
 	}
 
 	while ($data = fread($fp, 4096)) {
 		try {
 			if (!xml_parse($xml_parser, $data, feof($fp))) {
-				log_error(sprintf(gettext('XML error: %1$s at line %2$d in %3$s') . "\n",
+				logger(LOG_CRIT, localize_text('XML error: %1$s at line %2$d in %3$s',
 					xml_error_string(xml_get_error_code($xml_parser)),
 					xml_get_current_line_number($xml_parser),
-					$cffile));
+					$cffile), LOG_PREFIX_CONFIG);
 				return -1;
 			}
 		} catch (\Throwable | \Error | \Exception $e) {
-			log_error($e->getMessage());
+			logger(LOG_CRIT, localize_text($e->getMessage()), LOG_PREFIX_CONFIG);
 			return -1;
 		}
 	}
@@ -226,7 +226,7 @@ function parse_xml_config_raw($cffile, $rootobj, $isstring = "false") {
 		}
 
 		if (!$parsedcfg[$rootobj_name]) {
-			log_error(sprintf(gettext("XML error: no %s object found!") . "\n", implode(" or ", $rootobj)));
+			logger(LOG_CRIT, localize_text("XML error: no %s object found!", implode(" or ", $rootobj)), LOG_PREFIX_CONFIG);
 			return -1;
 		}
 		return $parsedcfg[$rootobj_name];
@@ -284,9 +284,9 @@ function dump_xml_config_sub($arr, $indent) {
 						if ((is_bool($cval) && $cval == true) || ($cval === "")) {
 							$xmlconfig .= "<{$ent}></{$ent}>\n";
 						} else if (is_cdata_entity($ent)) {
-							$xmlconfig .= "<{$ent}><![CDATA[" . htmlentities($cval) . "]]></{$ent}>\n";
+							$xmlconfig .= "<{$ent}><![CDATA[" . htmlentities($cval, ENT_QUOTES | ENT_SUBSTITUTE | ENT_XML1) . "]]></{$ent}>\n";
 						} else {
-							$xmlconfig .= "<{$ent}>" . htmlentities($cval) . "</{$ent}>\n";
+							$xmlconfig .= "<{$ent}>" . htmlentities($cval, ENT_QUOTES | ENT_SUBSTITUTE | ENT_XML1) . "</{$ent}>\n";
 						}
 					}
 				}
@@ -308,9 +308,9 @@ function dump_xml_config_sub($arr, $indent) {
 			} else if (!is_bool($val)) {
 				$xmlconfig .= str_repeat("\t", $indent);
 				if (is_cdata_entity($ent)) {
-					$xmlconfig .= "<{$ent}><![CDATA[" . htmlentities($val) . "]]></{$ent}>\n";
+					$xmlconfig .= "<{$ent}><![CDATA[" . htmlentities($val, ENT_QUOTES | ENT_SUBSTITUTE | ENT_XML1) . "]]></{$ent}>\n";
 				} else {
-					$xmlconfig .= "<{$ent}>" . htmlentities($val) . "</{$ent}>\n";
+					$xmlconfig .= "<{$ent}>" . htmlentities($val, ENT_QUOTES | ENT_SUBSTITUTE | ENT_XML1) . "</{$ent}>\n";
 				}
 			}
 		}

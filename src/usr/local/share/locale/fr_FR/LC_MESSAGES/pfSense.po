@@ -3,6 +3,7 @@
 # Renato Botelho do Couto <renato@netgate.com>, 2020. #zanata
 # Sweety <l.mail458@protonmail.com>, 2021. #zanata
 # cmcdonald <cmcdonald@netgate.com>, 2022. #zanata
+# cmcdonald <cmcdonald@netgate.com>, 2025. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
@@ -11,8 +12,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2022-10-28 07:26+0000\n"
-"Last-Translator: Copied by Zanata <copied-by-zanata@zanata.org>\n"
+"PO-Revision-Date: 2025-10-24 05:44+0000\n"
+"Last-Translator: cmcdonald <cmcdonald@netgate.com>\n"
 "Language-Team: French\n"
 "Language: fr\n"
 "X-Generator: Zanata 4.6.2\n"
@@ -30061,7 +30062,7 @@ msgstr "Nom de l'hôte, sans le domaine%1$sp. ex.: \"monhote\""
 #: src/usr/local/www/services_dnsmasq_edit.php:212
 #, php-format
 msgid "Domain of the host%1$se.g.: \"example.com\""
-msgstr "Nom de domaine de l'hôtet%1$p. ex. : « example.com »"
+msgstr "Nom de domaine de l'hôtet%1$s. ex. : « example.com »"
 
 #: src/usr/local/www/services_dnsmasq_edit.php:219
 #, php-format

@@ -4,7 +4,7 @@
  * pppoe-handler
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2025-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,15 +28,23 @@ require_once("util.inc");
 function pppoe_add_addrv4($interface, $address) {
 	$tmp = g_get('tmp_path', '');
 	$addresses = get_interface_addresses($interface);
-	if (!is_ipaddrv4($addresses['tunnel'])) {
+
+	// Ignore events when the tunnel isn't established.
+	if (!isset($addresses['dstaddr'])) {
 		return;
 	}
-	file_put_contents("{$tmp}/{$interface}_router",
-	    $addresses['tunnel']);
+
+	file_put_contents("{$tmp}/{$interface}_router", $addresses['dstaddr']);
 	unlink_if_exists("{$tmp}/{$interface}_router.last");
-	file_put_contents("{$tmp}/{$interface}_ip", $address);
 	touch("{$tmp}/{$interface}up");
 	touch("{$tmp}/{$interface}_upstart4");
+
+	// Only the interface's primary address needs further handling; e.g. ignore VIPs.
+	if ($addresses['ipaddr'] != $address) {
+		return;
+	}
+
+	file_put_contents("{$tmp}/{$interface}_ip", $address);
 
 	send_event("interface newip {$interface}");
 }
@@ -44,33 +52,48 @@ function pppoe_add_addrv4($interface, $address) {
 function pppoe_add_addrv6($interface, $address) {
 	$tmp = g_get('tmp_path', '');
 	$addresses = get_interface_addresses($interface);
-	if (!is_ipaddrv6($addresses['tunnel6'])) {
+
+	// Ignore events when the tunnel isn't established.
+	if (!isset($addresses['dstaddr6'])) {
 		return;
 	}
-	file_put_contents("{$tmp}/{$interface}_routerv6",
-	    $addresses['tunnel6']);
+
+	file_put_contents("{$tmp}/{$interface}_routerv6", $addresses['dstaddr6']);
 	unlink_if_exists("{$tmp}/{$interface}_routerv6.last");
-	file_put_contents("{$tmp}/{$interface}_ipv6", $address);
 	touch("{$tmp}/{$interface}upv6");
 	touch("{$tmp}/{$interface}_upstart6");
 	touch("{$tmp}/{$interface}_v6_by_pppoe");
 
+	// Only the interface's primary address needs further handling; e.g. ignore VIPs.
+	if ($addresses['ipaddr6'] != $address) {
+		return;
+	}
+
+	file_put_contents("{$tmp}/{$interface}_ipv6", $address);
+
+	// Defer running rc.newwanipv6 to the dhcp6c script
+	$interface_label = convert_real_interface_to_friendly_interface_name($interface);
+	$interface_config = config_get_path("interfaces/{$interface_label}");
+	if (!empty($interface_config) && ($interface_config["ipaddr6"] == "dhcp6")) {
+		return;
+	}
 	send_event("interface newipv6 {$interface}");
 }
 
 function pppoe_add_addr($interface, $address) {
-	if (is_ipaddrv4($address)) {
-		pppoe_add_addrv4($interface, $address);
-	} elseif (is_linklocal($address)) {
-		/* Nothing to be done here */
+	$address_family = match (is_ipaddr($address)) {
+		4 => AF_INET,
+		6 => AF_INET6,
+		default => null
+	};
+	if (!isset($address_family)) {
 		return;
+	}
+
+	if ($address_family == AF_INET) {
+		pppoe_add_addrv4($interface, $address);
 	} else {
-		$ifname = convert_real_interface_to_friendly_interface_name($interface);
-		$if = config_get_path("interfaces/{$ifname}");
-		// Only execute pppoe_add_addrv6() if dhcp6c will not respond to the address change
-		if (!empty($if) && $if["ipaddr6"] != "dhcp6") {
-			pppoe_add_addrv6($interface, $address);
-		}
+		pppoe_add_addrv6($interface, $address);
 	}
 }
 
@@ -101,6 +124,9 @@ function pppoe_attach($interface) {
 
 function pppoe_detach($interface) {
 	$tmp = g_get('tmp_path', '');
+	$interface_label = convert_real_interface_to_friendly_interface_name($interface);
+
+	interface_vip_cleanup($interface_label);
 
 	if (file_exists("{$tmp}/{$interface}_defaultgw")) {
 		$current_defaultgw = route_get_default('inet');
@@ -160,6 +186,13 @@ function pppoe_detach($interface) {
 	}
 
 	mwexec_bg("/usr/local/sbin/ppp-ipv6 {$interface} down");
+
+	foreach (get_gateways(GW_CACHE_DISABLED) as $gw) {
+		if ($gw['friendlyiface'] == $interface_label) {
+			setup_gateways_monitor();
+			break;
+		}
+	}
 }
 
 if (!config_path_enabled('system', 'use_if_pppoe')) {
@@ -168,7 +201,7 @@ if (!config_path_enabled('system', 'use_if_pppoe')) {
 }
 
 if ($argc < 4) {
-	log_error("HOTPLUG event: Missing mandatory parameters!");
+	logger(LOG_ERR, localize_text("HOTPLUG event: Missing mandatory parameters!"));
 	return;
 }
 $interface = trim($argv[1], " \n\t");
@@ -179,7 +212,7 @@ if (!empty($argv[3])) {
 }
 
 if (empty($interface)) {
-	log_error("HOTPLUG event: Ignoring event with empty interface");
+	logger(LOG_NOTICE, localize_text("HOTPLUG event: Ignoring event with empty interface"));
 	return;
 }
 
@@ -189,7 +222,7 @@ case "LINK_UP":
 	break;
 case "ADDR_ADD":
 	if (!is_ipaddr($address)) {
-		log_error("HOTPLUG event: Invalid IP address {$address}");
+		logger(LOG_ERR, localize_text("HOTPLUG event: Invalid IP address %s", $address));
 		break;
 	}
 	pppoe_add_addr($interface, $address);
@@ -197,7 +230,7 @@ case "ADDR_ADD":
 case "ADD_DNS1":
 case "ADD_DNS2":
 	if (!is_ipaddr($address)) {
-		log_error("HOTPLUG event: Invalid IP address {$address}");
+		logger(LOG_ERR, localize_text("HOTPLUG event: Invalid IP address %s", $address));
 		break;
 	}
 

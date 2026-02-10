@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -408,7 +408,7 @@ if (!($act == "new" || $act == "edit" || $act == gettext("Save") || $input_error
 					<th><?=gettext("Internal")?></th>
 					<th><?=gettext("Issuer")?></th>
 					<th><?=gettext("Certificates")?></th>
-					<th><?=gettext("Distinguished Name")?></th>
+					<th><?=gettext("Identity")?></th>
 					<th><?=gettext("In Use")?></th>
 					<th><?=gettext("Actions")?></th>
 				</tr>
@@ -457,7 +457,7 @@ foreach (config_get_path('ca', []) as $ca):
 					<td><i><?=$issuer_name?></i></td>
 					<td><?=$certcount?></td>
 					<td>
-						<?=$subj?>
+						<?=htmlspecialchars(cert_get_identity($ca['crt'], true, true))?>
 						<?php cert_print_infoblock($ca); ?>
 						<?php cert_print_dates($ca);?>
 					</td>

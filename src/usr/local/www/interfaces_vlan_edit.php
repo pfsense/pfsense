@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -34,6 +34,13 @@
 
 require_once("config.lib.inc");
 require_once("guiconfig.inc");
+
+function get_vlan_tag_types() {
+	return [
+		'ctag' => 'C-Tag (0x8100)',
+		'stag' => 'S-Tag (0x88A8)'
+	];
+}
 
 $portlist = get_interface_list();
 $lagglist = get_lagg_interface_list();
@@ -70,6 +77,7 @@ $this_vlan_config = isset($id) ? config_get_path("vlans/vlan/{$id}") : null;
 if ($this_vlan_config) {
 	$pconfig['if'] = $this_vlan_config['if'];
 	$pconfig['vlanif'] = $this_vlan_config['vlanif'];
+	$pconfig['tag_type'] = $this_vlan_config['tag_type'];
 	$pconfig['tag'] = $this_vlan_config['tag'];
 	$pconfig['pcp'] = $this_vlan_config['pcp'];
 	$pconfig['descr'] = $this_vlan_config['descr'];
@@ -109,6 +117,10 @@ if ($_POST['save']) {
 
 	if (!does_interface_exist($_POST['if'])) {
 		$input_errors[] = gettext("Interface supplied as parent is invalid");
+	}
+
+	if (!array_key_exists($_POST['tag_type'], get_vlan_tag_types())) {
+		$input_errors[] = gettext("The selected VLAN Tag Type is invalid.");
 	}
 
 	if (isset($id)) {
@@ -153,6 +165,7 @@ if ($_POST['save']) {
 		}
 		$vlan = array();
 		$vlan['if'] = $_POST['if'];
+		$vlan['tag_type'] = $_POST['tag_type'];
 		$vlan['tag'] = $_POST['tag'];
 		$vlan['pcp'] = $_POST['pcp'];
 		$vlan['descr'] = $_POST['descr'];
@@ -213,6 +226,13 @@ $section->addInput(new Form_Select(
 	$pconfig['if'],
 	build_interfaces_list()
 ))->setWidth(6)->setHelp('Only VLAN capable interfaces will be shown.');
+
+$section->addInput(new Form_Select(
+	'tag_type',
+	'*VLAN Tag Type',
+	$pconfig['tag_type'] ?? 'ctag',
+	get_vlan_tag_types()
+))->setHelp('The type of VLAN tag to use (defaults to C-Tag).');
 
 $section->addInput(new Form_Input(
 	'tag',

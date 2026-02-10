@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -78,8 +78,11 @@ $section->addInput(new Form_Checkbox(
 	'Enable daily notifications of expired and soon-to-expire certificates',
 	$pconfig['cert_enable_notify']
 ))->setHelp('When enabled, the firewall will check CA and Certificate expiration ' .
-	'times daily and file notices when expired or soon-to-expire ' .
-	'entries are detected.');
+	'times daily and file notices when it detects expired or soon-to-expire ' .
+	'entries. Warning period is determined by the lesser duration of 1/3 the ' .
+	'certificate lifetime, minus one day, or the Certificate Expiration ' .
+	'Threshold value to avoid warning too early for certificates with short ' .
+	'lifetimes.');
 $section->addInput(new Form_Checkbox(
     'revoked_cert_ignore_notify',
     'Ignore Revoked',
@@ -92,8 +95,11 @@ $section->addInput(new Form_Input(
 	'number',
 	$pconfig['certexpiredays']
 ))->setAttribute('placeholder', g_get('default_cert_expiredays'))
-  ->setHelp('The number of days at which a certificate lifetime is considered to ' .
-	'be expiring soon and worthy of notification. Default is %d days.', g_get('default_cert_expiredays'));
+  ->setHelp('The maximum number of days at which a certificate lifetime is ' .
+	'considered to be expiring soon and worthy of notification. Expiration ' .
+	'notifications will trigger at the lesser duration of 1/3 the ' .
+	'certificate lifetime, minus one day, or this value. ' .
+	'Default is %d days.', g_get('default_cert_expiredays'));
 
 $form->add($section);
 

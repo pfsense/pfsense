@@ -986,8 +986,8 @@ $priv_list['page-diagnostics-logs-settings']['match'] = array();
 $priv_list['page-diagnostics-logs-settings']['match'][] = "status_logs_settings.php*";
 
 $priv_list['page-diagnostics-logs-pptpvpn'] = array();
-$priv_list['page-diagnostics-logs-pptpvpn']['name'] = gettext("WebCfg - Status: Logs: VPN");
-$priv_list['page-diagnostics-logs-pptpvpn']['descr'] = gettext("Allow access to the 'Status: Logs: VPN' page.");
+$priv_list['page-diagnostics-logs-pptpvpn']['name'] = gettext("WebCfg - Status: Logs: PPPoE/L2TP Server");
+$priv_list['page-diagnostics-logs-pptpvpn']['descr'] = gettext("Allow access to the 'Status: Logs: PPPoE/L2TP Server' page.");
 $priv_list['page-diagnostics-logs-pptpvpn']['match'] = array();
 $priv_list['page-diagnostics-logs-pptpvpn']['match'][] = "status_logs_vpn.php*";
 

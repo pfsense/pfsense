@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -69,7 +69,7 @@ if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 
 if (isset($id) && $a_schedules[$id]) {
 	$pconfig['name'] = $a_schedules[$id]['name'];
-	$pconfig['descr'] = html_entity_decode($a_schedules[$id]['descr']);
+	$pconfig['descr'] = $a_schedules[$id]['descr'];
 	$pconfig['timerange'] = $a_schedules[$id]['timerange'];
 	$pconfig['schedlabel'] = $a_schedules[$id]['schedlabel'];
 	$getSchedule = true;

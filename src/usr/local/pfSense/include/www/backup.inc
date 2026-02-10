@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -319,7 +319,6 @@ function execPost($post, $postfiles, $ui = true) {
 								}
 								if ($conf_change) {
 									write_config(sprintf(gettext("Unset RRD and extra data from configuration after restoring %s configuration area"), $post['restorearea']));
-									unlink_if_exists("{$g['tmp_path']}/config.cache");
 									convert_config();
 								}
 								filter_configure();
@@ -342,10 +341,6 @@ function execPost($post, $postfiles, $ui = true) {
 								/* this will be picked up by /index.php */
 								mark_subsystem_dirty("restore");
 								touch("/conf/needs_package_sync");
-								/* remove cache, we will force a config reboot */
-								if (file_exists("{$g['tmp_path']}/config.cache")) {
-									unlink("{$g['tmp_path']}/config.cache");
-								}
 								config_read_file(true);
 
 								/* Restore previously pkg repo configured */
@@ -402,7 +397,6 @@ function execPost($post, $postfiles, $ui = true) {
 								}
 								if ($conf_change) {
 									write_config(gettext("Unset RRD and extra data from configuration after full restore."));
-									unlink_if_exists("{$g['tmp_path']}/config.cache");
 									convert_config();
 								}
 								if (is_array(config_get_path('captiveportal'))) {

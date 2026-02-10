@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2004 Dinesh Nair <dinesh@alphaque.com>
  * All rights reserved.
  *
@@ -135,15 +135,7 @@ if ($_POST['save']) {
 			$ip['bw_down'] = $_POST['bw_down'];
 		}
 
-		$oldip = array();
 		if ($this_allowedip_config) {
-			$oldip['ip'] = $this_allowedip_config['ip'];
-			if (!empty($this_allowedip_config['sn'])) {
-				$oldip['sn'] = $this_allowedip_config['sn'];
-			} else {
-				$oldip['sn'] = 32;
-			}
-
 			config_set_path("captiveportal/{$cpzone}/allowedip/{$id}", $ip);
 		} else {
 			config_set_path("captiveportal/{$cpzone}/allowedip/", $ip);
@@ -154,8 +146,8 @@ if ($_POST['save']) {
 		write_config("Captive portal allowed IPs added");
 
 		if (config_path_enabled("captiveportal/{$cpzone}")) {
-			if (!empty($oldip)) {
-				captiveportal_ether_delete_entry($oldip, 'allowedhosts');
+			if ($this_allowedip_config) {
+				captiveportal_ether_delete_entry($this_allowedip_config, 'allowedhosts');
 			}
 			captiveportal_allowedip_configure_entry($ip);
 		}
@@ -163,17 +155,6 @@ if ($_POST['save']) {
 		header("Location: services_captiveportal_ip.php?zone={$cpzone}");
 		exit;
 	}
-}
-
-function build_dir_list() {
-	$dirs = array(gettext("Both"), gettext("From"), gettext("To"));
-	$dirlist = array();
-
-	foreach ($dirs as $dir) {
-		$dirlist[strtolower($dir)] = $dir;
-	}
-
-	return($dirlist);
 }
 
 include("head.inc");
@@ -203,7 +184,7 @@ $section->addInput(new Form_Select(
 	'dir',
 	'*Direction',
 	strtolower($pconfig['dir']),
-	build_dir_list()
+	['both' => gettext('Both'), 'from' => gettext('From'), 'to' => gettext('To')]
 ))->setHelp('Use "From" to always allow access to an address through the captive portal (without authentication). ' .
 			'Use "To" to allow access from all clients (even non-authenticated ones) behind the portal to this IP.');
 

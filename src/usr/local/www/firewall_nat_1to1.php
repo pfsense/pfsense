@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -115,7 +115,7 @@ $system_alias_specialnet = get_specialnet('', [SPECIALNET_IFNET, SPECIALNET_GROU
 				<tbody class="user-entries">
 <?php
 		$i = 0;
-		foreach (config_get_path('nat/onetoone', []) as $natent):
+		foreach (get_anynat_rules_list('binat') as $natent):
 			if (isset($natent['disabled'])) {
 				$iconfn = "pass_d";
 			} else {

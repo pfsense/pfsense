@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,9 +35,6 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("rrd.inc");
 require_once("system.inc");
-
-// This causes the step #, field type and field name to be printed at the top of the page
-define('DEBUG', false);
 
 global $g;
 
@@ -501,7 +498,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 		}
 
 
-		if (DEBUG) {
+		if (g_get('debug')) {
 			print('Step: ' . $pkg['step'][$stepid]['id'] . ', Field: ' . $field['type'] . ', Name: ' . $name . '<br />');
 		}
 
@@ -886,7 +883,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 				try{
 					@eval("\$value = &$source;");
 				} catch (\Throwable | \Error | \Exception $e) {
-					log_error($e);
+					logger(LOG_ERR, $e);
 				}
 				$input = $section->addInput(new Form_Textarea(
 					$name,

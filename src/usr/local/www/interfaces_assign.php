@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -48,6 +48,7 @@ require_once("openvpn.inc");
 require_once("captiveportal.inc");
 require_once("rrd.inc");
 require_once("interfaces_fast.inc");
+require_once("firewall_nat.inc");
 
 global $friendlyifnames;
 
@@ -299,7 +300,7 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 					}
 
 					if ((substr($ifport, 0, 3) == 'gre') ||
-					    (substr($ifport, 0, 5) == 'gif')) {
+					    (substr($ifport, 0, 3) == 'gif')) {
 						unset($this_if_config['ipaddr']);
 						unset($this_if_config['subnet']);
 						unset($this_if_config['ipaddrv6']);
@@ -379,18 +380,14 @@ if (isset($_REQUEST['add']) && isset($_REQUEST['if_add'])) {
 				config_del_path("dhcpdv6/{$id}");
 				services_dhcpd_configure('inet6');
 			}
-
-			foreach (config_get_path('filter/rule', []) as $x => $rule) {
+			remove_filter_rules([], $id);
+			$rdr_rules_list = [];
+			foreach (get_anynat_rules_list('rdr') as $x => $rule) {
 				if ($rule['interface'] == $id) {
-					config_del_path("filter/rule/{$x}");
+					$rdr_rules_list[] = $x;
 				}
 			}
-		
-			foreach (config_get_path('nat/rule', []) as $x => $rule) {
-				if ($rule['interface'] == $id) {
-					config_del_path("nat/rule/{$x}/interface");
-				}
-			}
+			remove_rdr_rules($rdr_rules_list);
 
 			write_config(gettext('Interface assignment deleted'));
 

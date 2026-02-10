@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -70,6 +70,7 @@ if ($_POST['save'] == gettext("Save")) {
 $act = $_REQUEST['act'];
 
 if ($act == "edit") {
+	sortTunables();
 	if (is_numericint($id) && (config_get_path("sysctl/item/{$id}") !== null)) {
 		$pconfig['tunable'] = config_get_path('sysctl/item/' . $id . '/tunable');
 		$pconfig['value'] = config_get_path('sysctl/item/' . $id . '/value');
@@ -120,7 +121,7 @@ if ($act != "edit"): ?>
 	</div>
 	<div class="panel-body">
 		<div class="form-group">
-			<table class="table table-responsive table-hover table-condensed">
+			<table class="table table-responsive table-hover table-condensed" data-sortable>
 				<caption><strong><?=gettext('NOTE: '); ?></strong><?=gettext('The options on this page are intended for use by advanced users only.'); ?></caption>
 				<thead>
 					<tr>

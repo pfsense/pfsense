@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2009 Erik Kristensen
  * All rights reserved.
  *
@@ -38,6 +38,6 @@ if (acb_enabled()) {
 		write_config(gettext('Scheduled Backup via AutoConfigBackup'));
 		acb_backup_stage_upload();
 	} else {
-		log_error(gettext('Skipping AutoConfigBackup scheduled backup (no changes since previous backup)'));
+		logger(LOG_INFO, localize_text('Skipping scheduled backup (no changes since previous backup)'), LOG_PREFIX_ACB);
 	}
 }

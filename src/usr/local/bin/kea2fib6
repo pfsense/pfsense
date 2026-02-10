@@ -4,10 +4,12 @@
  * kea2fib6
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2025-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  */
+
+declare(strict_types=1);
 
 namespace kea2fib6;
 
@@ -83,8 +85,8 @@ final class KeaConfig extends Singleton
             );
         }
 
-        $this->config = \json_decode($configJson, true);
-        if (\json_last_error() !== JSON_ERROR_NONE) {
+        $tmpConfig = \json_decode($configJson, true);
+        if (!is_array($tmpConfig) || (\json_last_error() !== JSON_ERROR_NONE)) {
             throw new KeaConfigException(
                 \sprintf(
                     \gettext('Unable to parse Kea configuration file: %s'),
@@ -92,6 +94,7 @@ final class KeaConfig extends Singleton
                 )
             );
         }
+        $this->config = $tmpConfig;
 
         if (isset($this->config['Dhcp4'])) {
             $this->addressFamily = AddressFamily::INET;
@@ -235,7 +238,7 @@ function mkdir_safe(string $directory, int $permissions = 0777, bool $recursive 
         try {
             return (\mkdir($directory, $permissions, $recursive));
         } catch (\Exception $e) {
-            syslogf(LOG_NOTICE, \gettext('Unable to mkdir directory: %s'), $directory);
+            syslogf(LOG_ERR, \gettext('Unable to mkdir directory: %s'), $directory);
         }
     }
 
@@ -318,11 +321,10 @@ function kea_leases_routes(KeaConfig $config): array
                 continue;
         }
 
-        /* Ensure lease entry has a valid query6 key */
-        $query6 = &$lease['user-context']['Netgate']['query6'];
-        if (isset($query6, $query6['remote-addr'], $query6['iface-name'])) {
+        $binding_variables = &$lease['user-context']['ISC']['binding-variables'];
+        if (isset($binding_variables, $binding_variables['remote-addr'], $binding_variables['iface-name'])) {
             $prefix = "{$lease['ip-address']}/{$lease['prefix-len']}";
-            $nextHop = "{$query6['remote-addr']}%{$query6['iface-name']}";
+            $nextHop = "{$binding_variables['remote-addr']}%{$binding_variables['iface-name']}";
             $routesByPrefix[$prefix] = $nextHop;
         }
     }
@@ -336,7 +338,7 @@ function write_owned_routes(string $cachePath, array $routesByPrefix): void
 
     \file_put_contents($cachePath, \serialize($routesByPrefix));
 
-    syslogf(LOG_NOTICE, \gettext('Route cache updated: %s'), $cachePath);
+    syslogf(LOG_INFO, \gettext('Route cache updated: %s'), $cachePath);
 }
 
 function owned_routes(string $cachePath): array
@@ -388,13 +390,13 @@ function routes_sync(array $leaseRoutesByPrefix, array $ownedRoutesByPrefix): bo
     foreach ($routesToAdd as $dest => $nextHop) {
         route_add_or_change($dest, $nextHop);
         $syncHappened = true;
-        syslogf(LOG_NOTICE, \gettext('Route installed: %s via %s'), $dest, $nextHop);
+        syslogf(LOG_INFO, \gettext('Route installed: %s via %s'), $dest, $nextHop);
     }
 
     foreach (\array_keys($routesToRemove) as $dest) {
         route_del($dest);
         $syncHappened = true;
-        syslogf(LOG_NOTICE, \gettext('Route removed: %s'), $dest);
+        syslogf(LOG_INFO, \gettext('Route removed: %s'), $dest);
     }
 
     return ($syncHappened);
@@ -446,7 +448,7 @@ class FlushCommand extends Command
         }
 
         if ($syncHappened) {
-            syslogf(LOG_NOTICE, \gettext('Syncronization completed: %.4fms'), (\microtime(true) - $startTime) * 1000);
+            syslogf(LOG_INFO, \gettext('Syncronization completed: %.4fms'), (\microtime(true) - $startTime) * 1000);
         }
 
         \closelog();
@@ -509,7 +511,7 @@ class SyncCommand extends Command
         }
 
         if ($syncHappened) {
-            syslogf(LOG_NOTICE, \gettext('Syncronization completed: %.4fms'), (\microtime(true) - $startTime) * 1000);
+            syslogf(LOG_INFO, \gettext('Syncronization completed: %.4fms'), (\microtime(true) - $startTime) * 1000);
         }
 
         \closelog();
@@ -543,7 +545,7 @@ $app->getDefinition()->addOptions([
     ),
 ]);
 
-$app->add(new FlushCommand());
-$app->add(new SyncCommand());
+$app->addCommand(new FlushCommand());
+$app->addCommand(new SyncCommand());
 
 $app->run();

@@ -3,7 +3,7 @@
 /*
  * rc.package_reinstall_all
  *
- * Copyright (c) 2018-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2018-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,7 +37,7 @@ while($ntries <= $max_tries) {
 	if (package_reinstall_all()) {
 		break;
 	}
-	log_error("Attempt #{$ntries} to reinstall packages FAILED.");
+	logger(LOG_WARNING, localize_text("Attempt #%d to reinstall packages FAILED.", $ntries));
 	$ntries++;
 }
 

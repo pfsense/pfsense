@@ -3,7 +3,7 @@
  * system_advanced_sysctl.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,8 +29,23 @@ require_once("pfsense-utils.inc");
 
 // Functions included by system_advanced_sysctl.php ===========================
 
+// Sort custom tunables by the tunable name
+function sortTunables() {
+	$tunables = config_get_path('sysctl/item', []);
+	if (!empty($tunables)) {
+		array_multisort(
+			array_column($tunables, 'tunable'),
+			SORT_ASC,
+			SORT_NATURAL,
+			$tunables
+		);
+		config_set_path('sysctl/item', $tunables);
+	}
+}
+
 // Return a list of system tunables
 function getTunables($json = false) {
+	/* Read the full sorted list of custom and default system tunables */
 	$st = system_get_sysctls();
 
 	if (!$json) {
@@ -48,6 +63,8 @@ function getTunables($json = false) {
 
 // Delete a system tunable
 function deleteTunable($id, $complete = false) {
+	/* Sort tunables to ensure they are in the expected order. */
+	sortTunables();
 	if (config_get_path('sysctl/item/' . $id)) {
 		config_del_path('sysctl/item/' . $id);
 		write_config("Custom System Tunables deleted");
@@ -65,8 +82,10 @@ function deleteTunable($id, $complete = false) {
 
 // Update tunable if it exists, otherwise create a new one
 function saveTunable($post, $id, $json = false) {
-	$rv = array();
+	/* Sort tunables to ensure they are in the expected order. */
+	sortTunables();
 
+	$rv = array();
 	$rv['pconfig'] = $post;
 
 	$tunableent = array();
@@ -89,6 +108,9 @@ function saveTunable($post, $id, $json = false) {
 		if (!$json) {
 			mark_subsystem_dirty('sysctl');
 		}
+
+		/* Re-sort tunables before saving. */
+		sortTunables();
 
 		write_config("System Tunables Advanced Settings saved");
 		if ($json) {

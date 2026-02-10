@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005-2006 Bill Marquette <bill.marquette@gmail.com>
  * Copyright (c) 2006 Paul Taylor <paultaylor@winn-dixie.com>.
  * Copyright (c) 2008 Shrew Soft Inc
@@ -35,8 +35,9 @@ require_once('globals.inc');
 function cmp_page_matches($page, & $matches, $fullwc = true) {
 
 	global $g;
-//	$dbg_matches = implode(",", $matches);
-//	log_error("debug: checking page {$page} match with {$dbg_matches}");
+	if (g_get('debug')) {
+		logger(LOG_DEBUG, localize_text("checking page %s match with %s", $page, implode(",", $matches)), LOG_PREFIX_WEBGUI);
+	}
 
 	if (!is_array($matches)) {
 		return false;

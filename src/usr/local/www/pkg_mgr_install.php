@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005 Colin Smith
  * All rights reserved.
  *
@@ -74,6 +74,9 @@ if (!empty($_REQUEST['pkg'])) {
 	$pkgname = $_REQUEST['pkg'];
 }
 
+$pkgname_vital = is_vital_system_default_package($pkgname);
+$pkgname_vital_message = gettext("This package is vital to system operation and cannot be removed.");
+
 if ($_REQUEST['ajax']) {
 	$response = "";
 	$code = 0;
@@ -92,7 +95,7 @@ if ($_REQUEST['ajax']) {
 	// If this is an ajax call to get the installed and newest versions, call that function,
 	// JSON encode the result, print it and exit
 	if ($_REQUEST['getversion']) {
-		$firmwareversions = get_system_pkg_version(true, false);
+		$firmwareversions = get_system_pkg_version(false);
 		print(json_encode($firmwareversions));
 		exit;
 	}
@@ -345,7 +348,7 @@ if (!isvalidpid($gui_pidfile) && !$confirmed && !$completed &&
 			$pkgtxt = sprintf(gettext('Confirmation Required to reinstall package %s.'), $pkgname);
 			break;
 		case 'delete':
-			$pkgtxt = sprintf(gettext('Confirmation Required to remove package %s.'), $pkgname);
+			$pkgtxt = $pkgname_vital ? $pkgname : sprintf(gettext('Confirmation Required to remove package %s.'), $pkgname);
 			break;
 		case 'installed':
 		default:
@@ -464,6 +467,8 @@ if (!isvalidpid($gui_pidfile) && !$confirmed && !$completed &&
 					</div>
 				</div>
 <?php
+	elseif (($pkgmode == 'delete') && $pkgname_vital):
+		print_info_box($pkgname_vital_message);
 	else:
 ?>
 				<input type="hidden" name="pkg" value="<?=$pkgname;?>" />
@@ -586,6 +591,12 @@ ob_flush();
 if (!isvalidpid($gui_pidfile) && $confirmed && !$completed) {
 	/* Write out configuration to create a backup prior to pkg install. */
 	if ($firmwareupdate) {
+		foreach ($repos as $repo) {
+			if ($repo['name'] == $_POST['fwbranch']) {
+				config_set_path('system/pkg_repo_conf_path', $repo['name']);
+				break;
+			}
+		}
 		write_config(gettext("Creating restore point before upgrade."));
 	} else {
 		write_config(gettext("Creating restore point before package installation."));
@@ -636,7 +647,9 @@ if (!isvalidpid($gui_pidfile) && $confirmed && !$completed) {
 			break;
 	}
 
-	if (isset($params)) {
+	if (($pkgmode == 'delete') && $pkgname_vital) {
+		$failmsg = $pkgname_vital_message;
+	} elseif (isset($params)) {
 		$another_instance = true;
 		$log = array();
 		$upgrade_script = "{$pfsense_upgrade} -y -l {$logfilename}.txt -p {$sock_file}";
@@ -825,6 +838,8 @@ function get_firmware_versions() {
 				$('#confirmlabel').text( "<?=$confirmlabel?>");
 				$('#pkgconfirm').show();
 			}
+		} else if (json && json.pkg_version_error) {
+			$('#uptodate').html('<span class="text-danger">' + 'Unable to check for updates' + "</span>" + "<br/>" + json.pkg_version_error);
 		} else {
 			$('#uptodate').html('<span class="text-danger">' + 'Unable to check for updates' + "</span>");
 		}

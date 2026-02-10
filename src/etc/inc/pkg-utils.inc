@@ -6,7 +6,7 @@
  * Copyright (c) 2005-2006 Colin Smith (ethethlay@gmail.com)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,9 +31,9 @@ require_once("pfsense-utils.inc");
 if (!function_exists("pkg_debug")) {
 	/* set up logging if needed */
 	function pkg_debug($msg) {
-		global $g, $debug, $fd_log;
+		global $g, $fd_log;
 
-		if (!$debug) {
+		if (!g_get('debug')) {
 			return;
 		}
 
@@ -585,7 +585,7 @@ function register_all_installed_packages(bool $force = false) {
  * indicating progress.
  */
 function resync_all_package_configs($show_message = false) {
-	log_error(gettext("Resyncing configuration for all packages."));
+	logger(LOG_INFO, localize_text("Resyncing configuration for all packages."));
 
 	if ($show_message == true) {
 		echo "Syncing packages:";
@@ -671,8 +671,8 @@ function sync_package($package_name) {
 	}
 
 	if (!file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
-		log_error(sprintf(gettext("The %s package is missing its " .
-		    "configuration file and must be reinstalled."),
+		logger(LOG_WARNING, localize_text("The %s package is missing its " .
+		    "configuration file and must be reinstalled.",
 		    $package['name']));
 		delete_package_xml($package['name']);
 		return;
@@ -690,14 +690,14 @@ function sync_package($package_name) {
 		if (file_exists($include_file)) {
 			require_once($include_file);
 		} else {
-			log_error(sprintf(gettext('Reinstalling package %1$s " .
-			    "because its include file(%2$s) is missing!'),
+			logger(LOG_WARNING, localize_text('Reinstalling package %1$s " .
+			    "because its include file(%2$s) is missing!',
 			    $package['name'], $include_file));
 			uninstall_package($package['name']);
 			if (reinstall_package($package['name']) != 0) {
-				log_error(sprintf(gettext("Reinstalling " .
+				logger(LOG_ERR, localize_text("Reinstalling " .
 				    "package %s failed. Take appropriate " .
-				    "measures!!!"), $package['name']));
+				    "measures!!!", $package['name']));
 				return;
 			}
 			if (file_exists($include_file)) {
@@ -790,27 +790,26 @@ function install_package_xml($package_name) {
 	}
 
 	pkg_debug(gettext("Beginning package installation.") . "\n");
-	log_error(sprintf(gettext('Beginning package installation for %s .'),
+	logger(LOG_INFO, localize_text('Beginning package installation for %s .',
 	    $pkg_info['name']));
 
 	/* add package information to config.xml */
 	$pkgid = get_package_id($pkg_info['name']);
 	update_status(gettext("Saving updated package information...") . "\n");
-	$pkgs = config_get_path('installedpackages/package', []);
 	if ($pkgid == -1) {
-		$pkgs[] = $pkg_info;
 		$changedesc = sprintf(gettext("Installed %s package."),
 		    $pkg_info['name']);
 		$to_output = gettext("done.") . "\n";
+		config_set_path('installedpackages/package/', $pkg_info);
 	} else {
 		$pkgs[$pkgid] = $pkg_info;
 		$changedesc = sprintf(gettext("Overwrote previous " .
 		    "installation of %s."), $pkg_info['name']);
 		$to_output = gettext("overwrite!") . "\n";
+		config_set_path("installedpackages/package/{$pkgid}", $pkg_info);
 	}
-	config_set_path('installedpackages/package', $pkgs);
 	write_config(sprintf(gettext("Intermediate config write during " .
-	    "package install for %s."), $pkg_info['name']));
+	    "package install for %s."), $pkg_info['name']), false, true);
 	update_status($to_output);
 
 	if (($pkgid = get_package_id($package_name)) == -1) {
@@ -819,8 +818,8 @@ function install_package_xml($package_name) {
 		    "\n\n"));
 
 		uninstall_package($package_name);
-		write_config($changedesc);
-		log_error(sprintf(gettext("Failed to install package: %s."),
+		write_config($changedesc, false, true);
+		logger(LOG_ERR, localize_text("Failed to install package: %s.",
 		    $pkg_info['name']));
 		update_status(gettext("Failed to install package.") . "\n");
 		return false;
@@ -834,8 +833,8 @@ function install_package_xml($package_name) {
 		    "Installation aborted.") ."\n");
 
 		uninstall_package($package_name);
-		write_config($changedesc);
-		log_error(sprintf(gettext("Failed to install package: %s."),
+		write_config($changedesc, false, true);
+		logger(LOG_ERR, localize_text("Failed to install package: %s.",
 		    $pkg_info['name']));
 		update_status(gettext("Failed to install package.") . "\n");
 		return false;
@@ -873,9 +872,9 @@ function install_package_xml($package_name) {
 			    basename($pkg_config['include_file'])) . "\n");
 
 			uninstall_package($package_name);
-			write_config($changedesc);
-			log_error(sprintf(gettext(
-			    "Failed to install package: %s."),
+			write_config($changedesc, false, true);
+			logger(LOG_ERR, localize_text(
+			    "Failed to install package: %s.",
 			    $pkg_info['name']));
 			update_status(gettext("Failed to install package.") .
 			    "\n");
@@ -953,10 +952,13 @@ function install_package_xml($package_name) {
 	if (is_array($pkg_config['plugins'])) {
 		config_set_path("installedpackages/package/{$pkgid}/plugins", $pkg_config['plugins']);
 	}
+	if (!empty($pkg_config['ramdisk_dir_names']) && is_string($pkg_config['ramdisk_dir_names'])) {
+		config_set_path("installedpackages/package/{$pkgid}/ramdisk_dir_names", $pkg_config['ramdisk_dir_names']);
+	}
 
 	update_status(gettext("Writing configuration... "));
 	write_config($changedesc);
-	log_error(sprintf(gettext("Successfully installed package: %s."),
+	logger(LOG_INFO, localize_text("Successfully installed package: %s.",
 	    $pkg_info['name']));
 	update_status(gettext("done.") . "\n");
 	if ($pkg_info['after_install_info']) {
@@ -1045,7 +1047,7 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 		 *	Same is done during installation.
 		 */
 		write_config(sprintf(gettext("Intermediate config write " .
-		    "during package removal for %s."), $package_name));
+		    "during package removal for %s."), $package_name), false, true);
 
 		/*
 		 * If a require exists, include it. this will
@@ -1158,7 +1160,7 @@ function package_reinstall_all() {
 	}
 
 	/* wait for internet connection */
-	log_error(gettext("Waiting for Internet connection to update pkg " .
+	logger(LOG_NOTICE, localize_text("Waiting for Internet connection to update pkg " .
 	    "metadata and finish package reinstallation"));
 	$ntries = 3;
 	while ($ntries > 0) {
@@ -1241,7 +1243,7 @@ function stop_packages() {
 	require_once("pfsense-utils.inc");
 	require_once("service-utils.inc");
 
-	log_error(gettext("Stopping all packages."));
+	logger(LOG_INFO, localize_text("Stopping all packages."));
 
 	$rcfiles = glob(RCFILEPREFIX . "*.sh");
 	if (!$rcfiles) {
@@ -1282,18 +1284,30 @@ function stop_packages() {
 
 /* Identify which meta package is installed */
 function get_meta_pkg_name() {
-	global $g;
-
-	/* XXX: Use pkg annotation */
-	if (is_pkg_installed(g_get('product_name'))) {
-		return g_get('product_name');
-	}
+	$product_name = g_get('product_name');
 	foreach (g_get('alternativemetaports') as $suffix) {
-		if (is_pkg_installed(g_get('product_name') . '-' . $suffix)) {
-			return g_get('product_name') . '-' . $suffix;
+		if (is_pkg_installed("{$product_name}-{$suffix}")) {
+			return "{$product_name}-{$suffix}";
 		}
 	}
+	if (is_pkg_installed($product_name)) {
+		return $product_name;
+	}
 	return false;
+}
+
+function get_core_pkg_names() {
+	$product_name = g_get('product_name');
+
+	// This query mirrors pfSense-upgrade logic.
+	$rc = pkg_exec("query -e \"%n ~ {$product_name}-kernel-* || %n ~ {$product_name}-base*\" %n", $stdout, $stderr);
+	if ($rc != 0) {
+		return false;
+	}
+	// Clean up the output.
+	$stdout = implode(' ', array_filter(explode(PHP_EOL, $stdout)));
+
+	return $stdout;
 }
 
 /* Identify which package has the product dependencies */
@@ -1326,19 +1340,18 @@ function get_base_pkg_name() {
 }
 
 /* Verify if system needs updating from selected repo or upgrading from available repos (meta package or base) */
-function get_system_pkg_version($baseonly = false, $use_cache = true, $updates_only = true, $update_cache = false) {
-	global $g;
+function get_system_pkg_version($use_cache = true, $updates_only = true) {
+	$result = ['pkg_use_cache' => $use_cache];
 
 	if (!get_dnsavailable()) {
 		$result['pkg_version_error'] = "DNS servers not available";
-		return ($result);
+		return $result;
 	}
 
+	// Check the cache; pfSense-upgrade returns 2 when there's a new version.
 	$cache_file = g_get('version_cache_file');
 	$rc_file = $cache_file . '.rc';
-
-	$result['pkg_use_cache'] = $use_cache;
-
+	$product_name = g_get('product_name');
 	$rc = "";
 	if ($use_cache && file_exists($rc_file) &&
 	    (time()-filemtime($rc_file) < g_get('version_cache_refresh'))) {
@@ -1346,71 +1359,74 @@ function get_system_pkg_version($baseonly = false, $use_cache = true, $updates_o
 	}
 
 	if ($rc == "2") {
+		// A new version was previously detected, no need to check again.
 		$output = @file_get_contents($cache_file);
 	} else if ($rc != "0") {
-		$output = exec("/usr/local/sbin/{$g['product_name']}-upgrade ".
-		    ($updates_only?'-c':'-C') , $_gc, $rc);
-		if ($rc == 75) {
-			$result['pkg_busy'] = "1";
-		}
-		if ($rc != 0 && $rc != 2) {
-			$result['pkg_version_error'] = "{$g['product_name']}-upgrade error: $rc";
-			return ($result);
+		// Check for new versions and update the cache.
+		// "-c" (updates) checks active repo
+		// "-C" (upgrades) checks alternative repos.
+		$output = exec(
+			"/usr/local/sbin/{$product_name}-upgrade ".
+		    ($updates_only?'-c':'-C'),
+			$_gc, $rc
+		);
+		if (($rc != 0) && ($rc != 2)) {
+			if ($rc == 75) {
+				$result['pkg_busy'] = "1";
+			}
+			$result['pkg_version_error'] = "{$product_name}-upgrade error: {$rc}";
+			return $result;
 		}
 
-		/* Update cache if it succeeded */
-		if ($update_cache && ($rc == 0 || $rc == 2)) {
-			@file_put_contents($cache_file, $output);
-			@file_put_contents($rc_file, $rc);
-		}
+		// Update the cache on success.
+		@file_put_contents($cache_file, $output);
+		@file_put_contents($rc_file, $rc);
 	}
-
-	/* pfSense-upgrade returns 2 when there is a new version */
-	if ($rc == "2") {
+	if (strval($rc) == "2") {
+		// Get the new version.
 		$new_version = explode(' ', $output)[0];
 	}
 
-	$base_pkg = get_base_pkg_name();
-	$dep_pkg = get_dep_pkg_name();
-
-	if (!$base_pkg || !$dep_pkg) {
-		$result['pkg_version_error'] = "no base pkg: $base_pkg:$dep_pkg";
-		return false;
+	$installed_packages = '';
+	if (isset($new_version)) {
+		// Check additional packages to mirror pfSense-upgrade's logic.
+		$installed_packages = implode(' ', array_filter([
+			get_core_pkg_names() ?: '',
+			get_meta_pkg_name() ?: ''
+		]));
+	} else {
+		// No need to check additional packages, just get the meta package version.
+		$installed_packages = get_meta_pkg_name();
+	}
+	if (empty($installed_packages)) {
+		$result['pkg_version_error'] = "no meta or core packages found";
+		return $result;
 	}
 
-	$info = get_pkg_info($base_pkg, true, true);
-
-	$pkg_info = array();
-	foreach ($info as $item) {
-		if ($item['name'] == $base_pkg) {
-			$pkg_info = $item;
-			break;
+	// Get the greatest version between packages.
+	$installed_version = null;
+	foreach (get_pkg_info($installed_packages, true, true) as $item) {
+		if (!isset($item['installed_version'])) {
+			continue;
+		} elseif (!isset($installed_version)) {
+			$installed_version = $item['installed_version'];
 		}
+		$installed_version = match (pkg_version_compare($installed_version, $item['installed_version'])) {
+			'<' => $item['installed_version'],
+			default => $installed_version,
+		};
+	}
+	if (!isset($installed_version)) {
+		$result['pkg_version_error'] = "could not determine system version";
+		return $result;
 	}
 
-	if (empty($pkg_info) || (!$baseonly && ($pkg_info['version'] ==
-	    $pkg_info['installed_version']))) {
-		$info = get_pkg_info($dep_pkg, true, true);
-
-		foreach ($info as $item) {
-			if ($item['name'] == $dep_pkg) {
-				$pkg_info = $item;
-				break;
-			}
-		}
-	}
-
-	if (empty($pkg_info)) {
-		return false;
-	}
-
-	$result = array(
-	    'version'           => $new_version ?: $pkg_info['version'],
-	    'installed_version' => $pkg_info['installed_version']
-	);
-
-	$result['pkg_version_compare'] = pkg_version_compare(
-	    $result['installed_version'], $result['version']);
+	// Only return version info on success.
+	$result = [
+		'version' => $new_version ?: $installed_version,
+		'installed_version' => $installed_version,
+	];
+	$result['pkg_version_compare'] = pkg_version_compare($result['installed_version'], $result['version']);
 
 	return $result;
 }

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005-2006 Bill Marquette <bill.marquette@gmail.com>
  * Copyright (c) 2006 Paul Taylor <paultaylor@winn-dixie.com>.
  * Copyright (c) 2008 Shrew Soft Inc
@@ -294,10 +294,10 @@ function getAllowedPages($username, &$attributes = array()) {
 		}
 	}
 
-//	$dbg_pages = implode(",", $allowed_pages);
-//	$dbg_groups = implode(",", $allowed_groups);
-//	log_error("debug: user {$username} groups = {$dbg_groups}");
-//	log_error("debug: user {$username} pages = {$dbg_pages}");
+	if (g_get('debug')) {
+		logger(LOG_DEBUG, localize_text("user %s groups = %s", $username, implode(",", $allowed_groups)));
+		logger(LOG_DEBUG, localize_text("user %s pages = %s", $username, implode(",", $allowed_pages)));
+	}
 
 	$_SESSION['page-match'] = $allowed_pages;
 	phpsession_end(true);

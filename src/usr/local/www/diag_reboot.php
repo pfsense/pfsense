@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -32,9 +32,6 @@
 ##|*MATCH=diag_reboot.php*
 ##|-PRIV
 
-// Set DEBUG to true to prevent the system_reboot() function from being called
-define("DEBUG", false);
-
 global $g;
 
 require_once("guiconfig.inc");
@@ -50,7 +47,7 @@ $platform = system_identify_specific_platform();
 include("head.inc");
 
 if (isset($_POST['rebootmode'])):
-	if (DEBUG) {
+	if (g_get('debug')) {
 		print_info_box(gettext("Not actually rebooting (DEBUG is set true)."), 'success');
 	} else {
 		print('<div><pre>');

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -110,11 +110,14 @@ if ($_GET) {
 		$can_add = false;
 		$can_enable = false;
 		$dontshow = true;
-		foreach (config_get_path('filter/rule', []) as $key => $rule) {
+		// remove_filter_rules
+		$remove_list = [];
+		foreach (get_filter_rules_list() as $key => $rule) {
 			if (isset($rule['wizard']) && $rule['wizard'] == "yes") {
-				config_del_path("filter/rule/{$key}");
+				$remove_list[] = $key;
 			}
 		}
+		remove_filter_rules($remove_list);
 
 		if (write_config("Traffic Shaper: Reset all")) {
 			$changes_applied = true;

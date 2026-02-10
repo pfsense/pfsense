@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2011 Seth Mos
  * All rights reserved.
  *
@@ -197,7 +197,7 @@ foreach (config_get_path('interfaces', []) as $ifname => $ifarr) {
 		$slease['duid'] = $static['duid'];
 		$slease['start'] = "";
 		$slease['end'] = "";
-		$slease['hostname'] = htmlentities($static['hostname']);
+		$slease['hostname'] = $static['hostname'];
 		$slease['act'] = $static_string;
 		if (in_array($slease['ip'], array_keys($ndpdata))) {
 			$slease['online'] = $online_string;

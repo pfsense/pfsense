@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2007-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2007 Marcel Wiget <mwiget@mac.com>
  * All rights reserved.
  *
@@ -550,11 +550,7 @@ function voucher_unlink_db($roll) {
 
 /* we share the log with captiveportal for now */
 function voucher_log($priority, $message) {
-
-	$message = trim($message);
-	openlog("logportalauth", LOG_PID, LOG_LOCAL4);
-	syslog($priority, sprintf(gettext("Voucher: %s"), $message));
-	closelog();
+	logger($priority, localize_text("logportalauth: Voucher: %s", trim($message)), LOG_PREFIX_CAPTIVEPORTAL, LOG_LOCAL4);
 }
 
 /* Perform natural expiration of vouchers

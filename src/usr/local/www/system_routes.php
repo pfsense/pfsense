@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -46,12 +46,10 @@ if ($_POST['apply']) {
 	
 	$routes_apply_file = g_get('tmp_path') . '/.system_routes.apply';
 	if (file_exists($routes_apply_file)) {
-		$toapplylist = unserialize_data(file_get_contents($routes_apply_file), []);
-		foreach ($toapplylist as $toapply) {
-			mwexec($toapply);
+		foreach (unserialize_data(file_get_contents($routes_apply_file), []) as $toapply) {
+			mwexec("{$toapply}");
 		}
-
-		unlink($routes_apply_file);
+		@unlink($routes_apply_file);
 	}
 
 	$retval |= system_routing_configure();

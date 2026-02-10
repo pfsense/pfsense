@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -53,7 +53,7 @@ if ($_POST['act'] == "del") {
 		$input_errors[] = gettext("This bridge cannot be deleted because it is assigned as an interface.");
 	} else {
 		if (!does_interface_exist(config_get_path("bridges/bridged/{$_POST['id']}/bridgeif"))) {
-			log_error("Bridge interface does not exist, skipping ifconfig destroy.");
+			logger(LOG_NOTICE, localize_text("Bridge interface does not exist, skipping ifconfig destroy."));
 		} else {
 			pfSense_interface_destroy(config_get_path("bridges/bridged/{$_POST['id']}/bridgeif"));
 		}

@@ -3,7 +3,7 @@
  * diag_packet_capture.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2023-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2023-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -245,7 +245,6 @@ class FilterAttribute {
 				default:
 					throw new Exception("Invalid match operator given for the Type: " .
 					                    "{$filter_section}:{$attribute_operator}:{$attribute_type}");
-					break;
 			}
 		}
 		$this->operator = $attribute_operator;

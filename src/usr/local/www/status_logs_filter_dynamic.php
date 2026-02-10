@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -432,7 +432,13 @@ function toggleListDescriptions() {
 								$icon_act = "fa-solid fa-check text-success";
 							}
 ?>
-							<i class="<?=$icon_act;?> icon-pointer" title="<?php echo $filterent['act'] .'/'. $filterent['reason'] .'/'. $filterent['tracker'];?>" onclick="javascript:getURL('status_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"></i>
+							<i class="<?=
+									$icon_act
+								;?> icon-pointer" title="<?=
+									"{$filterent['act']}/{$filterent['reason']}/{$filterent['tracker']}"
+								;?>" onclick="javascript:getURL('status_logs_filter.php?getrulenum=<?=
+									"{$filterent['rulenum']},{$filterent['subrulenum']},{$filterent['tracker']},{$filterent['act']}"
+								;?>', outputrule);"></i>
 						</td>
 						<td><?=htmlspecialchars($filterent['time'])?></td>
 						<td><?=htmlspecialchars($filterent['interface'])?></td>

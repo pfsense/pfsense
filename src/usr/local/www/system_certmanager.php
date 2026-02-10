@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -138,6 +138,7 @@ switch ($act) {
 	case 'edit':
 		/* Editing a certificate, so populate values */
 		$pconfig['descr'] = $thiscert['descr'];
+		$pconfig['autorenew']  = ($thiscert['autorenew'] == 'enabled');
 		$pconfig['cert'] = base64_decode($thiscert['crt']);
 		$pconfig['key'] = base64_decode($thiscert['prv']);
 		break;
@@ -441,6 +442,7 @@ if ($_POST['save'] == gettext("Save")) {
 		}
 
 		$cert['descr'] = $pconfig['descr'];
+		$cert['autorenew'] = ($pconfig['autorenew'] == 'yes') ? "enabled" : "disabled";
 
 		switch($pconfig['method']) {
 			case 'existing':
@@ -761,10 +763,33 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 
 	if (!empty($pconfig['cert'])) {
 		$section->addInput(new Form_StaticText(
-			"Subject",
-			htmlspecialchars(cert_get_subject($pconfig['cert'], false))
+			"Identity",
+			htmlspecialchars(cert_get_identity($pconfig['cert'], false, true))
 		))->addClass('toggle-edit collapse');
 	}
+
+	$form->add($section);
+
+	$section = new Form_Section("Automatic Renewal");
+	$section->addClass('toggle-internal');
+	if (($act == 'edit') &&
+	    is_cert_locally_renewable($thiscert)) {
+		$section->addClass('toggle-edit');
+	}
+	$section->addClass('collapse');
+
+	$section->addInput(new Form_Checkbox(
+		'autorenew',
+		'Auto Renew',
+		'Automatically renew this certificate before it would expire.',
+		$pconfig['autorenew']
+	))->setHelp('When enabled, the certificate will renew automatically once it reaches ' .
+		'approximately 1/3 of its remaining lifetime using current recommended ' .
+		'Strict Security settings.%1$s%1$s' .
+		'This is the best practice for server certificates as the change should be ' .
+		'seamless to clients in most cases, such as for OpenVPN or Mobile IPsec.%1$s%1$s' .
+		'In most cases this should not be used on user certificates as those need further ' .
+		'action after being renewed, such as delivering the new certificates to users.', '<br/>');
 
 	$form->add($section);
 
@@ -1387,7 +1412,7 @@ if (in_array($act, array('new', 'edit')) || (($_POST['save'] == gettext("Save"))
 				<tr>
 					<th><?=gettext("Name")?></th>
 					<th><?=gettext("Issuer")?></th>
-					<th><?=gettext("Distinguished Name")?></th>
+					<th><?=gettext("Identity")?></th>
 					<th><?=gettext("In Use")?></th>
 
 					<th class="col-sm-2"><?=gettext("Actions")?></th>
@@ -1416,9 +1441,10 @@ foreach (config_get_path('cert', []) as $cert):
 			$caname = '<i>'. gettext("external").'</i>';
 		}
 
-		$subj = htmlspecialchars(cert_escape_x509_chars($subj, true));
+		$identity = cert_get_identity($cert['crt'], true, true);
 	} else {
 		$subj = "";
+		$identity = "";
 		$issuer = "";
 		$purpose = "";
 		$startdate = "";
@@ -1427,7 +1453,7 @@ foreach (config_get_path('cert', []) as $cert):
 	}
 
 	if ($cert['csr']) {
-		$subj = htmlspecialchars(cert_escape_x509_chars(csr_get_subject($cert['csr']), true));
+		$identity = cert_get_identity($cert['csr'], true, true);
 		$caname = "<em>" . gettext("external - signature pending") . "</em>";
 	}
 
@@ -1439,18 +1465,22 @@ foreach (config_get_path('cert', []) as $cert):
 ?>
 				<tr>
 					<td>
-						<?=$name?><br />
+						<?=$name?>
+						<?php if ($cert['autorenew'] == 'enabled'): ?>
+							<i class="fa-solid fa-rotate" title="<?=gettext('Auto-Renews')?>"></i>
+						<?php endif ?>
+						<br />
 						<?php if ($cert['type']): ?>
 							<i><?=$cert_types[$cert['type']]?></i><br />
-						<?php endif?>
+						<?php endif ?>
 						<?php if (is_array($purpose)): ?>
 							CA: <b><?=$purpose['ca']?></b><br/>
 							<?=gettext("Server")?>: <b><?=$purpose['server']?></b><br/>
-						<?php endif?>
+						<?php endif ?>
 					</td>
 					<td><?=$caname?></td>
 					<td>
-						<?=$subj?>
+						<?=htmlspecialchars($identity)?>
 						<?= cert_print_infoblock($cert); ?>
 						<?php cert_print_dates($cert);?>
 					</td>

@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2015 Warren Baker <warren@percol8.co.za>
  * Copyright (c) 2015-2016 Electric Sheep Fencing
- * Copyright (c) 2015-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2015-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -209,14 +209,71 @@ function unbound_generate_config_text($unboundcfg = NULL, $cfgsubdir = "") {
 	}
 
 	// Setup DNS64 support
-	if (isset($unboundcfg['dns64'])) {
-		$module_config .= 'dns64 ';
-		$dns64_conf = 'dns64-prefix: ';
-		if (is_subnetv6($unboundcfg['dns64prefix'] . '/' . $unboundcfg['dns64netbits'])) {
-			$dns64_conf .= $unboundcfg['dns64prefix'] . '/' . $unboundcfg['dns64netbits'];
+	if (array_path_enabled($unboundcfg, 'dns64')) {
+		$dns64_prefix = null;
+		$add_reserved_nat64_conf = false;
+		$add_respip_module = false;
+
+		// Define the DNS64 prefix
+		if (config_path_enabled('system', 'allow_nat64_prefix_override')) {
+			if (validate_nat64_prefix(array_get_path($unboundcfg, 'dns64/prefix'))) {
+				$dns64_prefix = $unboundcfg['dns64']['prefix'];
+			} else {
+				$dns64_prefix = NAT64_WELLKNOWN_PREFIX_CIDR;
+			}
 		} else {
-			$dns64_conf .= '64:ff9b::/96';
+			$add_reserved_nat64_conf = true;
+			$dns64_prefix = NAT64_WELLKNOWN_PREFIX_CIDR;
 		}
+		$dns64_conf = ["dns64-prefix: {$dns64_prefix}"];
+
+		// Omit reserved NAT64 addresses
+		if ($add_reserved_nat64_conf) {
+			$add_respip_module = true;
+			global $reserved_table_names;
+			foreach (explode(' ', $reserved_table_names['_nat64reserved_']['address']) as $reserved_na64_address) {
+				$dns64_conf[] = "response-ip: \"{$reserved_na64_address}\" redirect";
+			}
+		}
+
+		// Omit NAT64 addresses for queries from localhost
+		if (!config_path_enabled('unbound/dns64', 'allow_dns64_for_localhost')) {
+			$add_respip_module = true;
+			$dns64_tag = "dns64";
+			$dns64_conf[] = "define-tag: \"{$dns64_tag}\"";
+			$dns64_conf[] = "response-ip-tag: {$dns64_prefix} \"{$dns64_tag}\"";
+			// Always include the loopback interface
+			$localhost_addresses = get_interface_addresses_all('lo0');
+			// Also include addresses from assigned interfaces
+			foreach (config_get_path('interfaces', []) as $interface_label => $interface_config) {
+				if (!isset($interface_config['enable'])) {
+					continue;
+				}
+				$localhost_addresses = array_merge($localhost_addresses,
+					get_interface_addresses_all(get_real_interface($interface_label))
+				);
+			}
+			$localhost_addresses = array_unique($localhost_addresses);
+			foreach ($localhost_addresses as $address) {
+				$netblock = match (is_ipaddr($address)) {
+					4 => "{$address}/32",
+					6 => "{$address}/128",
+					default => null
+				};
+				if (!isset($netblock)) {
+					continue;
+				}
+				$dns64_conf[] = "access-control-tag: {$netblock} \"{$dns64_tag}\"";
+				$dns64_conf[] = "access-control-tag-action: {$netblock} \"{$dns64_tag}\" redirect";
+			}
+		}
+
+		if ($add_respip_module) {
+			$module_config .= 'respip dns64 ';
+		} else {
+			$module_config .= 'dns64 ';
+		}
+		$dns64_conf = implode(PHP_EOL, $dns64_conf);
 	}
 
 	// Setup DNSSEC support
@@ -353,7 +410,7 @@ EOF;
 			$private_domains = "# Set private domains in case authoritative name server returns a Private IP address\n";
 			$private_domains .= unbound_add_domain_overrides("private");
 		}
-		$reverse_zones .= unbound_add_domain_overrides("reverse");
+		$reverse_zones = unbound_add_domain_overrides("reverse");
 	}
 
 	// Configure Unbound statistics
@@ -401,7 +458,7 @@ EOF;
 	$use_caps = isset($unboundcfg['use_caps']) ? "yes" : "no";
 
 	if (isset($unboundcfg['regovpnclients'])) {
-		$openvpn_clients_conf .=<<<EOD
+		$openvpn_clients_conf =<<<EOD
 # OpenVPN client entries
 include: {$g['unbound_chroot_path']}{$cfgsubdir}/openvpn.*.conf
 EOD;
@@ -414,7 +471,7 @@ EOD;
 	if (isset($unboundcfg['forwarding'])) {
 		$dnsservers = get_dns_nameservers(false, true);
 		if (!empty($dnsservers)) {
-			$forward_conf .=<<<EOD
+			$forward_conf =<<<EOD
 # Forwarding
 forward-zone:
 	name: "."
@@ -674,7 +731,7 @@ function do_as_unbound_user($cmd, $param1 = "") {
 			if (file_exists($root_key_file)) {
 				$rootkeycheck = mwexec("/usr/bin/grep 'autotrust trust anchor file' {$root_key_file}", true);
 				if ($rootkeycheck != "0") {
-					log_error("Unbound {$root_key_file} file is corrupt, removing and recreating.");
+					logger(LOG_WARNING, localize_text("Unbound %s file is corrupt, removing and recreating.", $root_key_file), LOG_PREFIX_DNSR);
 					unlink_if_exists($root_key_file);
 				}
 			}

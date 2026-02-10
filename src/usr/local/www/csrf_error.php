@@ -3,7 +3,7 @@
  * csrf_error.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2019-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2019-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,6 +37,7 @@ $logincssfile = "#770101";
 <html lang="en">
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
+<? include('includes/iconheaders.html') ?>
 		<link rel="stylesheet" href="/vendor/font-awesome/css/all.min.css?v=<?=filemtime('/usr/local/www/vendor/font-awesome/css/all.min.css')?>">
 		<link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css" type="text/css">
 		<link rel="stylesheet" href="/css/login.css?v=<?=filemtime('/usr/local/www/css/login.css')?>" type="text/css">

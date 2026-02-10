@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -61,6 +61,7 @@ $pconfig['ppp'] = config_path_enabled('syslog', 'ppp');
 $pconfig['routing'] = config_path_enabled('syslog', 'routing');
 $pconfig['ntpd'] = config_path_enabled('syslog', 'ntpd');
 $pconfig['enable'] = config_path_enabled('syslog', 'enable');
+$pconfig['logipoptions'] = !config_path_enabled('syslog', 'nologipoptions');
 $pconfig['logdefaultblock'] = !config_path_enabled('syslog', 'nologdefaultblock');
 $pconfig['logdefaultpass'] = config_path_enabled('syslog', 'nologdefaultpass');
 $pconfig['logbogons'] = !config_path_enabled('syslog', 'nologbogons');
@@ -76,6 +77,11 @@ $pconfig['logfilesize'] = config_get_path('syslog/logfilesize');
 $pconfig['logcompressiontype'] = system_log_get_compression();
 $pconfig['rotatecount'] = config_get_path('syslog/rotatecount');
 $pconfig['format'] = config_get_path('syslog/format');
+$pconfig['default_log_level'] = config_get_path('syslog/default_log_level');
+if (!isset($pconfig['default_log_level']) || !array_key_exists($pconfig['default_log_level'], get_syslogd_log_levels())) {
+	$pconfig['default_log_level'] = 'default';
+}
+$log_levels = array_merge(['default' => gettext('Default')], get_syslogd_log_levels());
 
 if (!$pconfig['nentries']) {
 	$pconfig['nentries'] = g_get('default_log_entries');
@@ -108,6 +114,21 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 } elseif ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
+
+	if ($_POST['logall']) {
+		$_POST['system'] = false;
+		$_POST['filter'] = false;
+		$_POST['resolver'] = false;
+		$_POST['dhcp'] = false;
+		$_POST['ppp'] = false;
+		$_POST['auth'] = false;
+		$_POST['portalauth'] = false;
+		$_POST['vpn'] = false;
+		$_POST['dpinger'] = false;
+		$_POST['routing'] = false;
+		$_POST['ntpd'] = false;
+		$_POST['hostapd'] = false;
+	}
 
 	if ($read_only) {
 		$input_errors[] = gettext("Insufficient privileges to make the requested change (read only).");
@@ -201,6 +222,7 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		config_set_path('syslog/disablelocallogging', $_POST['disablelocallogging'] ? true : false);
 		config_set_path('syslog/logconfigchanges', $_POST['logconfigchanges'] ? "enabled" : "disabled");
 		config_set_path('syslog/enable', $_POST['enable'] ? true : false);
+		$oldnologipoptions = config_path_enabled('syslog', 'nologipoptions');
 		$oldnologdefaultblock = config_path_enabled('syslog', 'nologdefaultblock');
 		$oldnologdefaultpass = config_path_enabled('syslog', 'nologdefaultpass');
 		$oldnologbogons = config_path_enabled('syslog', 'nologbogons');
@@ -208,6 +230,7 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		$oldnologlinklocal4 = config_path_enabled('syslog', 'nologlinklocal4');
 		$oldnologsnort2c = config_path_enabled('syslog', 'nologsnort2c');
 		$oldnolognginx = config_path_enabled('syslog', 'nolognginx');
+		config_set_path('syslog/nologipoptions', $_POST['logipoptions'] ? false : true);
 		config_set_path('syslog/nologdefaultblock', $_POST['logdefaultblock'] ? false : true);
 		config_set_path('syslog/nologdefaultpass', $_POST['logdefaultpass'] ? true : false);
 		config_set_path('syslog/nologbogons', $_POST['logbogons'] ? false : true);
@@ -216,6 +239,12 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		config_set_path('syslog/nologsnort2c', $_POST['logsnort2c'] ? false : true);
 		config_set_path('syslog/nolognginx', $_POST['lognginx'] ? false : true);
 		config_set_path('syslog/rawfilter', $_POST['rawfilter'] ? true : false);
+
+		if (isset($_POST['default_log_level']) && array_key_exists($_POST['default_log_level'], get_syslogd_log_levels())) {
+			config_set_path('syslog/default_log_level', $_POST['default_log_level']);
+		} else {
+			config_del_path('syslog/default_log_level');
+		}
 
 		if (is_numeric($_POST['filterdescriptions']) && $_POST['filterdescriptions'] > 0) {
 			config_set_path('syslog/filterdescriptions', $_POST['filterdescriptions']);
@@ -235,7 +264,8 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		$retval = 0;
 		system_sshguard_stop();
 		system_syslogd_start();
-		if (($oldnologdefaultblock !== config_path_enabled('syslog', 'nologdefaultblock')) ||
+		if (($oldnologipoptions !== config_path_enabled('syslog', 'nologipoptions')) ||
+		    ($oldnologdefaultblock !== config_path_enabled('syslog', 'nologdefaultblock')) ||
 		    ($oldnologdefaultpass !== config_path_enabled('syslog', 'nologdefaultpass')) ||
 		    ($oldnologbogons !== config_path_enabled('syslog', 'nologbogons')) ||
 		    ($oldnologprivatenets !== config_path_enabled('syslog', 'nologprivatenets')) ||
@@ -247,12 +277,12 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		if ($oldnolognginx !== config_path_enabled('syslog', 'nolognginx')) {
 			ob_flush();
 			flush();
-			log_error(gettext("webConfigurator configuration has changed. Restarting webConfigurator."));
+			logger(LOG_NOTICE, localize_text('webConfigurator configuration has changed. Restarting webConfigurator.'));
 			send_event("service restart webgui");
 			$extra_save_msg = gettext("WebGUI process is restarting.");
 		}
 
-		filter_pflog_start();
+		filter_pflog_start(($oldnologipoptions !== config_path_enabled('syslog', 'nologipoptions')));
 	}
 }
 
@@ -360,6 +390,20 @@ $section->addInput(new Form_Button(
 $form->add($section);
 $section = new Form_Section('Logging Preferences');
 
+$section->addInput(new Form_Select(
+	'default_log_level',
+	'Default Log Level',
+	$pconfig['default_log_level'],
+	$log_levels
+))->setHelp('Sets the minimum log severity needed for messages to be logged. This may be overriden by program-specific settings.');
+
+$section->addInput(new Form_Checkbox(
+	'logipoptions',
+	null,
+	'Packets blocked due to IP options',
+	$pconfig['logipoptions']
+))->setHelp('Log packets that are %1$sblocked%2$s due to unmatched IP options in "pass" rules.', '<strong>', '</strong>');
+
 $section->addInput(new Form_Checkbox(
 	'logdefaultblock',
 	null,
@@ -372,11 +416,7 @@ $section->addInput(new Form_Checkbox(
 	null,
 	'Default firewall "pass" rules',
 	$pconfig['logdefaultpass']
-))->setHelp('Log packets that are %1$sallowed%2$s by the implicit ' .
-	'default pass rule. Note: Packets with IP options are not affected ' .
-	'by this option and %3$sare logged by default%4$s.', '<strong>', '</strong>',
-	'<a target="_blank" href="https://docs.netgate.com/pfsense/en/latest/troubleshooting/log-filter-blocked.html#packets-with-ip-options">', '</a>'
-);
+))->setHelp('Log packets that are %1$sallowed%2$s by the implicit default pass rule.', '<strong>', '</strong>');
 
 $section->addInput(new Form_Checkbox(
 	'logbogons',
@@ -649,6 +689,7 @@ events.push(function() {
 
 	// ---------- On initial page load ------------------------------------------------------------
 
+	disableEverything();
 	hideClass('remotelogging', !$('#enable').prop('checked'));
 	hideSelect('sourceip', !$('#enable').prop('checked'));
 	hideSelect('ipproto', !$('#enable').prop('checked'));

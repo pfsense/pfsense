@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -37,6 +37,20 @@ $syslog_formats = array(
 	'rfc3164' => gettext('BSD (RFC 3164, default)'),
 	'rfc5424' => gettext('syslog (RFC 5424, with RFC 3339 microsecond-precision timestamps)'),
 );
+
+function get_syslogd_log_levels() {
+	return [
+		'*' => gettext('Any'),
+		'debug' => gettext('Debug'),
+		'info' => gettext('Info'),
+		'notice' => gettext('Notice'),
+		'warning' => gettext('Warning'),
+		'err' => gettext('Error'),
+		'crit' => gettext('Critical'),
+		'alert' => gettext('Alert'),
+		'emerg' => gettext('Emergency')
+	];
+}
 
 function system_syslogd_fixup_server($server) {
 	/* If it's an IPv6 IP alone, encase it in brackets */
@@ -183,7 +197,7 @@ function clear_all_log_files($restart = false) {
 
 function system_syslogd_start($sighup = false) {
 	global $g;
-	if (config_path_enabled('system','developerspew')) {
+	if (g_get('debug')) {
 		$mt = microtime();
 		echo "system_syslogd_start() being called $mt\n";
 	}
@@ -223,8 +237,15 @@ EOD;
 		'ospf6d', 'ospfd', 'poes', 'radvd',
 		'routed', 'watchfrr', 'zebra'
 	];
+
+	$log_level_default = config_get_path('syslog/default_log_level');
+	if (isset($log_level_default) && !array_key_exists($log_level_default, get_syslogd_log_levels())) {
+		unset($log_level_default);
+	}
+	$remote_log_all = config_path_enabled('syslog', 'logall');
 	$syslogconf = "# Automatically generated, do not edit!\n";
 
+	$log_level_package = $log_level_default ?: '*';
 	foreach (config_get_path('installedpackages/package', []) as $key => $package) {
 		$pkg_log_facility = config_get_path("installedpackages/package/{$key}/logging/facilityname");
 		$pkg_log_filename = basename(config_get_path("installedpackages/package/{$key}/logging/logfilename"));
@@ -236,162 +257,191 @@ EOD;
 				mwexec('/usr/bin/touch ' . escapeshellarg($fn));
 			}
 			$pkgsyslogconf = "# Automatically generated for package {$package['name']}. Do not edit.\n";
-			$pkgsyslogconf .= "!{$pkg_log_facility}\n*.*\t\t\t\t\t\t {$fn}\n";
+			$pkgsyslogconf .= "!{$pkg_log_facility}\n*.{$log_level_package}\t\t\t\t\t\t {$fn}\n";
 			@file_put_contents("{$g['varetc_path']}/syslog.d/" . basename($pkg_log_filename) . ".conf", $pkgsyslogconf);
 		}
 	}
 
 	$syslogconf .= "!*\n";
+	$log_level_auth = '*';
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= "auth.*;authpriv.* 					{$g['varlog_path']}/auth.log\n";
+		$syslogconf .= "auth.{$log_level_auth};authpriv.{$log_level_auth} 					{$g['varlog_path']}/auth.log\n";
 	}
-	if (config_path_enabled('syslog', 'auth')) {
-		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "auth.*;authpriv.*");
+	if (!$remote_log_all && config_path_enabled('syslog', 'auth')) {
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "auth.{$log_level_auth};authpriv.{$log_level_auth}");
 	}
 
 	$syslogconf .= "!radvd\n";
-	$radvdloglevel = ((config_path_enabled('system', 'radvddebug')) ? '*' : 'err');
-	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= "*.{$radvdloglevel}								{$g['varlog_path']}/routing.log\n";
+	if (config_path_enabled('system', 'radvddebug')) {
+		$log_level_radvd = '*';
+	} else {
+		$log_level_radvd = $log_level_default ?: 'err';
 	}
-	if (config_path_enabled('syslog', 'routing')) {
-		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "!radvd.{$radvdloglevel}");
+	if (!config_path_enabled('syslog', 'disablelocallogging')) {
+		$syslogconf .= "*.{$log_level_radvd}								{$g['varlog_path']}/routing.log\n";
+	}
+	if (!$remote_log_all && config_path_enabled('syslog', 'routing')) {
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$log_level_radvd}");
 	}
 
 	$syslogconf .= "!routed,zebra,ospfd,ospf6d,bgpd,watchfrr,miniupnpd,igmpproxy\n";
+	$log_level_routing = $log_level_default ?: '*';
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= "*.*									{$g['varlog_path']}/routing.log\n";
+		$syslogconf .= "*.{$log_level_routing}									{$g['varlog_path']}/routing.log\n";
 	}
-	if (config_path_enabled('syslog', 'routing')) {
-		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+	if (!$remote_log_all && config_path_enabled('syslog', 'routing')) {
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$log_level_routing}");
 	}
 
 	$syslogconf .= "!ntp,ntpd,ntpdate\n";
+	$log_level_ntpd = $log_level_default ?: '*';
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= "*.*									{$g['varlog_path']}/ntpd.log\n";
+		$syslogconf .= "*.{$log_level_ntpd}									{$g['varlog_path']}/ntpd.log\n";
 	}
-	if (config_path_enabled('syslog', 'ntpd')) {
-		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+	if (!$remote_log_all && config_path_enabled('syslog', 'ntpd')) {
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$log_level_ntpd}");
 	}
 
 	$syslogconf .= "!ppp\n";
+	$log_level_ppp = $log_level_default ?: '*';
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= "*.*									{$g['varlog_path']}/ppp.log\n";
+		$syslogconf .= "*.{$log_level_ppp}									{$g['varlog_path']}/ppp.log\n";
 	}
-	if (config_path_enabled('syslog', 'ppp')) {
-		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+	if (!$remote_log_all && config_path_enabled('syslog', 'ppp')) {
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$log_level_ppp}");
 	}
+	$syslogconf .= "!*\n:msg, startswith, \"if_pppoe: \"\n";
+	if (!config_path_enabled('syslog', 'disablelocallogging')) {
+		$syslogconf .= "*.{$log_level_ppp}								{$g['varlog_path']}/ppp.log\n";
+	}
+	if (!$remote_log_all && config_path_enabled('syslog', 'ppp')) {
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$log_level_ppp}");
+	}
+	$syslogconf .= ":*\n";
 
 	$syslogconf .= "!poes\n";
+	$log_level_poes = $log_level_default ?: '*';
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= "*.*									{$g['varlog_path']}/poes.log\n";
+		$syslogconf .= "*.{$log_level_poes}									{$g['varlog_path']}/poes.log\n";
 	}
-	if (config_path_enabled('syslog', 'vpn')) {
-		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+	if (!$remote_log_all && config_path_enabled('syslog', 'vpn')) {
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$log_level_poes}");
 	}
 
 	$syslogconf .= "!l2tps\n";
+	$log_level_l2tps = $log_level_default ?: '*';
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= "*.*									{$g['varlog_path']}/l2tps.log\n";
+		$syslogconf .= "*.{$log_level_l2tps}									{$g['varlog_path']}/l2tps.log\n";
 	}
-	if (config_path_enabled('syslog', 'vpn')) {
-		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+	if (!$remote_log_all && config_path_enabled('syslog', 'vpn')) {
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$log_level_l2tps}");
 	}
 
 	$syslogconf .= "!charon,ipsec_starter\n";
+	$log_level_ipsec = '*';
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= "*.*									{$g['varlog_path']}/ipsec.log\n";
+		$syslogconf .= "*.{$log_level_ipsec}									{$g['varlog_path']}/ipsec.log\n";
 	}
-	if (config_path_enabled('syslog', 'vpn')) {
-		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+	if (!$remote_log_all && config_path_enabled('syslog', 'vpn')) {
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$log_level_ipsec}");
 	}
 
 	$syslogconf .= "!openvpn\n";
+	$log_level_openvpn = '*';
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= "*.*									{$g['varlog_path']}/openvpn.log\n";
+		$syslogconf .= "*.{$log_level_openvpn}									{$g['varlog_path']}/openvpn.log\n";
 	}
-	if (config_path_enabled('syslog', 'vpn')) {
-		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+	if (!$remote_log_all && config_path_enabled('syslog', 'vpn')) {
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$log_level_openvpn}");
 	}
 
 	$syslogconf .= "!dpinger\n";
+	$log_level_gateways = $log_level_default ?: '*';
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= "*.*									{$g['varlog_path']}/gateways.log\n";
+		$syslogconf .= "*.{$log_level_gateways}									{$g['varlog_path']}/gateways.log\n";
 	}
-	if (config_path_enabled('syslog', 'dpinger')) {
-		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+	if (!$remote_log_all && config_path_enabled('syslog', 'dpinger')) {
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$log_level_gateways}");
 	}
 
-	$syslogconf .= "!dnsmasq,named,filterdns,unbound\n";
+	$syslogconf .= "!dnsmasq,named,filterdns\n";
+	$log_level_resolver = $log_level_default ?: '*';
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= "*.*									{$g['varlog_path']}/resolver.log\n";
+		$syslogconf .= "*.{$log_level_resolver}									{$g['varlog_path']}/resolver.log\n";
 	}
-	if (config_path_enabled('syslog', 'resolver')) {
-		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+	if (!$remote_log_all && config_path_enabled('syslog', 'resolver')) {
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$log_level_resolver}");
+	}
+	$syslogconf .= "!unbound\n";
+	$log_level_unbound = '*';
+	if (!config_path_enabled('syslog', 'disablelocallogging')) {
+		$syslogconf .= "*.{$log_level_unbound}									{$g['varlog_path']}/resolver.log\n";
+	}
+	if (!$remote_log_all && config_path_enabled('syslog', 'resolver')) {
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$log_level_unbound}");
 	}
 
 	$syslogconf .= "!dhcpd,dhcrelay,dhclient,dhcp6c,dhcpleases,dhcpleases6,kea2fib6,kea2unbound,kea-dhcp4,kea-dhcp6\n";
+	$log_level_dhcpd = $log_level_default ?: '*';
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= "*.*									{$g['varlog_path']}/dhcpd.log\n";
+		$syslogconf .= "*.{$log_level_dhcpd}									{$g['varlog_path']}/dhcpd.log\n";
 	}
-	if (config_path_enabled('syslog', 'dhcp')) {
-		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+	if (!$remote_log_all && config_path_enabled('syslog', 'dhcp')) {
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$log_level_dhcpd}");
 	}
 
 	$syslogconf .= "!hostapd\n";
+	$log_level_wireless = $log_level_default ?: '*';
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= "*.* 								{$g['varlog_path']}/wireless.log\n";
+		$syslogconf .= "*.{$log_level_wireless} 								{$g['varlog_path']}/wireless.log\n";
 	}
-	if (config_path_enabled('syslog', 'hostapd')) {
-		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+	if (!$remote_log_all && config_path_enabled('syslog', 'hostapd')) {
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$log_level_wireless}");
 	}
 
 	$syslogconf .= "!filterlog\n";
+	$log_level_filter = '*';
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= "*.* 								{$g['varlog_path']}/filter.log\n";
+		$syslogconf .= "*.{$log_level_filter} 								{$g['varlog_path']}/filter.log\n";
 	}
-	if (config_path_enabled('syslog', 'filter')) {
-		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+	if (!$remote_log_all && config_path_enabled('syslog', 'filter')) {
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$log_level_filter}");
 	}
 
 	$syslogconf .= "!logportalauth\n";
+	$log_level_portalauth = '*';
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= "*.* 								{$g['varlog_path']}/portalauth.log\n";
+		$syslogconf .= "*.{$log_level_portalauth} 								{$g['varlog_path']}/portalauth.log\n";
 	}
-	if (config_path_enabled('syslog', 'portalauth')) {
-		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+	if (!$remote_log_all && config_path_enabled('syslog', 'portalauth')) {
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$log_level_portalauth}");
 	}
 
+	$log_level_vpn = $log_level_default ?: '*';
+	$log_level_nginx = $log_level_default ?: '*';
+	$log_level_system = $log_level_default ?: 'notice';
 	$facilitylist = implode(',', array_unique($separatelogfacilities));
 	$syslogconf .= "!-{$facilitylist}\n";
 	if (!config_path_enabled('syslog', 'disablelocallogging')) {
-		$syslogconf .= <<<EOD
-local3.*							{$g['varlog_path']}/vpn.log
-local5.*							{$g['varlog_path']}/nginx.log
-*.notice;kern.debug;lpr.info;mail.crit;daemon.none;news.err;local0.none;local3.none;local4.none;local7.none;security.*;auth.info;authpriv.info;daemon.info	{$g['varlog_path']}/system.log
-*.emerg								*
-
-EOD;
+		$syslogconf .= "local3.{$log_level_vpn}							{$g['varlog_path']}/vpn.log\n";
+	}
+	if (!$remote_log_all && config_path_enabled('syslog', 'vpn')) {
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "local3.{$log_level_vpn}");
+	}
+	if (!config_path_enabled('syslog', 'disablelocallogging')) {
+		$syslogconf .= "local5.{$log_level_nginx}							{$g['varlog_path']}/nginx.log\n";
+		$syslogconf .= "*.{$log_level_system};kern.debug;lpr.info;mail.crit;news.err;local0.none;local3.none;local4.none;local7.none;security.*;auth.info;authpriv.info;daemon.{$log_level_system}	{$g['varlog_path']}/system.log\n";
+		$syslogconf .= "*.emerg								*\n";
+	}
+	if (!$remote_log_all && config_path_enabled('syslog', 'system')) {
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.emerg;*.{$log_level_system};kern.debug;lpr.info;mail.crit;news.err;local0.none;local3.none;local4.none;local7.none;security.*;auth.info;authpriv.info;daemon.{$log_level_system}");
 	}
 
-	$syslogconf .= <<<EOD
-!*
-:msg, startswith, "if_pppoe: "
-*.*								{$g['varlog_path']}/ppp.log
-:*
-
-EOD;
-
-	if (config_path_enabled('syslog', 'vpn')) {
-		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "local3.*");
-	}
-	if (config_path_enabled('syslog', 'system')) {
-		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.emerg;*.notice;kern.debug;lpr.info;mail.crit;news.err;local0.none;local3.none;local7.none;security.*;auth.info;authpriv.info;daemon.info");
-	}
-	if (config_path_enabled('syslog', 'logall')) {
+	$log_level_all = $log_level_default ?: '*';
+	if ($remote_log_all) {
 		// Make everything mean everything, including facilities excluded above.
 		$syslogconf .= "!*\n";
-		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+		$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.{$log_level_all}");
 	}
 
 	/* write syslog config to pfSense.conf */
@@ -804,10 +854,10 @@ function conv_log_filter($logfile, $nentries, $tail = 500, $filtertext = "", $fi
 			break;
 		case 'system':
 		case 'vpn_service':
-			$patterns['rfc3164'] .= $base_patterns['rfc3164']['date_pattern'] . "\ +" .
-						$base_patterns['rfc3164']['host_pattern'] . "\ +" .
+			$patterns['rfc3164'] .= $base_patterns['rfc3164']['date_pattern'] . "\ " .
+						$base_patterns['rfc3164']['host_pattern'] . "\ " .
 						$base_patterns['rfc3164']['process_pattern'] .
-						$base_patterns['rfc3164']['pid_pattern'] . "\ +" .
+						$base_patterns['rfc3164']['pid_pattern'] . "\ " .
 						$base_patterns['rfc3164']['log_message_pattern'] . "$";
 			$patterns['rfc5424'] .= $base_patterns['rfc5424']['date_pattern'] . "\ " .
 						$base_patterns['rfc5424']['host_pattern'] . "\ " .
@@ -820,8 +870,8 @@ function conv_log_filter($logfile, $nentries, $tail = 500, $filtertext = "", $fi
 			$type_pattern = "\(.*?\)";
 			$ip_address_pattern = "\(.*?\)";
 			$user_pattern = "\(.*?\)";
-			$patterns['rfc3164'] .= $base_patterns['rfc3164']['date_pattern'] . "\ +" .
-						$base_patterns['rfc3164']['host_pattern'] . "\ +" .
+			$patterns['rfc3164'] .= $base_patterns['rfc3164']['date_pattern'] . "\ " .
+						$base_patterns['rfc3164']['host_pattern'] . "\ " .
 						$base_patterns['rfc3164']['process_pattern'] . "\ +" .
 						"\(.*?\)\,\ *" .
 						"\(.*?\)\,\ *" .
@@ -983,7 +1033,7 @@ function parse_vpn_login_log_line($line) {
 		return $flent;
 	} else {
 		if (g_get('debug')) {
-			log_error(sprintf(gettext("There was a error parsing log entry: %s. Please report to mailing list or forum."), $line));
+			logger(LOG_DEBUG, localize_text("There was a error parsing log entry: %s.", $line));
 		}
 		return "";
 	}
@@ -1006,7 +1056,7 @@ function parse_vpn_service_log_line($line) {
 		return $flent;
 	} else {
 		if (g_get('debug')) {
-			log_error(sprintf(gettext("There was a error parsing log entry: %s. Please report to mailing list or forum."), $line));
+			logger(LOG_DEBUG, localize_text("There was a error parsing log entry: %s.", $line));
 		}
 		return "";
 	}
@@ -1044,7 +1094,7 @@ function parse_unknown_log_line($line) {
 		return $flent;
 	} else {
 		if (g_get('debug')) {
-			log_error(sprintf(gettext("There was a error parsing log entry: %s. Please report to mailing list or forum."), $line));
+			logger(LOG_DEBUG, localize_text("There was a error parsing log entry: %s.", $line));
 		}
 		return "";
 	}
@@ -1068,7 +1118,7 @@ function parse_system_log_line($line) {
 		return $flent;
 	} else {
 		if (g_get('debug')) {
-			log_error(sprintf(gettext("There was a error parsing log entry: %s. Please report to mailing list or forum."), $line));
+			logger(LOG_DEBUG, localize_text("There was a error parsing log entry: %s.", $line));
 		}
 		return "";
 	}
@@ -1095,7 +1145,7 @@ function parse_firewall_log_line($line) {
 	list($all, $flent['time'], $host, $rule) = $log_split;
 	$flent['time'] = str_replace('T', ' ', $flent['time']);
 
-	$rule_data = array_filter(explode(",", $rule));
+	$rule_data = explode(",", $rule);
 	$field = 0;
 
 	$flent['rulenum'] = $rule_data[$field++];
@@ -1110,6 +1160,11 @@ function parse_firewall_log_line($line) {
 	$flent['version'] = $rule_data[$field++];
 
 	if ($flent['version'] == '4' || $flent['version'] == '6') {
+		// Handle short (truncated-ip/truncated-ip6) errors.
+		if (str_starts_with($rule_data[$field], 'error=')) {
+			// Ignore the value.
+			$field++;
+		}
 		if ($flent['version'] == '4') {
 			$flent['tos'] = $rule_data[$field++];
 			$flent['ecn'] = $rule_data[$field++];
@@ -1217,7 +1272,7 @@ function parse_firewall_log_line($line) {
 		}
 	} else {
 		if (g_get('debug')) {
-			log_error(sprintf(gettext("There was a error parsing rule number: %s. Please report to mailing list or forum."), $flent['rulenum']));
+			logger(LOG_DEBUG, localize_text("There was a error parsing rule number: %s.", (is_numericint($flent['subrulenum']) ? "{$flent['rulenum']},{$flent['subrulenum']}" : $flent['rulenum'])));
 		}
 		return "";
 	}
@@ -1227,7 +1282,7 @@ function parse_firewall_log_line($line) {
 		return $flent;
 	} else {
 		if (g_get('debug')) {
-			log_error(sprintf(gettext("There was a error parsing rule: %s. Please report to mailing list or forum."), $line));
+			logger(LOG_DEBUG, localize_text("There was a error parsing rule: %s.", $line));
 		}
 		return "";
 	}
@@ -1248,11 +1303,12 @@ function get_port_with_service($port, $proto) {
 	return ':' . $portstr;
 }
 
-function find_rule_by_number($rulenum, $trackernum, $type="block") {
+function find_rule_by_number($rulenr, $subrulenr, $trackernum, $type="block") {
 	$result = [
 		'match' => null,
 		'associated' => null
 	];
+	$rulenum = (is_numericint($subrulenr) ? $subrulenr : $rulenr);
 
 	/* Passing arbitrary input to grep could be a Very Bad Thing(tm) */
 	if (!is_numeric($rulenum) || !is_numeric($trackernum)) {
@@ -1275,7 +1331,7 @@ function find_rule_by_number($rulenum, $trackernum, $type="block") {
 		$lookup_pattern = "/^@{$rulenum}\b.*/m";
 		$pf_output = $pf_miniupnpd_output;
 	} else {
-		static $pf_rules_output = exec_command('/sbin/pfctl -vvPsr');
+		static $pf_rules_output = exec_command('/sbin/pfctl -vvPsr | grep ^@');
 		if ($trackernum == '0') {
 			// Find rules with a matching rule number and type.
 			$lookup_pattern = "/^@{$rulenum} {$type} .*/m";
@@ -1335,7 +1391,41 @@ function buffer_rules_load() {
 	if (is_array($rules)) {
 		foreach ($rules as $rule) {
 			$key = sprintf("%d", $rule['tracker']);
-			$buffer_rules_normal[$key] = is_array($rule['labels']) ? array_shift($rule['labels']) : $rule['labels'];
+			$buffer_rules_normal[$key] = null;
+			if (empty($rule['labels'])) {
+				continue;
+			}
+			if (is_string($rule['labels']) &&
+			    str_starts_with($rule['labels'], RULE_LABEL_KEY_DESCRIPTION . RULE_LABEL_DELIMITER)) {
+				$buffer_rules_normal[$key] = str_replace(
+					RULE_LABEL_KEY_DESCRIPTION . RULE_LABEL_DELIMITER,
+					'',
+					$rule['labels']
+				);
+				continue;
+			} elseif (!is_array($rule['labels'])) {
+				continue;
+			}
+
+			$tags = '';
+			foreach ($rule['labels'] as $label) {
+				if (str_starts_with($label, RULE_LABEL_KEY_DESCRIPTION . RULE_LABEL_DELIMITER)) {
+					$buffer_rules_normal[$key] = str_replace(
+						RULE_LABEL_KEY_DESCRIPTION . RULE_LABEL_DELIMITER,
+						'',
+						$label
+					);
+				} elseif (str_starts_with($label, RULE_LABEL_KEY_TAGS . RULE_LABEL_DELIMITER)) {
+					$tags = explode(RULE_LABEL_TAG_DELIMITER, str_replace(
+						RULE_LABEL_KEY_TAGS . RULE_LABEL_DELIMITER,
+						'',
+						$label
+					));
+				}
+			}
+			if (!empty($buffer_rules_normal[$key]) && !empty($tags) && in_array('user_rule', $tags)) {
+				$buffer_rules_normal[$key] = "USER_RULE: {$buffer_rules_normal[$key]}";
+			}
 		}
 	}
 	unset($_gb, $buffer);
@@ -1346,8 +1436,10 @@ function buffer_rules_clear() {
 	unset($GLOBALS['buffer_rules_rdr']);
 }
 
-function find_rule_by_number_buffer($rulenum, $trackernum, $type) {
+function find_rule_by_number_buffer($rulenr, $subrulenr, $trackernum, $type) {
 	global $g, $buffer_rules_rdr, $buffer_rules_normal;
+
+	$rulenum = (is_numericint($subrulenr) ? $subrulenr : $rulenr);
 
 	if ($trackernum == "0") {
 		$lookup_key = "@{$rulenum}";
@@ -1428,7 +1520,7 @@ function handle_ajax() {
 					$icon_act = "fa-solid fa-check text-success";
 				}
 
-				$btn = '<i class="' . $icon_act . ' icon-pointer" title="' . $log_row['act'] . '/' . $log_row['reason'] .'/'. $log_row['tracker'] . '" onclick="javascript:getURL(\'status_logs_filter.php?getrulenum=' . $log_row['rulenum'] . ',' . $log_row['tracker'] . ',' . $log_row['act'] . '\', outputrule);"></i>';
+				$btn = '<i class="' . $icon_act . ' icon-pointer" title="' . $log_row['act'] . '/' . $log_row['reason'] .'/'. $log_row['tracker'] . '" onclick="javascript:getURL(\'status_logs_filter.php?getrulenum=' . $log_row['rulenum'] . ',' . $log_row['subrulenum'] . ',' . $log_row['tracker'] . ',' . $log_row['act'] . '\', outputrule);"></i>';
 				$new_rules .= "{$btn}||{$log_row['time']}||{$log_row['interface']}||{$log_row['srcip']}||{$log_row['srcport']}||{$log_row['dstip']}||{$log_row['dstport']}||{$log_row['proto']}||{$log_row['version']}||" . time() . "||\n";
 			}
 		}
@@ -1457,7 +1549,7 @@ function print_syslog_rule_action($rule) {
 			break;
 	}
 
-	$rules = find_rule_by_number($rule['rulenum'], $rule['tracker'], $action);
+	$rules = find_rule_by_number($rule['rulenum'], $rule['subrulenum'], $rule['tracker'], $action);
 	if (isset($rules['match']) && ($action == 'block') && preg_match('/^@\d+ block return /', $rules['match'])) {
 		// "reject" action is not supported - filterlog writes it as 'block' - check the rule itself.
 		$action = 'reject';

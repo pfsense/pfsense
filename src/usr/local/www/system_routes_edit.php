@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -142,9 +142,8 @@ if ($_POST['save']) {
 		}
 	}
 
-	$overlaps = array_intersect($current_targets, $new_targets);
-	$overlaps = array_diff($overlaps, $old_targets);
-	if (count($overlaps)) {
+	$overlaps = array_intersect($new_targets, array_diff($current_targets, $old_targets));
+	if (!$_POST['disabled'] && count($overlaps)) {
 		$input_errors[] = gettext("A route to these destination networks already exists") . ": " . implode(", ", $overlaps);
 	}
 
@@ -197,8 +196,7 @@ if ($_POST['save']) {
 					if (is_ipaddrv6($dts)) {
 						$family = "-inet6";
 					}
-					$route = route_get($dts, '', true);
-					if (!count($route)) {
+					if (!count(route_get($dts, '', true))) {
 						continue;
 					}
 					$toapplylist[] = "/sbin/route delete " .

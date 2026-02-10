@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2011 Seth Mos <seth.mos@dds.nl>
  * All rights reserved.
  *
@@ -108,7 +108,7 @@ display_top_tabs($tab_array);
 
 	$textse = "</span>";
 	$i = 0;
-	foreach (config_get_path('nat/npt', []) as $natent):
+	foreach (get_anynat_rules_list('npt') as $natent):
 		if (isset($natent['disabled'])) {
 			$textss = "<span class=\"gray\">";
 			$iconfn = "pass_d";

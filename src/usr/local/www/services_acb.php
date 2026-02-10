@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2008-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -119,7 +119,7 @@ EOF;
 				$errormsg = gettext('Unable to revert to the selected configuration backup revision.');
 			}
 		} else {
-			log_error(gettext('There was an error while restoring the AutoConfigBackup entry'));
+			logger(LOG_ERR, localize_text('There was an error while restoring the entry'), LOG_PREFIX_ACB);
 		}
 		unlink_if_exists($config_restore_path);
 	}

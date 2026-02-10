@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2013 BSD Perimeter
  * Copyright (c) 2013-2016 Electric Sheep Fencing
- * Copyright (c) 2014-2025 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2014-2026 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://neon1.net/m0n0wall)
@@ -42,7 +42,7 @@ require_once("gwlb.inc");
 $filtered_tags = array(
 	'accountkey', 'authorizedkeys', 'auth_pass',
 	'auth_server_shared_secret', 'auth_server_shared_secret2', 'auth_user',
-	'barnyard_dbpwd', 'bcrypt-hash', 'cert_key', 'community', 'crypto_password',
+	'backwardsyncpassword', 'barnyard_dbpwd', 'bcrypt-hash', 'cert_key', 'community', 'crypto_password',
 	'crypto_password2', 'dns_nsupdatensupdate_key', 'ddnsdomainkey', 'encryption_password',
 	'etpro_code', 'etprocode', 'gold_encryption_password', 'gold_password',
 	'influx_pass', 'ipsecpsk', 'keydata', 'ldap_bindpw', 'ldapbindpass', 'ldap_pass',

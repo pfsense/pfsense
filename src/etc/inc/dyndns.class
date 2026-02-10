@@ -65,6 +65,7 @@
 	 *    - HE.net Tunnelbroker IP update (ipv4.tunnelbroker.net)
 	 *    - HN (hn.org) -- incomplete checking!
 	 *    - Hover (www.hover.com)
+	 *    - Infomaniak (infomaniak.com)
 	 *    - Loopia (loopia.se)
 	 *    - LuaDNS (luadns.com)
 	 *    - Name.com (name.com)
@@ -134,6 +135,7 @@
 	 *  HE.net Tunnel   - Last Tested: 28 June 2011
 	 *  HN.org          - Last Tested: 12 July 2005
 	 *  Hover           - Last Tested: 15 February 2017
+	 *  Infomaniak      - Last Tested: 03 June 2025
 	 *  Loopia          - Last Tested: 21 August 2019
 	 *  LuaDNS          - Last Tested: 20 March 2025
 	 *  Name.com        - Last Tested: 5 Dec 2021
@@ -508,6 +510,7 @@
 					case 'he-net-v6':
 					case 'hn':
 					case 'hover':
+					case 'infomaniak':
 					case 'linode':
 					case 'linode-v6':
 					case 'luadns':
@@ -630,6 +633,13 @@
 					$post_data['data'] = $this->_dnsIP;
 					curl_setopt($ch, CURLOPT_URL, $server);
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+					break;
+				case 'infomaniak':
+					// see specification at https://faq.infomaniak.com/2376
+					$needsIP = FALSE;
+					$server = 'https://infomaniak.com/nic/update';
+					curl_setopt($ch, CURLOPT_USERPWD, "{$this->_dnsUser}:{$this->_dnsPass}");
+					curl_setopt($ch, CURLOPT_URL, "{$server}?hostname={$this->_dnsHost}");
 					break;
 				//
 				// Not yet ordered providers.
@@ -2170,6 +2180,9 @@
 					}
 					break;
 				// Providers in an alphabetical order. Add code for new providers below in a correct position.
+				case 'infomaniak':
+					// see specification at https://faq.infomaniak.com/2376
+					// similar to dyfi, reusing their code
 				case 'dyfi':
 					// see specification at https://www.dy.fi/page/specification
 					if (preg_match('/badauth/i', $data)) {

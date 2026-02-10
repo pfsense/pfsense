@@ -542,7 +542,7 @@ if ($act == "new" || $act == gettext("Save")) {
 		<div class="panel-body table-responsive">
 <?php
 	if (!is_array($crl['cert']) || (count($crl['cert']) == 0)) {
-		print_info_box(gettext("No certificates found for this CRL."), 'danger');
+		print_info_box(gettext("No certificates found in this CRL."), 'danger');
 	} else {
 ?>
 			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>

@@ -732,9 +732,7 @@ $section->addInput(new Form_Textarea(
 	'login_message',
 	'Login Message',
 	$pconfig['login_message']
-))->setHelp('Text message to display on the login page, such as a warning or disclaimer. ' .
-	'Plain text only - tags, e.g. HTML and PHP, are automatically removed.'
-);
+))->setHelp('Message to display on the login page, such as a warning or disclaimer. Plain text only.');
 
 /*
 $section->addInput(new Form_Input(

@@ -458,7 +458,7 @@ $section->addInput(new Form_Checkbox(
 	'curl_ssl_verifypeer',
 	'HTTP API SSL/TLS Options',
 	'Verify SSL/TLS Certificate Trust',
-	$pconfig['curl_ssl_verifypeer']
+	$pconfig['curl_ssl_verifypeer'] ?? true
 ))->setHelp('When set, the server must provide a valid SSL/TLS certificate trust chain which can be verified by this firewall.');
 
 $section->addInput(new Form_Input(

@@ -598,15 +598,15 @@
 				case 'custom-v6':
 					if (strstr($this->_dnsUpdateURL, "%IP%")) {$needsIP = TRUE;} else {$needsIP = FALSE;}
 					if ($this->_dnsUser != '') {
-						if ($this->_curlSslVerifypeer) {
-							/* required for a local CA
-							 * see https://redmine.pfsense.org/issues/12589 */
-							curl_setopt($ch, CURLOPT_CAPATH, "/etc/ssl/certs/");
-							curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, TRUE);
-						} else {
-							curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-						}
 						curl_setopt($ch, CURLOPT_USERPWD, "{$this->_dnsUser}:{$this->_dnsPass}");
+					}
+					if ($this->_curlSslVerifypeer) {
+						/* required for a local CA
+						 * see https://redmine.pfsense.org/issues/12589 */
+						curl_setopt($ch, CURLOPT_CAPATH, "/etc/ssl/certs/");
+						curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, TRUE);
+					} else {
+						curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 					}
 					$server = str_replace("%IP%", $this->_dnsIP, $this->_dnsUpdateURL);
 					if ($this->_dnsVerboseLog) {

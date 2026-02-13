@@ -1051,7 +1051,7 @@ function system_get_kea6prefixes() {
 			continue;
 		}
 
-		$query6 = &$lease['user-context']['Netgate']['query6'];
+		$query6 = &$lease['user-context']['ISC']['query6'];
 		if (!isset($query6, $query6['remote-addr'], $query6['iface-name'])) {
 			continue;
 		}

@@ -905,3 +905,5 @@ function get_ipprotocols(?string $type = ''):array {
 if (can_include('globals.plus.inc')) {
 	include_once('globals.plus.inc');
 }
+
+add_default_system_package(['name' => 'pfSense-pkg-System_Patches']);

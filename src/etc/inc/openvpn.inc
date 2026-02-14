@@ -1005,7 +1005,7 @@ function openvpn_reconfigure($mode, $settings) {
 		if (is_numericint($interface_config['mtu'])) {
 			$conf .= "tun-mtu {$interface_config['mtu']}\n";
 			if ($mode == 'client') {
-				$conf .= 'pull-filter ignore "tun-mtu"';
+				$conf .= "pull-filter ignore \"tun-mtu\"\n";
 			}
 		}
 		break;

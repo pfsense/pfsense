@@ -4816,9 +4816,11 @@ function fix_config_artifacts() {
 	unset($rules, $rules_to_fix);
 
 	/**
+	 * ===================================================================
 	 * MSS clamping is not performed by OpenVPN when DCO is enabled.
 	 * Tunnels configured with a non-default MTU must configure both the
 	 * MTU and MSS values in the interface assignment.
+	 * ===================================================================
 	 */
 
 	// Remove MTU and MSS custom options for tunnels with a proper interface
@@ -4836,7 +4838,10 @@ function fix_config_artifacts() {
 			$custom_options = array_filter(explode(';', $tunnel_config['custom_options']));
 			foreach ($custom_options as $idx => &$option) {
 				$option = trim($option);
-				if (!str_starts_with($option, 'tun-mtu ') && !str_starts_with($option, 'mssfix')) {
+				if (!str_starts_with($option, 'tun-mtu ') && !str_starts_with($option, 'mssfix') &&
+				    (($config_path == 'openvpn/openvpn-client') &&
+				     !str_starts_with($option, 'pull-filter ignore tun-mtu') &&
+				     !str_starts_with($option, 'pull-filter ignore "tun-mtu"'))) {
 					continue;
 				}
 				unset($option[$idx]);
@@ -4898,9 +4903,11 @@ function fix_config_artifacts() {
 	}
 
 	/**
+	 * ===================================================================
 	 * The interface for Port Forwarding rules may be missing on some old
 	 * configurations. These rules default to the "wan" interface; specify
 	 * it explicitly since it's required.
+	 * ===================================================================
 	 */
 	$changed = false;
 	$rules = array_get_path($conf, 'nat/rule', []);

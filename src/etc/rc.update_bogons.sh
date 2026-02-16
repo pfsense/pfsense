@@ -123,7 +123,7 @@ if [ "$BOGON_V4_CKSUM" = "$ON_DISK_V4_CKSUM" ] || [ "$BOGON_V6_CKSUM" = "$ON_DIS
 	fi
 
 	if [ "$BOGON_V6_CKSUM" = "$ON_DISK_V6_CKSUM" ]; then
-		BOGONS_V6_TABLE_COUNT=`pfctl -sTables | grep ^bogonsv6$ | wc -l | awk '{ print $1 }'`
+		BOGONS_V6_TABLE_COUNT=`pfctl -sTables | grep -c ^bogonsv6$`
 		ENTRIES_TOT=`pfctl -vvsTables | awk '/Addresses/ {s+=$2}; END {print s}'`
 		LINES_V6=`wc -l /tmp/bogonsv6 | awk '{ print $1 }'`
 		if [ "$BOGONS_V6_TABLE_COUNT" -gt 0 ]; then

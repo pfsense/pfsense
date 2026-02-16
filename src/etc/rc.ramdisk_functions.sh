@@ -34,7 +34,7 @@ _be_remount_subordinate()
 	/sbin/zfs list -rH -o mountpoint,name,canmount,mounted -s mountpoint -t filesystem "${1}" | \
 		while read _mp _name _canmount _mounted ; do
 			# skip filesystems that must *not* be mounted
-			[ "${_canmount}" = "off" -o "${_mp}" = "/" ] && continue
+			[ "${_canmount}" = "off" ] || [ "${_mp}" = "/" ] && continue
 			# unmount the dataset if mounted...
 			[ "${_mounted}" = "yes" ] && /sbin/zfs umount -f "${_name}"
 			# finally, mount the dataset
@@ -97,7 +97,7 @@ ramdisk_was_active() {
 #   varsize = $( ramdisk_get_size var )
 ramdisk_get_size () {
 	NAME=${1}
-	DEFAULT_SIZE=$(eval echo \${RAMDISK_DEFAULT_SIZE_${NAME}})
+	eval DEFAULT_SIZE="\${RAMDISK_DEFAULT_SIZE_${NAME}}"
 
 	SIZE=$(/usr/local/sbin/read_xml_tag.sh string "system/use_mfs_${NAME}_size")
 	if [ -n "${SIZE}" ] && [ "${SIZE}" -gt 0 ]; then
@@ -130,7 +130,7 @@ ramdisk_check_size () {
 #   ramdisk_try_mount var
 ramdisk_try_mount () {
 	NAME=$1
-	SIZE=$(eval echo \${${NAME}size})m
+	eval SIZE="\${${NAME}size}m"
 	if [ "${NAME}" = "tmp" ]; then
 		MODE="1777"
 	else

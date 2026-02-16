@@ -14,8 +14,8 @@ if [ -d "${DBPATH}" ]; then
 	fi
 
 	for aliastablefile in "${DBPATH}"/* ; do
-		filename="$(basename ${aliastablefile})"
-		if [ ! -f "${RAM_Disk_Store}/${filename}.tgz" -o "${RAM_Disk_Store}/${filename}.tgz" -ot "${DBPATH#/}/${filename}" ]; then
+		filename="$(basename "${aliastablefile}")"
+		if [ ! -f "${RAM_Disk_Store}/${filename}.tgz" ] || [ "${RAM_Disk_Store}/${filename}.tgz" -ot "${DBPATH#/}/${filename}" ]; then
 			[ -f "${RAM_Disk_Store}/${filename}.tgz" ] && /bin/rm -f "${RAM_Disk_Store}/${filename}.tgz"
 			/usr/bin/tar -czf "${RAM_Disk_Store}/${filename}.tgz" -C / "${DBPATH#/}/${filename}"
 		fi

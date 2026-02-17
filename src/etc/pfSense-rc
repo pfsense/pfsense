@@ -535,7 +535,7 @@ ln -sf /etc/ssl/openssl.cnf \
 	&& cp -f "/usr/local/share/${product_name}/ssl/netgate-ca.pem" /etc/ssl
 
 # Populate /usr/local/etc/php.ini
-/usr/local/sbin/php-fpm -c /usr/local/etc/php.ini -y /usr/local/lib/php-fpm.conf -RD 2>&1 >/dev/null
+/usr/local/sbin/php-fpm -c /usr/local/etc/php.ini -y /usr/local/lib/php-fpm.conf -RD >/dev/null 2>&1
 
 # Launch external configuration loader
 /etc/rc.ecl
@@ -711,6 +711,6 @@ echo "$product_label ${version}${version_patch} $ARCH $BUILDTIME"
 echo "Bootup complete"
 echo "NOTICE Bootup complete" | /usr/bin/logger -p user.notice
 
-/usr/local/bin/beep.sh start 2>&1 >/dev/null
+/usr/local/bin/beep.sh start >/dev/null 2>&1
 
 exit 0

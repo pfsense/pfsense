@@ -3218,7 +3218,7 @@ function interface_ipalias_configure(&$vip) {
 		if (is_pseudo_interface($realif)) {
 			if (is_ipaddrv4($vip['subnet'])) {
 				$gateway = get_interface_gateway($if);
-			} else {
+			} else if (!config_path_enabled('system', 'use_if_pppoe')) {
 				$gateway = get_interface_gateway_v6($if);
 			}
 		}

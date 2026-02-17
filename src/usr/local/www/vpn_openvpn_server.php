@@ -1301,7 +1301,7 @@ if ($act=="new" || $act=="edit"):
 		'*IPv6 Interface',
 		array_get_path($pconfig, 'tunnel_track6_interface'),
 		build_ipv6interface_list()
-	))->setHelp('Selects the dynamic IPv6 WAN interface to track for configuration.');
+	))->setHelp('Select the 6rd interface to track for configuration.');
 
 	if (array_get_path($pconfig, 'tunnel_track6_prefix_id') == "") {
 		array_set_path($pconfig, 'tunnel_track6_prefix_id', 0);
@@ -1312,7 +1312,7 @@ if ($act=="new" || $act=="edit"):
 		'IPv6 Prefix ID',
 		'text',
 		$pconfig['tunnel_track6_prefix_id']
-	))->setHelp('(%1$shexadecimal%2$s from 0 to %3$s) The value in this field is the (Delegated) IPv6 prefix ID. This determines the configurable network ID based on the dynamic IPv6 connection. The default value is 0.', '<b>', '</b>', '<span id="track6-prefix-id-range"></span>');
+	))->setHelp('(%1$shexadecimal%2$s from 0 to %3$s) The value in this field is the (Delegated) IPv6 prefix ID. This determines the configurable network ID based on the 6rd IPv6 connection. The default value is 0.', '<b>', '</b>', '<span id="track6-prefix-id-range"></span>');
 
 	$section->addInput(new Form_Checkbox(
 		'serverbridge_dhcp',
@@ -2334,11 +2334,28 @@ events.push(function() {
 		hideInput('connlimit', hide);
 	}
 
+	function update_track6_prefix() {
+		var iface = $("#tunnel_track6_interface").val();
+		if (iface == null) {
+			return;
+		}
+
+		var track6_prefix_ids = $('#ipv6-num-prefix-ids-' + iface).val();
+		if (track6_prefix_ids == null) {
+			return;
+		}
+
+		track6_prefix_ids = parseInt(track6_prefix_ids).toString(16);
+		$('#track6-prefix-id-range').html(track6_prefix_ids);
+	}
+
+
 	function ipv6_type_change() {
 		var hide = ($('#tunnel_networkv6_type').val() == 'track6')
 		hideInput('tunnel_networkv6', hide);
 		hideInput('tunnel_track6_interface', !hide);
 		hideInput('tunnel_track6_prefix_id', !hide);
+		update_track6_prefix();
 	}
 
 	// ---------- Monitor elements for change and call the appropriate display functions ------------------------------
@@ -2449,6 +2466,10 @@ events.push(function() {
 	// IPv6 Tunnel Type
 	$('#tunnel_networkv6_type').change(function () {
 		ipv6_type_change();
+	});
+
+	$('#tunnel_track6_interface').on('change', function() {
+		update_track6_prefix();
 	});
 
 	function updateCipher(mem) {

@@ -5,7 +5,6 @@
 # program by Gunter Burchardt.
 #
 DEV=ath0
-d=0
 
 usage()
 {
@@ -13,19 +12,21 @@ usage()
 	exit 2
 }
 
-args=`getopt d:i: $*`
-test $? -ne 0 && usage
-
-set -- $args
-for i; do
-	case "$i" in
-	-i)	DEV="$2"; shift; shift;;
-	-d)	d="$2"; shift; shift;;
-	--)	shift; break;
+while getopts d:i: opt; do
+	case "${opt}" in
+		i)
+			DEV=$OPTARG
+			;;
+		d)
+			d=$OPTARG
+			;;
+		*)
+			usage
+			;;
 	esac
 done
 
-test $d -eq 0 && usage
+[ -z "${d}" ] && usage
 
 slottime=`expr 9 + \( $d / 300 \)`
 if expr \( $d % 300 \) != 0 >/dev/null 2>&1; then
@@ -33,8 +34,8 @@ if expr \( $d % 300 \) != 0 >/dev/null 2>&1; then
 fi
 timeout=`expr $slottime \* 2 + 3`
 
-printf "Setup IFS parameters on interface ${DEV} for %i meter p-2-p link\n" $d
-ATHN=`echo $DEV | /usr/bin/sed 's/ath//'`
-sysctl dev.ath.$ATHN.slottime=$slottime
-sysctl dev.ath.$ATHN.acktimeout=$timeout
-sysctl dev.ath.$ATHN.ctstimeout=$timeout
+printf "Setup IFS parameters on interface ${DEV} for %i meter p-2-p link\n" "$d"
+ATHN="${DEV#ath}"
+sysctl "dev.ath.$ATHN.slottime=$slottime"
+sysctl "dev.ath.$ATHN.acktimeout=$timeout"
+sysctl "dev.ath.$ATHN.ctstimeout=$timeout"

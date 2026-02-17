@@ -352,12 +352,13 @@ events.push(function() {
 	}
 
 	function proto_change() {
-		portsenabled = ($('#protocol :selected').val() == 'any' || (jQuery.inArray($('#protocol :selected').val(), Object.keys(<?=json_encode(get_ipprotocols('portsonly'))?>)) != -1)) ? true : false;
+		proto = $('#protocol :selected').val()
+		portsenabled = (proto == 'any' || (jQuery.inArray(proto, Object.keys(<?=json_encode(get_ipprotocols('portsonly'))?>)) != -1)) ? true : false;
 		if (portsenabled) {
 			hideGroupInput('sourceport', false);
 			hideGroupInput('dstport', false);
 			hideClass('natportgrp', false);
-			hideClass('eimnat', !($('#protocol :selected').val() != 'tcp') /* meh */);
+			hideClass('eimnat', (proto == 'sctp' || proto == 'tcp'));
 		} else {
 			hideGroupInput('sourceport', true);
 			hideGroupInput('dstport', true);

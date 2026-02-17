@@ -420,7 +420,7 @@ chflags noschg /var/empty
 chmod 0555 /var/empty
 chflags schg /var/empty
 
-/bin/rm -rf "$varrunpath"/*
+/bin/rm -rf "${varrunpath:?}"/*
 
 # Cleanup configuration files from previous instance
 /bin/rm -rf /var/etc/*

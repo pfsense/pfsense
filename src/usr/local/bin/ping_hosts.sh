@@ -33,17 +33,16 @@
 # Read in ipsec ping hosts and check the CARP status
 # Only perform this check if there are IPsec hosts to ping, see
 #   https://redmine.pfsense.org/issues/8172
-if [ -f /var/db/ipsecpinghosts -a -s /var/db/ipsecpinghosts ]; then
+if [ -s /var/db/ipsecpinghosts ]; then
 	IPSECHOSTS="/var/db/ipsecpinghosts"
 	CURRENTIPSECHOSTS="/var/db/currentipsecpinghosts"
-	IFVPNSTATE=`ifconfig $IFVPN | grep "carp: BACKUP vhid" | wc -l`
-	if [ $IFVPNSTATE -gt 1 ]; then
-		echo -e "CARP interface in BACKUP (not pinging ipsec hosts)"
-		rm -f $CURRENTIPSECHOSTS
-		touch $CURRENTIPSECHOSTS
+	if [ "$( ifconfig "$IFVPN" | grep -c "carp: BACKUP vhid" )" -gt 1 ]; then
+		echo "CARP interface in BACKUP (not pinging ipsec hosts)"
+		rm -f "$CURRENTIPSECHOSTS"
+		touch "$CURRENTIPSECHOSTS"
 	else
-		echo -e "CARP interface is MASTER or non CARP (pinging ipsec hosts)"
-		cat < $IPSECHOSTS > $CURRENTIPSECHOSTS
+		echo "CARP interface is MASTER or non CARP (pinging ipsec hosts)"
+		cat < "$IPSECHOSTS" > "$CURRENTIPSECHOSTS"
 	fi
 fi
 
@@ -58,8 +57,8 @@ if [ -f /var/db/pkgpinghosts ]; then
 fi
 
 # Make sure at least one of these has contents, otherwise cat will be stuck waiting on input
-if [ ! -z "${PKGHOSTS}" -o ! -z "${HOSTS}" -o ! -z "${CURRENTIPSECHOSTS}" ]; then
-	cat $PKGHOSTS $HOSTS $CURRENTIPSECHOSTS >/tmp/tmpHOSTS
+if [ -n "${PKGHOSTS}" ] || [ -n "${HOSTS}" ] || [ -n "${CURRENTIPSECHOSTS}" ]; then
+	eval cat "$PKGHOSTS" "$HOSTS" "$CURRENTIPSECHOSTS" >/tmp/tmpHOSTS
 else
 	# Nothing to do!
 	exit
@@ -75,79 +74,76 @@ fi
 
 PINGHOSTS=`cat /tmp/tmpHOSTS`
 
-PINGHOSTCOUNT=`cat /tmp/tmpHOSTS | wc -l`
-
-if [ "$PINGHOSTCOUNT" -lt "1" ]; then
+if [ "$( wc -l /tmp/tmpHOSTS )" -lt "1" ]; then
 	exit
 fi
 
 for TOPING in $PINGHOSTS ; do
 	echo "PROCESSING $TOPING"
-	SRCIP=`echo $TOPING | cut -d"|" -f1`
-	DSTIP=`echo $TOPING | cut -d"|" -f2`
-	COUNT=`echo $TOPING | cut -d"|" -f3`
-	FAILURESCRIPT=`echo $TOPING | cut -d"|" -f4`
-	SERVICERESTOREDSCRIPT=`echo $TOPING | cut -d"|" -f5`
-	THRESHOLD=`echo $TOPING | cut -d"|" -f6`
-	WANTHRESHOLD=`echo $TOPING | cut -d"|" -f7`
-	AF=`echo $TOPING | cut -d"|" -f8`
-	if [ "$AF" == "inet6" ]; then
+	SRCIP=`echo "$TOPING" | cut -d"|" -f1`
+	DSTIP=`echo "$TOPING" | cut -d"|" -f2`
+	COUNT=`echo "$TOPING" | cut -d"|" -f3`
+	FAILURESCRIPT=`echo "$TOPING" | cut -d"|" -f4`
+	SERVICERESTOREDSCRIPT=`echo "$TOPING" | cut -d"|" -f5`
+	THRESHOLD=`echo "$TOPING" | cut -d"|" -f6`
+	WANTHRESHOLD=`echo "$TOPING" | cut -d"|" -f7`
+	AF=`echo "$TOPING" | cut -d"|" -f8`
+	if [ "$AF" = "inet6" ]; then
 		PINGCMD=ping6
 	else
 		PINGCMD=ping
 	fi
-	echo Processing $DSTIP
+	echo "Processing $DSTIP"
 	# Look for a service being down
 	# Read in previous status
 	PREVIOUSSTATUS=""
 	if [ -f "/var/db/pingstatus/${DSTIP}" ]; then
-		PREVIOUSSTATUS=`cat /var/db/pingstatus/$DSTIP`
+		PREVIOUSSTATUS=`cat "/var/db/pingstatus/$DSTIP"`
 	fi
-	$PINGCMD -c $COUNT -S $SRCIP $DSTIP
-	if [ $? -eq 0 ]; then
+	if $PINGCMD -c "$COUNT" -S "$SRCIP" "$DSTIP"; then
 		# Host is up
 		if [ "$PREVIOUSSTATUS" != "UP" ]; then
 			# Service restored
-			echo "UP" > /var/db/pingstatus/$DSTIP
-			if [ "$SERVICERESTOREDSCRIPT" != "" ]; then
+			echo "UP" > "/var/db/pingstatus/$DSTIP"
+			if [ -n "$SERVICERESTOREDSCRIPT" ]; then
 				echo "$DSTIP is UP, previous state was DOWN .. Running $SERVICERESTOREDSCRIPT"
 				echo "INFO $DSTIP is UP, previous state was DOWN .. Running $SERVICERESTOREDSCRIPT" | logger -p daemon.info -i -t PingMonitor
-				sh -c $SERVICERESTOREDSCRIPT
+				sh -c "$SERVICERESTOREDSCRIPT"
 			fi
 		fi
 	else
 		# Host is down
 		if [ "$PREVIOUSSTATUS" != "DOWN" ]; then
 			# Service is down
-			echo "DOWN" > /var/db/pingstatus/$DSTIP
-			if [ "$FAILURESCRIPT" != "" ]; then
+			echo "DOWN" > "/var/db/pingstatus/$DSTIP"
+			if [ -n "$FAILURESCRIPT" ]; then
 				echo "$DSTIP is DOWN, previous state was UP ..  Running $FAILURESCRIPT"
 				echo "INFO $DSTIP is DOWN, previous state was UP ..  Running $FAILURESCRIPT" | logger -p daemon.info -i -t PingMonitor
-				sh -c $FAILURESCRIPT
+				sh -c "$FAILURESCRIPT"
 			fi
 		fi
 	fi
 	echo "Checking ping time $DSTIP"
 	# Look at ping values themselves
-	PINGTIME=`$PINGCMD -c 1 -S $SRCIP $DSTIP | awk '{ print $7 }' | grep time | cut -d "=" -f2`
+	PINGTIME=`$PINGCMD -c 1 -S "$SRCIP" "$DSTIP" | awk '{ print $7 }' | grep time | cut -d "=" -f2`
 	echo "Ping returned $?"
-	echo $PINGTIME > /var/db/pingmsstatus/$DSTIP
-	if [ "$THRESHOLD" != "" ]; then
-		if [ $(echo "${PINGTIME} > ${THRESHOLD}" | /usr/bin/bc) -eq 1 ]; then
+	echo "$PINGTIME" > "/var/db/pingmsstatus/$DSTIP"
+	if [ -n "$THRESHOLD" ]; then
+		if [ "$(echo "${PINGTIME} > ${THRESHOLD}" | /usr/bin/bc)" -eq 1 ]; then
 			echo "$DSTIP has exceeded ping threshold $PINGTIME / $THRESHOLD .. Running $FAILURESCRIPT"
 			echo "INFO $DSTIP has exceeded ping threshold $PINGTIME / $THRESHOLD .. Running $FAILURESCRIPT" | logger -p daemon.info -i -t PingMonitor
-			sh -c $FAILURESCRIPT
+			sh -c "$FAILURESCRIPT"
 		fi
 	fi
 	# Wan ping time threshold
 	#WANTIME=`rrdtool fetch /var/db/rrd/wan-quality.rrd AVERAGE -r 120 -s -1min -e -1min | grep ":" | cut -f3 -d" " | cut -d"e" -f1`
 	echo "Checking wan ping time $WANTIME"
-	echo $WANTIME > /var/db/wanaverage
-	if [ "$WANTHRESHOLD" != "" -a "$WANTIME" != "" ]; then
-		if [ $(echo "${WANTIME} > ${WANTHRESHOLD}" | /usr/bin/bc) -eq 1 ]; then
+	echo "$WANTIME" > /var/db/wanaverage
+	if [ -n "$WANTHRESHOLD" ] && [ -n "$WANTIME" ]; then
+		if [ "$(echo "${WANTIME} > ${WANTHRESHOLD}" | /usr/bin/bc)" -eq 1 ]; then
 			echo "$DSTIP has exceeded wan ping threshold $WANTIME / $WANTHRESHOLD .. Running $FAILURESCRIPT"
 			echo "INFO $DSTIP has exceeded wan ping threshold $WANTIME / $WANTHRESHOLD .. Running $FAILURESCRIPT" | logger -p daemon.info -i -t PingMonitor
-			sh -c $FAILURESCRIPT
+			sh -c "$FAILURESCRIPT"
 		fi
 	fi
 	sleep 1

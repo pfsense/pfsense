@@ -30,19 +30,30 @@ if [ "${dev_type}" = "tun" ]; then
 			;;
 	esac
 
-	if [ "${configuration_type}" = "server" ] && [ -n "${ifconfig_local}" ]; then
-		echo "${ifconfig_local}" > "/tmp/${1}_router"
+	# Servers with a /30 IPv4 tunnel only one peer and hence the variable
+	# $ifconfig_remote can be used to set up the gateway.
+	# Servers with > 30 (e.g. /24) IPv4 tunnel don't have a known peer and
+	# hence the gateway must be set to a local address. In this case the
+	# variable $ifconfig_remote is not set.
+	if [ "${configuration_type}" = "server" ] && [ -n "${ifconfig_remote}" ]; then
+		# IPv4 server with a /30 tunnel.
+		echo "${ifconfig_remote}" > "/tmp/${1}_router"
 	elif [ -n "${route_vpn_gateway}" ]; then
 		echo "${route_vpn_gateway}" > "/tmp/${1}_router"
 	elif [ -n "${ifconfig_remote}" ]; then
 		echo "${ifconfig_remote}" > "/tmp/${1}_router"
 	elif [ -n "${ifconfig_local}" ]; then
+		# IPv4 server with a > /30 tunnel, or an IPv4 client.
 		echo "${ifconfig_local}" > "/tmp/${1}_router"
 	else
 		echo "${5}" > "/tmp/${1}_router"
 	fi
 
+	# Servers with IPv6 tunnels always have $ifconfig_ipv6_remote and will
+	# not start with e.g. a /126. The address from $ifconfig_ipv6_remote
+	# may be incorrect and hence a local address is used for the gateway.
 	if [ "${configuration_type}" = "server" ] && [ -n "${ifconfig_ipv6_local}" ]; then
+		# Any server with an IPv6 tunnel.
 		echo "${ifconfig_ipv6_local}" > "/tmp/${1}_routerv6"
 	elif [ -n "${route_ipv6_gateway_1}" ]; then
 		echo "${route_ipv6_gateway_1}" > "/tmp/${1}_routerv6"

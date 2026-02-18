@@ -812,77 +812,78 @@ function filter_configure() {
 
 function filter_delete_states_for_down_gateways() {
 	$any_gateway_down = false;
-	$a_gateways = return_gateways_status();
-	$gateway = "";
+	$gw_down_kill_states = config_get_path('system/gw_down_kill_states');
 	foreach (get_gateways() as $gateway) {
-		/* Skip irrelevant or invalid gateway entries */
-		$last_gw = '';
-		if (empty($gateway['monitor']) ||
-		    !is_ipaddr($gateway['monitor']) ||
-		    strstr($gateway['monitor'], "127.0.0.")) {
+		if (!is_gateway_state_killing_enabled($gateway)) {
+			continue;
+		}
+		if (!is_gateway_action_enabled($gateway)) {
+			continue;
+		}
+
+		$last_gw = null;
+		if (!is_ipaddr($gateway['monitor']) ||
+		    ip_in_subnet($gateway['monitor'], "127.0.0.0/8") ||
+		    ip_in_subnet($gateway['monitor'], "::1/128")) {
 			// invalid monitor IP address
 			$last_gw = get_interface_gateway_last($gateway['interface'], $gateway['ipprotocol']);
 			if (!is_ipaddr($last_gw)) {
 				continue;
 			}
-		} elseif (empty($a_gateways[$gateway['monitor']])) {
-			// no gateway status, check for static configuration
-			$last_gw = $gateway['gateway'];
-			if (!is_ipaddr($last_gw)) {
-				continue;
+		} else {
+			list($gateway_status) = get_gateway_status($gateway);
+			if ($gateway_status == GW_STATUS_UNKNOWN) {
+				/* Handle a pending gateway on static interface configuration.
+				 * See https://redmine.pfsense.org/issues/15225 */
+				$last_gw = $gateway['gateway'];
+				if (!is_ipaddr($last_gw)) {
+					continue;
+				}
 			}
 		}
-		/* Do not trigger these actions if:
-		 * The gateway is configured to not kill states when down
-		 * Gateway monitoring is disabled
-		 * Gateway monitoring action is disabled
-		 * The gateway is forced down. */
-		if (($gateway['gw_down_kill_states'] == 'none') ||
-		    (isset($gateway['monitor_disable'])) ||
-		    (isset($gateway['action_disable'])) ||
-		    (isset($gateway['force_down']))) {
+
+		if (isset($last_gw)) {
+			/* If $last_gw is found then it's assumed the gateway is down. */
+			$gwip = $last_gw;
+		} elseif (!is_gateway_online($gateway)) {
+			if (is_ipaddr($gateway['gateway'])) {
+				$gwip = $gateway['gateway'];
+				$what_to_kill = gettext("down gateway");
+			} else {
+				$gwip = lookup_gateway_ip_by_name($gateway['name']);
+				/* Cannot locate the gateway IP address, so we
+				 * cannot proceed. */
+				if (!is_ipaddr($gwip)) {
+					$message = gettext("Gateway is down but its IP address cannot be located. Skipping state kill.") . ": {$gateway['name']}";
+					update_filter_reload_status($message);
+					logger(LOG_INFO, $message, LOG_PREFIX_GWMON);
+					continue;
+				}
+				$what_to_kill = gettext("dynamic down gateway");
+			}
+		} else {
+			/* Skip killing states for online gateways. */
 			continue;
 		}
 
-		$gwstatus = &$a_gateways[$gateway['monitor']];
-		$gw_down_kill_states = config_get_path('system/gw_down_kill_states');
-		if (strstr($gwstatus['status'], "down") || is_ipaddr($last_gw)) {
-			$any_gateway_down = $gateway['name'];
-			if ($gw_down_kill_states == 'all') {
-				/* All states will be killed, no need to continue searching. */
-				break;
-			}
+		$any_gateway_down = $gateway['name'];
+		if ($gw_down_kill_states == 'all') {
+			/* All states will be killed, no need to continue searching. */
+			break;
+		}
 
-			$what_to_kill = gettext("down gateway");
-			$gwip = lookup_gateway_ip_by_name($gateway['name']);
-			if (!is_ipaddr($gwip) && is_ipaddr($last_gw)) {
-				$gwip = $last_gw;
-				$what_to_kill = gettext("dynamic down gateway");
-			}
-			/* Cannot locate the gateway IP address, so we
-			 * cannot proceed. */
-			if (!is_ipaddr($gwip)) {
-				$message = gettext("Gateway is down but its IP address cannot be located. Skipping state kill.") . ": {$gateway['name']}";
-				update_filter_reload_status($message);
-				logger(LOG_INFO, $message, LOG_PREFIX_GWMON);
-				continue;
-			}
-
-			/* Kill states for the down gateway if the flag is on globally
-			 * or configured to do so on a specific gateway. */
-			if (($gw_down_kill_states == 'down') ||
-			    ($gateway['gw_down_kill_states'] == 'down')) {
-				$message = gettext("Killing states for") . " {$what_to_kill}: {$gateway['name']}, {$gwip}";
-				update_filter_reload_status($message);
-				logger(LOG_NOTICE, $message, LOG_PREFIX_GWMON);
-				mwexec("/sbin/pfctl -M -k gateway -k " . escapeshellarg($gwip));
-			}
+		/* Kill states for the down gateway if the flag is on globally
+		 * or configured to do so on a specific gateway. */
+		if (is_gateway_state_killing_enabled($gateway)) {
+			$message = gettext("Killing states for") . " {$what_to_kill}: {$gateway['name']}, {$gwip}";
+			update_filter_reload_status($message);
+			logger(LOG_NOTICE, $message, LOG_PREFIX_GWMON);
+			mwexec("/sbin/pfctl -M -k gateway -k " . escapeshellarg($gwip));
 		}
 	}
 
-	if ((config_get_path('system/gw_down_kill_states') == 'all') &&
-	    ($any_gateway_down !== false)) {
-		$message = gettext("One or more gateways is down, flushing all states") . ": {$gateway['name']} ";
+	if (($gw_down_kill_states == 'all') && ($any_gateway_down !== false)) {
+		$message = gettext("One or more gateways is down, flushing all states") . ": {$any_gateway_down}";
 		update_filter_reload_status($message);
 		logger(LOG_NOTICE, $message, LOG_PREFIX_GWMON);
 		mwexec("/sbin/pfctl -Fs");
@@ -1723,123 +1724,128 @@ function filter_generate_gateways() {
 
 	update_filter_reload_status(gettext("Creating gateway group item..."));
 
-	/* Lookup Gateways to be used in filter rules once */
-	refresh_gateways(); // make sure rules are generated from a current gateway list
+	/* Maintain consistency across functions during filter reloads by
+	 * using the same gateway information per filter reload. */
+	refresh_gateways();
 	$GatewaysList = get_gateways();
-	$GatewayGroupsList = return_gateway_groups_array(true);
 	$GatewaysStatus = return_gateways_status(true);
+	$GatewayGroupsList = return_gateway_groups_array(true);
+	$skip_rules_gw_down = config_path_enabled('system','skip_rules_gw_down');
+	$lb_use_sticky = config_path_enabled('system','lb_use_sticky');
+	$gateway_groups_config = config_get_path('gateways/gateway_group', []);
 
-	if (is_array($GatewaysList)) {
-		foreach ($GatewaysList as $gwname => $gateway) {
-			$int = $gateway['interface'];
-			$gwip = $gateway['gateway'];
-			$route = "";
-			if (($gateway['ipprotocol'] == 'inet') && !is_ipaddrv4($gwip)) {
-				$gwip = get_interface_gateway($gateway['friendlyiface']);
-			} elseif (($gateway['ipprotocol'] == 'inet6') && !is_ipaddrv6($gwip)) {
-				$gwip = get_interface_gateway_v6($gateway['friendlyiface']);
-			}
-			if (is_ipaddr($gwip) && !empty($int) && !isset($gateway['force_down']) &&
-			    (($GatewaysStatus[$gwname]['status'] != 'down') || isset($gateway['action_disable']))) {
-				$route = "route-to ( {$int} {$gwip} )";
-			}
-			if (($route === "") && config_path_enabled('system','skip_rules_gw_down')) {
+	foreach ($GatewaysList as $gwname => $gateway) {
+		if (empty($gateway['interface'])) {
+			if ($skip_rules_gw_down) {
 				unset($GatewaysList[$gwname]);
-			} else {
-				$rules .= "GW{$gwname} = \" {$route} \"\n";
+				continue;
 			}
 		}
+
+		$gwip = lookup_gateway_ip_by_name($gwname);
+		if (!is_ipaddr($gwip)) {
+			if ($skip_rules_gw_down) {
+				unset($GatewaysList[$gwname]);
+				continue;
+			}
+		}
+
+		if (!is_gateway_action_enabled($gateway) || is_gateway_online($gateway)) {
+			$route = "route-to ( {$gateway['interface']} {$gwip} )";
+		} else {
+			$route = '';
+		}
+		$rules .= "GW{$gwname} = \" {$route} \"\n";
 	}
 
-	if (is_array($GatewayGroupsList)) {
-		foreach ($GatewayGroupsList as $gateway => $members) {
-			$route = "";
-			/* hey, that's not a group member! */
-			unset($members['ipprotocol']);
-			unset($members['descr']);
-			if (count($members) > 0) {
-				$foundlb = 0;
-				$routeto = "";
-				$routetomembers = 0;
-				$trigger = "";
-				foreach (config_get_path('gateways/gateway_group', []) as $group) {
-					if ($group['name'] == $gateway) {
-						$trigger = $group['trigger'];
-						break;
-					}
-				}
-				/* see "Load balancing fails when one gateway has a weight of 1
-				* and another gateway has a weight >1", https://redmine.pfsense.org/issues/6025 */
-				foreach ($members as $member) {
-					if ((int) $member['weight'] == 1) {
-						$weight1 = true;
-					} elseif ((int) $member['weight'] > 1) {
-						$weightgt1 = true;
-					}
-				}
-				if ($weight1 && $weightgt1) {
-					$mult = 2;
-				} else {
-					$mult = 1;
-				}
-				foreach ($members as $member) {
-					if (!is_array($member)) {
-						continue;
-					}
-					$int = $member['int'];
-					$gatewayip = $member['gwip'];
-					if (!empty($int) && is_ipaddr($gatewayip) &&
-					    isset($GatewaysList[$member['gw']]) &&
-					    (isset($GatewaysList[$member['gw']]['action_disable']) ||
-					    (!isset($GatewaysList[$member['gw']]['force_down']) &&
-					    ((($GatewaysStatus[$member['gw']]['status'] != 'down') &&
-					    ($trigger == 'down')) ||
-					    (($GatewaysStatus[$member['gw']]['substatus'] != 'highloss') &&
-					    stristr($trigger, 'loss')) ||
-					    (($GatewaysStatus[$member['gw']]['substatus'] != 'highdelay') &&
-					    stristr($trigger, 'latency')))))) {
-						if (g_get('debug')) {
-							logger(LOG_DEBUG, localize_text('Setting up route with %1$s on %2$s', $gatewayip, $int), LOG_PREFIX_FILTER);
-						}
-						if ($routetomembers + ((int) $member['weight'] * $mult) > 384) {
-							// would create invalid ruleset, bail
-							logger(LOG_ERR, localize_text("Too many members in group %s, gateway group truncated in ruleset.", $member['name']), LOG_PREFIX_FILTER);
-							continue;
-						}
-						/* Only repeat the gateway string if the gateway is weighted
-						 * and there is more than one gateway involved
-						 * See https://redmine.pfsense.org/issues/12660
-						 */
-						if (((int) $member['weight'] > 0) &&
-						    (count($members) > 1)) {
-							$routeto .= str_repeat("( {$int} {$gatewayip} ) ", $member['weight'] * $mult);
-							$routetomembers += (int) $member['weight'];
-						} else {
-							$routeto .= "( {$int} {$gatewayip} ) ";
-							$routetomembers++;
-						}
-						$foundlb++;
-					} else {
-						logger(LOG_INFO, localize_text('Omitting gateway from filter ruleset. Group: "%s" Gateway: "%s" IP: "%s"', $gateway, $member['gw'], $gatewayip), LOG_PREFIX_FILTER);
-					}
-				}
-				$route = "";
-				if ($foundlb > 0) {
-					$route = " route-to { {$routeto} } ";
-					if ($foundlb > 1) {
-						$route .= " round-robin ";
-						if (config_path_enabled('system','lb_use_sticky')) {
-							$route .= " sticky-address ";
-						}
-					}
-				}
+	foreach ($GatewayGroupsList as $grpname => $grpconfig) {
+		$members = array_filter(
+			$grpconfig,
+			function($k) {
+				return is_int($k);
+			},
+			ARRAY_FILTER_USE_KEY
+		);
+
+		$route = '';
+		if (!count($members)) {
+			if ($skip_rules_gw_down) {
+				unset($GatewayGroupsList[$grpname]);
+				continue;
 			}
-			if (($route === "") && config_path_enabled('system','skip_rules_gw_down')) {
-				unset($GatewayGroupsList[$gateway]);
-			} else {
-				$rules .= "GW{$gateway} = \" {$route} \"\n";
+			$rules .= "GW{$grpname} = \" {$route} \"\n";
+			continue;
+		}
+
+		$foundlb = 0;
+		$routeto = "";
+		$routetomembers = 0;
+		$trigger = "";
+		foreach ($gateway_groups_config as $group) {
+			if ($group['name'] == $grpname) {
+				$trigger = $group['trigger'];
+				break;
 			}
 		}
+		/* see "Load balancing fails when one gateway has a weight of 1
+		* and another gateway has a weight >1", https://redmine.pfsense.org/issues/6025 */
+		foreach ($members as $member) {
+			if ((int) $member['weight'] == 1) {
+				$weight1 = true;
+			} elseif ((int) $member['weight'] > 1) {
+				$weightgt1 = true;
+			}
+		}
+		if ($weight1 && $weightgt1) {
+			$mult = 2;
+		} else {
+			$mult = 1;
+		}
+		foreach ($members as $member) {
+			if (!is_array($member)) {
+				continue;
+			}
+			if (!empty($member['int']) && is_ipaddr($member['gwip']) && isset($GatewaysList[$member['gw']]) &&
+				(!is_gateway_action_enabled($GatewaysList[$member['gw']]) || is_gateway_online($GatewaysList[$member['gw']], $trigger))) {
+				if (g_get('debug')) {
+					logger(LOG_DEBUG, localize_text('Setting up route with %1$s on %2$s', $member['gwip'], $member['int']), LOG_PREFIX_FILTER);
+				}
+				if ($routetomembers + ((int) $member['weight'] * $mult) > 384) {
+					// would create invalid ruleset, bail
+					logger(LOG_ERR, localize_text("Too many members in group %s, gateway group truncated in ruleset.", $member['name']), LOG_PREFIX_FILTER);
+					continue;
+				}
+				/* Only repeat the gateway string if the gateway is weighted
+				 * and there is more than one gateway involved
+				 * See https://redmine.pfsense.org/issues/12660
+				 */
+				if (((int) $member['weight'] > 0) &&
+				    (count($members) > 1)) {
+					$routeto .= str_repeat("( {$member['int']} {$member['gwip']} ) ", $member['weight'] * $mult);
+					$routetomembers += (int) $member['weight'];
+				} else {
+					$routeto .= "( {$member['int']} {$member['gwip']} ) ";
+					$routetomembers++;
+				}
+				$foundlb++;
+			} else {
+				logger(LOG_INFO, localize_text('Omitting gateway from filter ruleset. Group: "%s" Gateway: "%s" IP: "%s"', $grpname, $member['gw'], $member['gwip']), LOG_PREFIX_FILTER);
+			}
+		}
+
+		if ($foundlb > 0) {
+			$route = " route-to { {$routeto} } ";
+			if ($foundlb > 1) {
+				$route .= " round-robin ";
+				if ($lb_use_sticky) {
+					$route .= " sticky-address ";
+				}
+			}
+		} elseif ($skip_rules_gw_down) {
+			unset($GatewayGroupsList[$grpname]);
+			continue;
+		}
+		$rules .= "GW{$grpname} = \" {$route} \"\n";
 	}
 
 	/* Create a global array to avoid errors on rulesets. */

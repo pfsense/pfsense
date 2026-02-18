@@ -51,8 +51,6 @@ if ($_POST['act'] == 'killgw') {
 
 $changedesc = gettext("Gateway Groups") . ": ";
 
-$gateways_status = return_gateways_status();
-
 $pgtitle = array(gettext("Status"), gettext("Gateways"), gettext("Gateway Groups"));
 $pglinks = array("", "status_gateways.php", "@self");
 $shortcut_section = "gateway-groups";
@@ -121,68 +119,30 @@ display_top_tabs($tab_array);
 ?>
 									<tr>
 <?php
+									list($gateway_status, $gateway_details) = get_gateway_status($member);
+									$gwip = array_get_path($gateway_details, 'config/gateway');
 									$c = 1;
 									while ($c <= $priority_count) {
-										$monitor = lookup_gateway_monitor_ip_by_name($member);
-										$gwip = lookup_gateway_ip_by_name($member);
 										if ($p == $c) {
-											$status = $gateways_status[$monitor];
-											if (stristr($status['status'], "online")) {
-												switch ($status['substatus']) {
-													case "highloss":
-														$online = gettext("Danger, Packetloss") . ': ' . $status['loss'];
-														$bgcolor = "bg-danger";
-														break;
-													case "highdelay":
-														$online = gettext("Danger, Latency") . ': ' . $status['delay'];
-														$bgcolor = "bg-danger";
-														break;
-													case "loss":
-														$online = gettext("Warning, Packetloss") . ': ' . $status['loss'];
-														$bgcolor = "bg-warning";
-														break;
-													case "delay":
-														$online = gettext("Warning, Latency") . ': ' . $status['delay'];
-														$bgcolor = "bg-warning";
-														break;
-													default:
-														if ($status['monitor_disable'] || ($status['monitorip'] == "none")) {
-															$online = gettext("Online <br/>(unmonitored)");
-														} else {
-															$online = gettext("Online");
-														}
-														$bgcolor = "bg-success";
-												}
-											} elseif (stristr($status['status'], "down")) {
-												$bgcolor = "bg-danger";
-												switch ($status['substatus']) {
-													case "force_down":
-														$online = gettext("Offline (forced)");
-														break;
-													case "highloss":
-														$online = gettext("Offline, Packetloss") . ': ' . $status['loss'];
-														break;
-													case "highdelay":
-														$online = gettext("Offline, Latency") . ': ' . $status['delay'];
-														break;
-													default:
-														$online = gettext("Offline");
-												}
-											} else {
-												$online = gettext("Gathering data");
-												$bgcolor = "bg-info";
-											}
+											$gatewy_status_text = get_gateway_status_text($gateway_status);
+											$status_text = $gatewy_status_text['reason'];
+											$bgcolor = match ($gatewy_status_text['level']) {
+												GW_STATUS_LEVEL_SUCCESS => 'bg-success',
+												GW_STATUS_LEVEL_WARNING => 'bg-warning',
+												GW_STATUS_LEVEL_FAILURE => 'bg-danger',
+												default => 'bg-info',
+											};
 
 											if (!COLOR) {
 												$bgcolor = "";
 											}
 ?>
 										<td class="<?=$bgcolor?>">
-											<?=htmlspecialchars($member);?>
+											<?=htmlspecialchars(array_get_path($gateway_details, 'config/name', ''));?>
 <?php if (!empty($gwip) && is_ipaddr($gwip)): ?>
 											<a href="?act=killgw&amp;gwip=<?=urlencode($gwip);?>" class="fa-regular fa-circle-xmark do-confirm" title="<?=gettext('Kill all firewall states using this gateway IP address via policy routing and reply-to.')?>" usepost></a>
 <?php endif; ?>
-											<br/><?=$online?>
+											<br/><?=$status_text?>
 										</td>
 
 <?php

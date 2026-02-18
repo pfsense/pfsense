@@ -60,10 +60,6 @@ if (!function_exists('compose_table_body_contents')) {
 
 		$rtnstr = '';
 
-		$a_gateways = get_gateways();
-		$gateways_status = array();
-		$gateways_status = return_gateways_status(true);
-
 		if (isset($user_settings["widgets"][$widgetkey]["display_type"]) &&
 		    array_key_exists($user_settings["widgets"][$widgetkey]["display_type"], $display_types)) {
 			$display_type = $user_settings["widgets"][$widgetkey]["display_type"];
@@ -72,9 +68,11 @@ if (!function_exists('compose_table_body_contents')) {
 		}
 
 		$hiddengateways = explode(",", $user_settings["widgets"][$widgetkey]["gatewaysfilter"]);
+		$gw_found = false;
 		$gw_displayed = false;
 
-		foreach ($a_gateways as $gname => $gateway) {
+		foreach (get_gateways() as $gname => $gateway) {
+			$gw_found = true;
 			if (in_array($gname, $hiddengateways)) {
 				continue;
 			}
@@ -149,68 +147,35 @@ if (!function_exists('compose_table_body_contents')) {
 			$rtnstr .= 		"</div>\n";
 			$rtnstr .= 	"</td>\n";
 
-			if ($gateways_status[$gname]) {
-				if (stristr($gateways_status[$gname]['status'], "online")) {
-					switch ($gateways_status[$gname]['substatus']) {
-						case "highloss":
-							$online = gettext("Danger, Packetloss");
-							$bgcolor = "danger";
-							break;
-						case "highdelay":
-							$online = gettext("Danger, Latency");
-							$bgcolor = "danger";
-							break;
-						case "loss":
-							$online = gettext("Warning, Packetloss");
-							$bgcolor = "warning";
-							break;
-						case "delay":
-							$online = gettext("Warning, Latency");
-							$bgcolor = "warning";
-							break;
-						default:
-							if ($gateways_status[$gname]['monitor_disable'] || ($gateways_status[$gname]['monitorip'] == "none")) {
-								$online = gettext("Online <br/>(unmonitored)");
-							} else {
-								$online = gettext("Online");
-							}
-							$bgcolor = "success";
-					}
-				} elseif (stristr($gateways_status[$gname]['status'], "down")) {
-					$bgcolor = "danger";
-					switch ($gateways_status[$gname]['substatus']) {
-						case "force_down":
-							$online = gettext("Offline (forced)");
-							break;
-						case "highloss":
-							$online = gettext("Offline, Packetloss");
-							break;
-						case "highdelay":
-							$online = gettext("Offline, Latency");
-							break;
-						default:
-							$online = gettext("Offline");
-					}
-				} else {
-					$online = gettext("Pending");
-					$bgcolor = "info";  // lightgray
-				}
+			list($gateway_status, $gateway_details) = get_gateway_status($gateway);
+			$gatewy_status_text = get_gateway_status_text($gateway_status);
+			$status_text = $gatewy_status_text['reason'];
+			$bgcolor = match ($gatewy_status_text['level']) {
+				GW_STATUS_LEVEL_SUCCESS => 'bg-success',
+				GW_STATUS_LEVEL_WARNING => 'bg-warning',
+				GW_STATUS_LEVEL_FAILURE => 'bg-danger',
+				default => 'bg-info',
+			};
+
+			if (!is_null(array_get_path($gateway_details, 'status'))) {
+				$delay = number_format((float)rtrim(array_get_path($gateway_details, 'status/delay', ''), "ms"), 1);
+				$stddev = number_format((float)rtrim(array_get_path($gateway_details, 'status/stddev', ''), "ms"), 1);
+				$loss = number_format((float)rtrim(array_get_path($gateway_details, 'status/loss', ''), "ms"), 1);
 			} else {
-				$online = gettext("Unknown");
-				$bgcolor = "info";  // lightblue
+				$delay = $stddev = $loss = '';
 			}
 
-			$rtnstr .= 	"<td>" . ($gateways_status[$gname] ? ($gateways_status[$gname]['delay'] ? htmlspecialchars(number_format((float)rtrim($gateways_status[$gname]['delay'], "ms"), 1)) . "ms" : '') : gettext("Pending")) . "</td>\n";
-			$rtnstr .= 	"<td>" . ($gateways_status[$gname] ? ($gateways_status[$gname]['stddev'] ? htmlspecialchars(number_format((float)rtrim($gateways_status[$gname]['stddev'], "ms"), 1)) . "ms" : '') : gettext("Pending")) . "</td>\n";
-			$rtnstr .= 	"<td>" . ($gateways_status[$gname] ? htmlspecialchars($gateways_status[$gname]['loss']) : gettext("Pending")) . "</td>\n";
-			$rtnstr .= '<td class="bg-' . $bgcolor . '">' . $online . "</td>\n";
+			$rtnstr .= 	"<td>" . $delay . "</td>\n";
+			$rtnstr .= 	"<td>" . $stddev . "</td>\n";
+			$rtnstr .= 	"<td>" . $loss . "</td>\n";
+			$rtnstr .= '<td class="' . $bgcolor . '">' . $status_text . "</td>\n";
 			$rtnstr .= "</tr>\n";
 		}
 
 		if (!$gw_displayed) {
 			$rtnstr .= '<tr>';
 			$rtnstr .= 	'<td colspan="6" class="text-center">';
-			if (count($a_gateways)) {
+			if ($gw_found) {
 				$rtnstr .= gettext('All gateways are hidden.');
 			} else {
 				$rtnstr .= gettext('No gateways found.');

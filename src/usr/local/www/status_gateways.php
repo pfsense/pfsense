@@ -47,9 +47,6 @@ if ($_POST['act'] == 'killgw') {
 	exit;
 }
 
-$a_gateways = get_gateways();
-$gateways_status = return_gateways_status(true);
-
 $pgtitle = array(gettext("Status"), gettext("Gateways"));
 $pglinks = array("", "@self");
 $shortcut_section = "gateways";
@@ -81,14 +78,15 @@ display_top_tabs($tab_array);
 			</tr>
 		</thead>
 		<tbody>
-<?php		foreach ($a_gateways as $i => $gateway) {
-			$gwip = lookup_gateway_ip_by_name($i);
+<?php		foreach (get_gateways() as $gateway) {
+			list($gateway_status, $gateway_details) = get_gateway_status($gateway);
+			$gwip = array_get_path($gateway_details, 'config/gateway');
 ?>
 			<tr>
 				<td>
-					<?=htmlspecialchars($gateway['name']);?>
+					<?=htmlspecialchars(array_get_path($gateway_details, 'config/name', ''));?>
 <?php		
-					if (isset($gateway['isdefaultgw'])) {
+					if (!is_null(array_get_path($gateway_details, 'config/isdefaultgw'))) {
 						echo " <strong>(default)</strong>";
 					}
 ?>			
@@ -98,20 +96,20 @@ display_top_tabs($tab_array);
 				</td>
 				<td>
 <?php
-					if ($gateways_status[$i]) {
-						if ($gateway['monitor_disable'] || ($gateway['monitorip'] == "none")) {
+					if ($gateway_status != GW_STATUS_UNKNOWN) {
+						if (($gateway_status == GW_STATUS_ONLINE_FORCED) || ($gateway_status == GW_STATUS_OFFLINE_FORCED)) {
 							echo "(unmonitored)";
 						} else {
-							echo $gateways_status[$i]['monitorip'];
+							echo array_get_path($gateway_details, 'status/monitorip');
 						}
 					}
 ?>
 				</td>
 				<td>
 <?php
-					if ($gateways_status[$i]) {
-						if (!isset($gateway['monitor_disable'])) {
-							echo $gateways_status[$i]['delay'];
+					if ($gateway_status != GW_STATUS_UNKNOWN) {
+						if (($gateway_status != GW_STATUS_ONLINE_FORCED) && ($gateway_status != GW_STATUS_OFFLINE_FORCED)) {
+							echo array_get_path($gateway_details, 'status/delay');
 						}
 					} else {
 						echo gettext("Pending");
@@ -120,9 +118,9 @@ display_top_tabs($tab_array);
 				</td>
 				<td>
 <?php
-					if ($gateways_status[$i]) {
-						if (!isset($gateway['monitor_disable'])) {
-							echo $gateways_status[$i]['stddev'];
+					if ($gateway_status != GW_STATUS_UNKNOWN) {
+						if (($gateway_status != GW_STATUS_ONLINE_FORCED) && ($gateway_status != GW_STATUS_OFFLINE_FORCED)) {
+							echo array_get_path($gateway_details, 'status/stddev');
 						}
 					} else {
 						echo gettext("Pending");
@@ -131,9 +129,9 @@ display_top_tabs($tab_array);
 				</td>
 				<td>
 <?php
-					if ($gateways_status[$i]) {
-						if (!isset($gateway['monitor_disable'])) {
-							echo $gateways_status[$i]['loss'];
+					if ($gateway_status != GW_STATUS_UNKNOWN) {
+						if (($gateway_status != GW_STATUS_ONLINE_FORCED) && ($gateway_status != GW_STATUS_OFFLINE_FORCED)) {
+							echo array_get_path($gateway_details, 'status/loss');
 						}
 					} else {
 						echo gettext("Pending");
@@ -141,66 +139,28 @@ display_top_tabs($tab_array);
 ?>
 				</td>
 <?php
-					$status = $gateways_status[$i];
-					if (stristr($status['status'], "online")) {
-						switch ($status['substatus']) {
-							case "highloss":
-								$online = gettext("Danger, Packetloss") . ': ' . $status['loss'];
-								$bgcolor = "bg-danger";
-								break;
-							case "highdelay":
-								$online = gettext("Danger, Latency") . ': ' . $status['delay'];
-								$bgcolor = "bg-danger";
-								break;
-							case "loss":
-								$online = gettext("Warning, Packetloss") . ': ' . $status['loss'];
-								$bgcolor = "bg-warning";
-								break;
-							case "delay":
-								$online = gettext("Warning, Latency") . ': ' . $status['delay'];
-								$bgcolor = "bg-warning";
-								break;
-							default:
-								if ($status['monitor_disable'] || ($status['monitorip'] == "none")) {
-									$online = gettext("Online <br/>(unmonitored)");
-								} else {
-									$online = gettext("Online");
-								}
-								$bgcolor = "bg-success";
-						}
-					} elseif (stristr($status['status'], "down")) {
-						$bgcolor = "bg-danger";
-						switch ($status['substatus']) {
-							case "force_down":
-								$online = gettext("Offline (forced)");
-								break;
-							case "highloss":
-								$online = gettext("Offline, Packetloss") . ': ' . $status['loss'];
-								break;
-							case "highdelay":
-								$online = gettext("Offline, Latency") . ': ' . $status['delay'];
-								break;
-							default:
-								$online = gettext("Offline");
-						}
-					} else {
-						$online = gettext("Pending");
-						$bgcolor = "bg-info";
-					}
+					$gatewy_status_text = get_gateway_status_text($gateway_status);
+					$status_text = $gatewy_status_text['reason'];
+					$bgcolor = match ($gatewy_status_text['level']) {
+						GW_STATUS_LEVEL_SUCCESS => 'bg-success',
+						GW_STATUS_LEVEL_WARNING => 'bg-warning',
+						GW_STATUS_LEVEL_FAILURE => 'bg-danger',
+						default => 'bg-info',
+					};
 ?>
 				<td class="<?=$bgcolor?>">
-					<strong><?=$online?></strong>
+					<strong><?=$status_text?></strong>
 				</td>
 				<td>
-					<?=htmlspecialchars($gateway['descr']); ?>
+					<?=htmlspecialchars(array_get_path($gateway_details, 'config/descr', '')); ?>
 				</td>
 				<td>
-					<a href="?act=killgw&amp;gwname=<?=urlencode($gateway['name']);?>" class="fa-solid fa-times-circle do-confirm" title="<?=gettext('Kill all firewall states created by policy routing rules using this specific gateway by name.')?>" usepost></a>
+					<a href="?act=killgw&amp;gwname=<?=urlencode(array_get_path($gateway_details, 'config/name', ''));?>" class="fa-solid fa-times-circle do-confirm" title="<?=gettext('Kill all firewall states created by policy routing rules using this specific gateway by name.')?>" usepost></a>
 <?php if (!empty($gwip) && is_ipaddr($gwip)): ?>
 					<a href="?act=killgw&amp;gwip=<?=urlencode($gwip);?>" class="fa-regular fa-circle-xmark do-confirm" title="<?=gettext('Kill all firewall states using this gateway IP address via policy routing and reply-to.')?>" usepost></a>
 <?php endif; ?>
-<?php if (isset($gateway['isdefaultgw'])): ?>
-	<?php if ($gateway['ipprotocol'] != 'inet6'): ?>
+<?php if (!is_null(array_get_path($gateway_details, 'config/isdefaultgw'))): ?>
+	<?php if (array_get_path($gateway_details, 'config/ipprotocol') != 'inet6'): ?>
 					<a href="?act=killgw&amp;gwdef4=true" class="fa-solid fa-times do-confirm" title="<?=gettext('Kill all firewall states which use the default IPv4 gateway (0.0.0.0) and not policy routing or reply-to rules.')?>" usepost></a>
 	<?php else: ?>
 					<a href="?act=killgw&amp;gwdef6=true" class="fa-solid fa-times do-confirm" title="<?=gettext('Kill all firewall states which use the default IPv6 gateway (::) and not policy routing or reply-to rules.')?>" usepost></a>

@@ -491,10 +491,6 @@ $separators = config_get_path('filter/separator/'.strtolower($if));
 // More efficient than looping through the list of separators on every row.
 $seprows = separator_rows($separators);
 
-/* Cache gateway status for this page load.
- * See https://redmine.pfsense.org/issues/12174 */
-$gateways_status = return_gateways_status(true);
-
 global $user_settings;
 $show_system_alias_popup = (array_key_exists('webgui', $user_settings) && !$user_settings['webgui']['disablealiaspopupdetail']);
 $system_alias_specialnet = get_specialnet('', [SPECIALNET_IFNET, SPECIALNET_GROUP]);
@@ -882,7 +878,7 @@ foreach (get_filter_rules_list() as $filteri => $filterent):
 										$gw_info = array();
 									}
 									if (empty($gw_info[$filterent['gateway']])) {
-										$gw_info[$filterent['gateway']] = gateway_info_popup($filterent['gateway'], $gateways_status);
+										$gw_info[$filterent['gateway']] = gateway_info_popup($filterent['gateway']);
 									}
 								?>
 								<?php if (!empty($gw_info[$filterent['gateway']])): ?>

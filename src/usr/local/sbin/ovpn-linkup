@@ -30,8 +30,8 @@ if [ "${dev_type}" = "tun" ]; then
 			;;
 	esac
 
-	# Servers with a /30 IPv4 tunnel only one peer and hence the variable
-	# $ifconfig_remote can be used to set up the gateway.
+	# Servers with a /30 IPv4 tunnel only have one peer and hence the
+	# variable $ifconfig_remote can be used to set up the gateway.
 	# Servers with > 30 (e.g. /24) IPv4 tunnel don't have a known peer and
 	# hence the gateway must be set to a local address. In this case the
 	# variable $ifconfig_remote is not set.

@@ -155,7 +155,7 @@ function refresh_gateways(): void {
 
 /**
  * Helper function that retrieves the state of a gateway.
- * @param array|string $gateway The gateway to be checked.
+ * @param mixed $gateway The gateway to be checked.
  * 	- string: the gateway name.
  * 	- array: value from the array result of get_gateways().
  * 	- array: value from the array result of return_gateways_status().
@@ -165,7 +165,16 @@ function refresh_gateways(): void {
  *  - array: the result of return_gateways_status(true).
  * @return array<array|array{status: null|int, config: null|array>}
  */
-function get_gateway_status(array|string $gateway, array|bool $cache = true): array {
+function get_gateway_status(mixed $gateway, array|bool $cache = true): array {
+	$gateway_details = [
+		'status' => null,
+		'config' => null
+	];
+
+	if (!is_array($gateway) && !is_string($gateway)) {
+		return [GW_STATUS_UNKNOWN, $gateway_details];
+	}
+
 	if ($cache === false) {
 		refresh_gateways();
 		$gateways = get_gateways(GW_CACHE_ALL);
@@ -187,11 +196,6 @@ function get_gateway_status(array|string $gateway, array|bool $cache = true): ar
 			$gateways_status = $cache;
 		}
 	}
-
-	$gateway_details = [
-		'status' => null,
-		'config' => null
-	];
 
 	// Normalize gateway argument; config from get_gateways() is needed.
 	if (is_string($gateway)) {
@@ -301,23 +305,30 @@ function is_online_gateway_status(int $gateway_status, string $trigger = 'downlo
 }
 
 // Wrapper for get_gateway_status() that returns a bool instead.
-function is_gateway_online(array|string $gateway, string $trigger = 'downlosslatency', array|bool $cache = true): bool {
+function is_gateway_online(mixed $gateway, string $trigger = 'downlosslatency', array|bool $cache = true): bool {
+	if (!is_array($gateway) && !is_string($gateway)) {
+		return false;
+	}
 	list($status) = get_gateway_status($gateway, $cache);
 	return is_online_gateway_status($status, $trigger);
 }
 
-function is_gateway_action_enabled(array|string $gateway): bool {
+function is_gateway_action_enabled(mixed $gateway): bool {
 	if (is_string($gateway)) {
 		$gateways = get_gateways(GW_CACHE_ALL);
 		$gateway = isset($gateways[$gateway]) ? $gateways[$gateway] : [];
+	} elseif (!is_array($gateway)) {
+		return false;
 	}
 	return !isset($gateway['action_disable']);
 }
 
-function is_gateway_state_killing_enabled(array|string $gateway): bool {
+function is_gateway_state_killing_enabled(mixed $gateway): bool {
 	if (is_string($gateway)) {
 		$gateways = get_gateways(GW_CACHE_ALL);
 		$gateway = isset($gateways[$gateway]) ? $gateways[$gateway] : [];
+	} elseif (!is_array($gateway)) {
+		return false;
 	}
 	if (empty($gateway['gw_down_kill_states'])) {
 		return (config_get_path('system/gw_down_kill_states', 'none') != 'none');
@@ -1768,7 +1779,7 @@ function get_gwgroup_members_inner($group, $gateways_status, $gateways_arr, $vip
 	$gwvip_arr = array();
 	foreach ($group['item'] as $item) {
 		list($gwname, $tier, $vipname) = explode("|", $item);
-		list($gateway_status) = get_gateway_status($gwname, $gateways_status);
+		list($gateway_status) = get_gateway_status($gwname, (is_array($gateways_status) ? $gateways_status : true));
 
 		if (is_ipaddr($viplist[$vipname])) {
 			if (!is_array($gwvip_arr[$group['name']])) {

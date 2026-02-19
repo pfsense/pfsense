@@ -422,11 +422,7 @@ function saveDomainOverride($post, $id, $json=false) {
         do_input_validation($post, $reqdfields, $reqdfieldsn, $input_errors);
     }
 
-    function String_Begins_With($needle, $haystack) {
-        return (substr($haystack, 0, strlen($needle)) == $needle);
-    }
-
-    if (String_Begins_With('_msdcs', $post['domain'])) {
+    if (str_starts_with($post['domain'], '_msdcs')) {
         $subdomainstr = substr($post['domain'], 7);
 
         if ($subdomainstr && !is_domain($subdomainstr)) {

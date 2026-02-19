@@ -1047,12 +1047,10 @@ function ipsec_dump_mobile() {
 }
 
 function ipsec_mobilekey_sort() {
-	function mobilekeycmp($a, $b) {
-		return strcmp($a['ident'][0], $b['ident'][0]);
-	}
-
 	$mobilekey_config = config_get_path('ipsec/mobilekey', []);
-	usort($mobilekey_config, "mobilekeycmp");
+	usort($mobilekey_config, function($a, $b) {
+		return strcmp($a['ident'][0], $b['ident'][0]);
+	});
 	config_set_path('ipsec/mobilekey', $mobilekey_config);
 }
 

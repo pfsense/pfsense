@@ -2032,14 +2032,6 @@ function upgrade_054_to_055() {
 	$downstream = 125000000;
 	$upstream = 125000000;
 
-	/* build a list of quality databases */
-	/* roundtrip has become delay */
-	function divide_delay($delayval) {
-		$delayval = floatval($delayval);
-		$delayval = ($delayval / 1000);
-		$delayval = " ". sprintf("%1.10e", $delayval) ." ";
-		return $delayval;
-	}
 	/* the roundtrip times need to be divided by 1000 to get seconds, really */
 	$databases = array();
 	if (!file_exists($rrddbpath)) {
@@ -2065,8 +2057,11 @@ function upgrade_054_to_055() {
 		foreach ($rrdold['rra'] as $rra) {
 			$l = 0;
 			foreach ($rra['database']['row'] as $row) {
-				$vnew = divide_delay($row['v'][1]);
-				$rrdold['rra'][$i]['database']['row'][$l]['v'][1] = $vnew;
+				/* build a list of quality databases */
+				/* roundtrip has become delay */
+				$rrdold['rra'][$i]['database']['row'][$l]['v'][1] = " ".
+					sprintf("%1.10e", (floatval($row['v'][1]) / 1000)) .
+					" ";
 				$l++;
 			}
 			$i++;
@@ -6267,24 +6262,27 @@ function upgrade_215_to_216() {
 	}
 
 	/* Deprecated method. */
-	function upgrade216_ipsec_create_vtimap($ikeid, $idx) {
-		$assigned = array_column(config_get_path('ipsec/vtimaps/item', []), 'ifnum');
-		asort($assigned, SORT_NUMERIC);
-		$new = 1;
-		foreach ($assigned as $ipsecifnum) {
-			if ($ipsecifnum != $new) {
-				break;
+	if (!function_exists('upgrade216_ipsec_create_vtimap')) {
+		function upgrade216_ipsec_create_vtimap($ikeid, $idx) {
+			$assigned = array_column(config_get_path('ipsec/vtimaps/item', []), 'ifnum');
+			asort($assigned, SORT_NUMERIC);
+			$new = 1;
+			foreach ($assigned as $ipsecifnum) {
+				if ($ipsecifnum != $new) {
+					break;
+				}
+				if ($new++ > 32767) {
+					return(NULL);
+				}
 			}
-			if ($new++ > 32767) {
-				return(NULL);
-			}
+			return array(
+				"reqid" => $ikeid,
+				"index" => $idx,
+				"ifnum" => $new
+			);
 		}
-		return array(
-			"reqid" => $ikeid,
-			"index" => $idx,
-			"ifnum" => $new
-		);
 	}
+
 
 	$iflist = get_configured_interface_list_by_realif(true);
 
@@ -6359,14 +6357,16 @@ function upgrade_218_to_219() {
 	 * $ipsecifnum = get_ipsecifnum($ikeid, $idx);
 	 * locates and returns an ipsecifnum in the config.
 	 */
-	function upgrade219_get_ipsecifnum($ikeid, $idx) {
-		foreach (config_get_path('ipsec/vtimaps/item', []) as $vtimap) {
-			if (($vtimap['reqid'] == $ikeid) &&
-			    ($vtimap['index'] == $idx)) {
-				return $vtimap['ifnum'];
+	if (!function_exists('upgrade219_get_ipsecifnum')) {
+		function upgrade219_get_ipsecifnum($ikeid, $idx) {
+			foreach (config_get_path('ipsec/vtimaps/item', []) as $vtimap) {
+				if (($vtimap['reqid'] == $ikeid) &&
+					($vtimap['index'] == $idx)) {
+					return $vtimap['ifnum'];
+				}
 			}
+			return false;
 		}
-		return false;
 	}
 
 	/* If IPsec is disabled or there are no P1 or P2 entries, there cannot

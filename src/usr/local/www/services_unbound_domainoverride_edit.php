@@ -58,11 +58,7 @@ if ($_POST['save']) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	function String_Begins_With($needle, $haystack) {
-		return (substr($haystack, 0, strlen($needle)) == $needle);
-	}
-
-	if (String_Begins_With('_msdcs', $_POST['domain'])) {
+	if (str_starts_with($_POST['domain'], '_msdcs')) {
 		$subdomainstr = substr($_POST['domain'], 7);
 		if ($subdomainstr && !is_domain($subdomainstr)) {
 			$input_errors[] = gettext("A valid domain must be specified after _msdcs.");

@@ -212,14 +212,16 @@ if ($_POST['save']) {
 			}
 		}
 
-		if ($_POST['enableinterfacesuse'] == "yes") {
-			if (!config_path_enabled('ipsec', 'enableinterfacesuse')) {
+		if (config_path_enabled('ipsec', 'enableinterfacesuse')) {
+			if ($_POST['enableinterfacesuse'] != "yes") {
+				$needsrestart = true;
+				config_del_path('ipsec/enableinterfacesuse');
+			}
+		} else {
+			if ($_POST['enableinterfacesuse'] == "yes") {
 				$needsrestart = true;
 				config_set_path('ipsec/enableinterfacesuse', true);
 			}
-		} elseif (!empty(config_get_path('ipsec/enableinterfacesuse'))) {
-			$needsrestart = true;
-			config_del_path('ipsec/enableinterfacesuse');
 		}
 
 		if ($_POST['unityplugin'] == "yes") {

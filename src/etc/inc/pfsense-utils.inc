@@ -4844,7 +4844,7 @@ function fix_config_artifacts() {
 				     !str_starts_with($option, 'pull-filter ignore "tun-mtu"'))) {
 					continue;
 				}
-				unset($option[$idx]);
+				unset($custom_options[$idx]);
 				$changed = true;
 			}
 			unset($option);

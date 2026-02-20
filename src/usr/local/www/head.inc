@@ -29,7 +29,7 @@ require_once('notices.inc');
 
 header('Content-Type: text/html; charset=utf-8');
 
-$pagetitle = gentitle($pgtitle);
+$pagetitle = strip_tags(gentitle($pgtitle));
 $system_url = config_get_path('system/hostname') . "." . config_get_path('system/domain');
 
 if ($user_settings['webgui']['pagenamefirst']) {

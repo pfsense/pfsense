@@ -1173,6 +1173,7 @@ function load_loader_conf($loader_conf = NULL, $local = false) {
 	    "hw.e6000sw.default_disabled",
 	    "hw.hn.vf_transparent",
 	    "hw.hn.use_if_start",
+	    "hw.vtnet.altq_disable",
 	    "hw.usb.no_pf",
 	    "net.pf.request_maxcount",
 	    "vm.pmap.pti",

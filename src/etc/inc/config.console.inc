@@ -572,12 +572,12 @@ function installer_add_vlan($dev, $if, $descr, $tag, $pcp) {
 
 	/* Remove other interfaces using this VLAN tag. */
 	$ifs = config_get_path('interfaces', []);
-	$ifs = array_filter($ifs, function($intf) use ($dev, $if, $tag) {
-		if ($intf != $if && $intf['if'] == "{$dev}.{$tag}") {
+	$ifs = array_filter($ifs, function($intf, $ifname) use ($dev, $if, $tag) {
+		if ($ifname != $if && $intf['if'] == "{$dev}.{$tag}") {
 			return (false);
 		}
 		return (true);
-	});
+	}, ARRAY_FILTER_USE_BOTH);
 	config_set_path('interfaces', $ifs);
 
 	/* Add the VLAN. */

@@ -211,6 +211,7 @@ function saveAdvancedNetworking($post, $json = false) {
 			config_del_path('system/disablelargereceiveoffloading');
 		}
 
+		$old_hn_altq_enable = config_path_enabled('system', 'hn_altq_enable');
 		if ($post['hnaltqenable'] == "yes") {
 			config_set_path('system/hn_altq_enable', true);
 		} else {
@@ -245,6 +246,11 @@ function saveAdvancedNetworking($post, $json = false) {
 
 		// Write out configuration (config.xml)
 		write_config("Networking Advanced Settings saved");
+
+		// Setup loader if necessary
+		if ($old_hn_altq_enable != config_path_enabled('system', 'hn_altq_enable')) {
+			setup_loader_settings();
+		}
 
 		// Set preferred protocol
 		prefer_ipv4_or_ipv6();

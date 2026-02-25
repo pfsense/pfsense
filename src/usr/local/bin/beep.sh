@@ -30,15 +30,13 @@ NOTELENGTH="25"
 
 # this is super annoying in VMware, exit if in VMware
 if [ -f /var/log/dmesg.boot ]; then
-	VMWCOUNT=`/usr/bin/grep -c VMware /var/log/dmesg.boot`
-	if [ $VMWCOUNT -gt 0 ]; then
+	if [ "$( /usr/bin/grep -c VMware /var/log/dmesg.boot )" -gt 0 ]; then
 		exit;
 	fi
 fi
 
 # Check for different HZ
-HZ=`/sbin/sysctl -qn kern.hz`
-if [ "$HZ" = "1" ]; then
+if [ "$( /sbin/sysctl -qn kern.hz )" = "1" ]; then
 	NOTELENGTH="10"
 fi
 

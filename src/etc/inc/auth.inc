@@ -703,7 +703,7 @@ function check_current_password($username) {
 	if (local_backed($username, g_get('factory_shipped_password'))) {
 		return sprintf(gettext('Password is currently set to the default value (%s).'), g_get('factory_shipped_password'));
 	}
-	return null;
+	return false;
 }
 
 function local_user_set($user) {

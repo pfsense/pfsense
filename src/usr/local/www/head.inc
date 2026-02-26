@@ -569,26 +569,36 @@ if (are_notices_pending()) {
 	 * if the user has sufficient access to do correct the problem.
 	 * Do not test the account if it is in a disabled state. */
 	if (($_SESSION['Username'] != 'admin') &&
-	    !is_account_disabled('admin')) {
-		/* Check the admin password */
-		$error = check_current_password('admin');
+	    !is_account_disabled('admin') &&
+	    isAllowedPage('system_usermanager.php')) {
+		/* Check the admin password and cache the result in the session */
+		$insecure_admin = $_SESSION['insecure_admin'];
+		if (!isset($insecure_admin)) {
+			$insecure_admin = check_current_password('admin');
+			phpsession_begin();
+			$_SESSION['insecure_admin'] = $insecure_admin;
+			phpsession_end(true);
+		}
 
-		/* Only print a warning if the user has sufficient access to
-		 * address the problem. */
-		if ($error &&
-		    isAllowedPage('system_usermanager.php')) {
+		if ($insecure_admin) {
 			print('<div class="alert alert-danger">' .
 				sprintf(gettext('%sWARNING:%s%s The \'admin\' account password is insecure. %s%s' .
 				' %sChange the password in the User Manager as soon as possible.%s'),
 				'<strong>', '</strong>', '<br/>',
-				$error, '<br/>',
+				$insecure_admin, '<br/>',
 				'<a href="/system_usermanager.php?act=edit&userid=' . $userindex['admin'] . '">', '</a>') .
 				'</div>');
 		}
 	}
 
-	/* When logging in as any user, check the password for their account. */
-	$error = check_current_password($_SESSION['Username']);
+	/* When logging in as any user, check the password for their account and cache the result in the session. */
+	$insecure_user = $_SESSION['insecure_user'];
+	if (!isset($insecure_user)) {
+		$insecure_user = check_current_password($_SESSION['Username']);
+		phpsession_begin();
+		$_SESSION['insecure_user'] = $insecure_user;
+		phpsession_end(true);
+	}
 
 	/* Determine where to send the user to change their password
 	 * based on their account privileges. */
@@ -605,13 +615,13 @@ if (are_notices_pending()) {
 
 	/* Print a warning only if the user has sufficient access to change
 	 * their own password (non-empty target page). */
-	if ($error &&
+	if ($insecure_user &&
 	    !empty($target_page)) {
 		print('<div class="alert alert-danger">' .
 			sprintf(gettext('%sWARNING:%s%s The password for this account is insecure. %s%s' .
 			' %sChange the password as soon as possible.%s'),
 			'<strong>', '</strong>', '<br/>',
-			$error, '<br/>',
+			$insecure_user, '<br/>',
 			'<a href="/' . $target_page . '">', '</a>') .
 			'</div>');
 	}

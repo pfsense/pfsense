@@ -87,6 +87,10 @@ if (($_POST['act'] == "del") && $a_gateway_groups[$_POST['id']]) {
 		config_del_path("gateways/gateway_group/{$_POST['id']}");
 		write_config($changedesc);
 		mark_subsystem_dirty('staticroutes');
+		$gw_subsystem = 'gwgroup.' . $a_gateway_groups[$_POST['id']]['name'];
+		if (is_subsystem_dirty($gw_subsystem)) {
+			clear_subsystem_dirty($gw_subsystem);
+		}
 		header("Location: system_gateway_groups.php");
 		exit;
 	}

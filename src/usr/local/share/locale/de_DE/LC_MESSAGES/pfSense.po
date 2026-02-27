@@ -28063,7 +28063,7 @@ msgstr ""
 #: src/usr/local/www/interfaces.php:1930
 msgid "Don't forget to adjust the DHCP Server range if needed after applying."
 msgstr ""
-"Vergiss nicht die DHCP Server Einstellungen nach em einspielen anzupassen."
+"Vergiss nicht die DHCP Server Einstellungen nach dem Einspielen anzupassen."
 
 #: src/usr/local/www/interfaces.php:1939
 msgid "General Configuration"

@@ -85,12 +85,17 @@ function getAdvancedNotifications($json = false) {
 	$nconfig['enable_telegram'] = config_path_enabled('notifications/telegram', 'enabled') ;
 
 	if (config_get_path('notifications/telegram/api')) {
-		$nconfig['api'] = config_get_path('notifications/telegram/api');
+		$nconfig['telegram_api'] = config_get_path('notifications/telegram/api');
 	}
 
 	if (config_get_path('notifications/telegram/chatid')) {
-		$nconfig['chatid'] = config_get_path('notifications/telegram/chatid');
+		$nconfig['telegram_chat_id'] = config_get_path('notifications/telegram/chatid');
 	}
+
+	if (config_get_path('notifications/telegram/messagethreadid')) {
+		$nconfig['telegram_message_thread_id'] = config_get_path('notifications/telegram/messagethreadid');
+	}
+
 	// Pushover
 	$nconfig['enable_pushover'] = config_path_enabled('notifications/pushover', 'enabled');
 
@@ -232,14 +237,18 @@ function saveAdvancedNotifications($post, $json = false) {
 
 		// Telegram
 		config_set_path('notifications/telegram/enabled', (($post['enable_telegram'] == "yes") ? true : false));
-		config_set_path('notifications/telegram/api', $post['api']);
-		config_set_path('notifications/telegram/chatid', $post['chatid']);
+		config_set_path('notifications/telegram/api', $post['telegram_api']);
+		config_set_path('notifications/telegram/chatid', $post['telegram_chat_id']);
+		config_set_path('notifications/telegram/messagethreadid', $post['telegram_message_thread_id']);
 
 		if (preg_replace("/[^a-zA-Z0-9_:\-]/", "", config_get_path('notifications/telegram/api')) !== config_get_path('notifications/telegram/api')) {
 			$input_errors[] = gettext("The only special characters permitted in the Telegram API string are _, - and :");
 		}
 		if (preg_replace("/[^a-zA-Z0-9@_\-]/", "", config_get_path('notifications/telegram/chatid')) !== config_get_path('notifications/telegram/chatid')) {
 			$input_errors[] = gettext("The Chat ID can only contain @, _ or - as special characters");
+		}
+		if (preg_replace("/([^0-9]|^$)/", "", config_get_path('notifications/telegram/messagethreadid')) !== config_get_path('notifications/telegram/messagethreadid')) {
+			$input_errors[] = gettext("The Message Thread ID can only contain numbers");
 		}
 
 		// Pushover

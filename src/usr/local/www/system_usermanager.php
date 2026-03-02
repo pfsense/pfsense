@@ -333,6 +333,14 @@ if ($_POST['save'] && !$read_only) {
 		/* the user password was modified */
 		if ($_POST['passwordfld1']) {
 			local_user_set_password($user_item_config, $_POST['passwordfld1']);
+			phpsession_begin();
+			/* invalidate cache, see #16720/16728 */
+			if ($_POST['usernamefld'] === $_SESSION['Username']) {
+				unset($_SESSION['insecure_user']);
+			} else if ($_POST['usernamefld'] === 'admin') {
+				unset($_SESSION['insecure_admin']);
+			}
+			phpsession_end(true);
 		}
 
 		/* only change description if sent */

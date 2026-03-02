@@ -86,6 +86,8 @@ if (isset($_POST['save'])) {
 		local_user_set_password($user_item_config, $_POST['passwordfld1']);
 		local_user_set($userent);
 		$savemsg = localize_text("Password changed for user: %s", $userent['name']);
+		/* invalidate cache, see #16720 and 16728 */
+		unset($_SESSION['insecure_user']);
 		phpsession_end(true);
 
 		write_config($savemsg);

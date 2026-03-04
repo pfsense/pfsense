@@ -128,9 +128,10 @@ $section->addInput(new Form_Checkbox(
 $section->addInput(new Form_Checkbox(
 	'igmpxverbose',
 	'Verbose Logging',
-	'Enable verbose logging (Default is terse logging)',
+	'Enable verbose logging',
 	$pconfig['igmpxverbose']
-));
+))->setHelp('Change the IGMP Proxy logging from terse to verbose. Note: Make sure to set an appropriate default log level (%s) to see informational messages.',
+	'<a href="/status_logs_settings.php">Status > System Logs > Settings</a>');
 
 $form->add($section);
 

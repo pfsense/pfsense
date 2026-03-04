@@ -445,7 +445,8 @@ $section->addInput(new Form_Checkbox(
 	'Verbose logging',
 	'Enable verbose logging',
 	$pconfig['verboselog']
-));
+))->setHelp('Note: Make sure to set an appropriate default log level (%s) to see informational messages.',
+		'<a href="/status_logs_settings.php">Status > System Logs > Settings</a>');
 
 $section->addInput(new Form_Checkbox(
 	'curl_ipresolve_v4',

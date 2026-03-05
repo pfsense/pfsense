@@ -102,7 +102,9 @@ if (is_numeric($user_settings['widgets'][$widgetkey]['rsswidgettextlength'])) {
 
 // Set a default feed if none exists
 if (!$rss_feed_s) {
-	$rss_feed_s = "https://www.netgate.com/blog/";
+	$rss_feed_s = [
+		"https://www.netgate.com/blog/"
+	];
 	if ($widgetkey != "") {
 		$user_settings['widgets'][$widgetkey]['rssfeed'] = $rss_feed_s;
 	}
@@ -143,13 +145,23 @@ if ($user_settings['widgets'][$widgetkey]['rssfeed']) {
 			return $string;
 		}
 	}
-	$feed = new SimplePie();
-	$feed->set_cache_location("/tmp/simplepie/");
-	$feed->set_feed_url($rss_feed_s);
-	$feed->init();
-	$feed->handle_content_type();
-	$counter = 1;
-	foreach ($feed->get_items(0, $max_items) as $item) {
+
+	$feeds_cache = new \Symfony\Component\Cache\Psr16Cache(
+		new \Symfony\Component\Cache\Adapter\FilesystemAdapter('', 0, '/tmp/simplepie/')
+	);
+	$feed_objects = [];
+	foreach ($rss_feed_s as $feed_source) {
+		$tmp_feed = new SimplePie();
+		$tmp_feed->set_feed_url($feed_source);
+		$tmp_feed->set_cache($feeds_cache);
+		$tmp_feed->set_cache_duration(3600);
+		$tmp_feed->init();
+		$tmp_feed->handle_content_type();
+		$feed_objects[] = $tmp_feed;
+	}
+
+	$feed_items = SimplePie::merge_items($feed_objects, 0, 0, $max_items);
+	foreach ($feed_items as $item) {
 		$feed = $item->get_feed();
 		$feed->strip_htmltags();
 		$content = $item->get_content();

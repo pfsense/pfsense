@@ -163,7 +163,7 @@ function refresh_gateways(): void {
  * 	- true (default): Use cache automatically.
  *  - false: refetch gateway information.
  *  - array: the result of return_gateways_status(true).
- * @return array<array|array{status: null|int, config: null|array>}
+ * @return array<array|array{status: null|int, config: null|array}>
  */
 function get_gateway_status(mixed $gateway, array|bool $cache = true): array {
 	$gateway_details = [

@@ -38,7 +38,7 @@ process_url() {
 	local file="$1"
 	local url="$2"
 	local filename="${url##*/}"
-	local ext=${filename#*.}
+	local ext="${filename#*.}"
 
 	/usr/bin/fetch -a -m -w 600 -T 30 -q -o "$file" "${url}"
 
@@ -68,7 +68,7 @@ process_url() {
 echo "INFO rc.update_bogons.sh is starting up." | logger -p user.info
 
 # Sleep for some time, unless an argument is specified.
-if [ "$1" = "" ]; then
+if [ -z "$1" ]; then
 	# Grab a random value
 	value=$( jot -r 1 86400 )
 	echo "INFO rc.update_bogons.sh is sleeping for $value" | logger -p user.info
@@ -91,7 +91,7 @@ v6urlcksum=${v6urlcksum:-"${v6url}.md5"}
 process_url /tmp/bogons "${v4url}"
 process_url /tmp/bogonsv6 "${v6url}"
 
-if [ "$proc_error" != "" ]; then
+if [ -n "$proc_error" ]; then
 	# Relaunch and sleep
 	sh /etc/rc.update_bogons.sh &
 	exit
@@ -150,7 +150,7 @@ if [ "$BOGON_V4_CKSUM" = "$ON_DISK_V4_CKSUM" ] || [ "$BOGON_V6_CKSUM" = "$ON_DIS
 	fi
 fi
 
-if [ "$checksum_error" != "" ]; then
+if [ -n "$checksum_error" ]; then
 	# Relaunch and sleep
 	sh /etc/rc.update_bogons.sh &
 	exit

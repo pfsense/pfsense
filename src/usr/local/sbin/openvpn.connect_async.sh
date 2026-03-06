@@ -147,7 +147,7 @@ elif [ "${script_type}" = "client-connect" ]; then
 
 	# Process "Duplicate Connection Limit" setting
 	if [ -n "${active_sessions}" ]; then
-		vpnid=$(/bin/echo "${dev}" | /usr/bin/sed -e 's/ovpns//g')
+		vpnid=${dev##ovpns}
 		if [ -f "/var/etc/openvpn/server${vpnid}/connuserlimit" ]; then
 			sessionlimit=$(/usr/bin/head -1 "/var/etc/openvpn/server${vpnid}/connuserlimit" | /usr/bin/sed -e 's/[[:space:]]//g')
 			if [ "${sessionlimit}" -ge 1 ]; then
@@ -156,7 +156,7 @@ elif [ "${script_type}" = "client-connect" ]; then
 				else
 					usersession="${dev}_'${username}'"
 				fi
-				sessioncount=$(/bin/echo "${active_sessions}" | /usr/bin/grep -o "${usersession}" | /usr/bin/wc -l | /usr/bin/sed -e 's/[[:space:]]//g')
+				sessioncount=$(/bin/echo "${active_sessions}" | /usr/bin/grep -c "${usersession}")
 
 				if [ "${sessioncount}" -gt "${sessionlimit}" ]; then
 					log_session "LOG_NOTICE" "active connection limit of '${sessionlimit}' reached"

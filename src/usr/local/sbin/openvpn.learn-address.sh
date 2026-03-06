@@ -14,12 +14,12 @@ DIR="/var/unbound"
 PIDFILE="/var/run/unbound.pid"
 IPV4REGEX='^[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}$'
 
-if [ -n "${IP}" -a "$(/usr/bin/basename ${IP})" = "${IP}" ]; then
+if [ -n "${IP}" ] && [ "$(/usr/bin/basename ${IP})" = "${IP}" ]; then
 	if [ $(expr "${IP}" : ${IPV4REGEX}) -ne 0 ]; then
-		ARECORD='A' 
+		ARECORD='A'
 		PTRRECORD=$(/bin/echo ${IP} | /usr/bin/awk -F . '{print $4"."$3"."$2"."$1".in-addr.arpa."}')
 	else
-		ARECORD='AAAA' 
+		ARECORD='AAAA'
 		PTRRECORD=$(/bin/echo ${IP} | /usr/bin/awk -F: 'BEGIN {OFS=""; }{addCount = 9 - NF; for(i=1; i<=NF;i++){if(length($i) == 0){ for(j=1;j<=addCount;j++){$i = ($i "0000");} } else { $i = substr(("0000" $i), length($i)+5-4);}}; print}'| /usr/bin/rev | /usr/bin/sed -e "s/./&./g;s/.*/&ip6.arpa/")
 	fi
 	CONF="${DIR}/openvpn.client.${IP}.conf"
@@ -30,10 +30,10 @@ if [ -n "${IP}" -a "$(/usr/bin/basename ${IP})" = "${IP}" ]; then
 			TMPCONF=$(/usr/bin/mktemp "${CONF}.XXXXXX")
 			TMPSRV=$(/usr/bin/mktemp "${CONF}.XXXXXX")
 
-			if [ -f "${TMPCONF}" -a -f "${TMPSRV}" ]; then
+			if [ -f "${TMPCONF}" ] && [ -f "${TMPSRV}" ]; then
 				# Remove all configs which mention the FQDN
 				/usr/bin/grep -l -null "^local-data: \"${CN}.${DOMAIN} ${ARECORD} " ${DIR}/openvpn.client.*.conf | /usr/bin/xargs -0 /bin/rm
-				/bin/test -f "${CONF}" && /bin/rm "${CONF}"
+				[ -f "${CONF}" ] && /bin/rm "${CONF}"
 
 				# Add new local-data entry.
 				(
@@ -52,7 +52,9 @@ if [ -n "${IP}" -a "$(/usr/bin/basename ${IP})" = "${IP}" ]; then
 
 				/bin/chmod 644 "${TMPCONF}" "${TMPSRV}"
 				# set the working directory for unbound-checkconf; see https://redmine.pfsense.org/issues/15723
-				CWD=$PWD; cd "${DIR}" && /usr/local/sbin/unbound-checkconf "${TMPSRV}" && cd "${CWD}" && /bin/mv "${TMPCONF}" "${CONF}"
+				(
+					cd "${DIR}" && /usr/local/sbin/unbound-checkconf "${TMPSRV}"
+				) && /bin/mv "${TMPCONF}" "${CONF}"
 
 				# do not restart unbound on connect, see https://redmine.pfsense.org/issues/11129
 				/usr/bin/su -m unbound -c "/usr/local/sbin/unbound-control -c /var/unbound/unbound.conf local_data ${CN}.${DOMAIN} ${ARECORD} ${IP}"
@@ -61,14 +63,14 @@ if [ -n "${IP}" -a "$(/usr/bin/basename ${IP})" = "${IP}" ]; then
 
 			fi
 
-			/bin/test -f "${TMPCONF}" && /bin/rm "${TMPCONF}"
-			/bin/test -f "${TMPSRV}" && /bin/rm "${TMPSRV}"
+			[ -f "${TMPCONF}" ] && /bin/rm "${TMPCONF}"
+			[ -f "${TMPSRV}" ] && /bin/rm "${TMPSRV}"
 		;;
 
 		delete)
 			# CN is not set on delete
 			if [ -f "${CONF}" ]; then
-				CN=`/usr/bin/sed -nr "s/(local-data-ptr\:) "\""(.*) (.*).${DOMAIN}"\""/\3/p" ${CONF}` &&
+				CN=`/usr/bin/sed -nr "s/(local-data-ptr\:) "\""(.*) (.*).${DOMAIN}"\""/\3/p" "${CONF}"` &&
 				/usr/bin/su -m unbound -c "/usr/local/sbin/unbound-control -c /var/unbound/unbound.conf local_data_remove ${CN}.${DOMAIN}" &&
 				/usr/bin/su -m unbound -c "/usr/local/sbin/unbound-control -c /var/unbound/unbound.conf local_data_remove ${CN}" &&
 				/usr/bin/su -m unbound -c "/usr/local/sbin/unbound-control -c /var/unbound/unbound.conf local_data_remove ${PTRRECORD}"

@@ -215,6 +215,16 @@ if (isset($_POST['apply'])) {
 		if (!is_ipaddrv6($_POST['pdprefix'])) {
 			$input_errors[] = gettext('Delegated prefix must be a valid IPv6 prefix.');
 		}
+		if (!is_numericint($_POST['pdprefixlen']) ||
+		    ($_POST['pdprefixlen'] < 48) ||
+		    ($_POST['pdprefixlen'] > 64)) {
+			$input_errors[] = gettext('Delegated Prefix Length is not an integer in the required range.');
+		}
+		if (!is_numericint($_POST['pddellen']) ||
+		    ($_POST['pddellen'] < 48) ||
+		    ($_POST['pddellen'] > 128)) {
+			$input_errors[] = gettext('Delegated Length is not an integer in the required range.');
+		}
 		if ((int)$_POST['pddellen'] < (int)$_POST['pdprefixlen']) {
 			$input_errors[] = gettext('Delegated length must be greater than or equal to the prefix length.');
 		}
@@ -482,8 +492,8 @@ if (isset($_POST['apply'])) {
 		// Kea prefix delegation
 		if ($_POST['pdprefix']) {
 			$dhcpdconf['pdprefix'] = $_POST['pdprefix'];
-			$dhcpdconf['pdprefixlen'] = $_POST['pdprefixlen'];
-			$dhcpdconf['pddellen'] = $_POST['pddellen'];
+			$dhcpdconf['pdprefixlen'] = intval($_POST['pdprefixlen']);
+			$dhcpdconf['pddellen'] = intval($_POST['pddellen']);
 		} else {
 			unset($dhcpdconf['pdprefix']);
 			unset($dhcpdconf['pdprefixlen']);
@@ -1726,7 +1736,7 @@ events.push(function() {
 		let dellen = $('#pddellen');
 		dellen.empty();
 		for (let i = start; i <= 128; i++) {
-			let selected = (i.toString() === "<?=$pconfig['pddellen']?>");
+			let selected = (i.toString() === "<?=intval($pconfig['pddellen'])?>");
 			dellen.append(new Option(i, i, false, selected));
 		}
 	}

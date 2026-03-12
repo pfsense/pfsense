@@ -796,8 +796,11 @@ function service_control_stop($name, $extras) {
 			break;
 		case 'captiveportal':
 			$zone = htmlspecialchars($extras['zone']);
-			killbypid("{$g['varrun_path']}/nginx-{$zone}-CaptivePortal.pid");
-			killbypid("{$g['varrun_path']}/nginx-{$zone}-CaptivePortal-SSL.pid");
+			if (!preg_match('/[^A-Za-z0-9_]/', $zone) &&
+			    !empty(config_get_path("captiveportal/{$zone}"))) {
+				killbypid("{$g['varrun_path']}/nginx-{$zone}-CaptivePortal.pid");
+				killbypid("{$g['varrun_path']}/nginx-{$zone}-CaptivePortal-SSL.pid");
+			}
 			break;
 		case 'ntpd':
 			killbyname("ntpd");
@@ -854,9 +857,8 @@ function service_control_stop($name, $extras) {
 		case 'openvpn':
 			$vpnmode = htmlspecialchars($extras['vpnmode']);
 			if (($vpnmode == "server") or ($vpnmode == "client")) {
-				$id = htmlspecialchars($extras['id']);
-				$pidfile = "{$g['varrun_path']}/openvpn_{$vpnmode}{$id}.pid";
-				killbypid($pidfile);
+				$id = intval($extras['id']);
+				killbypid("{$g['varrun_path']}/openvpn_{$vpnmode}{$id}.pid");
 				openvpn_delete_tmp($vpnmode, $id);
 			}
 			break;

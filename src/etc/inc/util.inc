@@ -658,10 +658,13 @@ function killbypid($pidfile, $waitfor = 0) {
 }
 
 function isvalidpid(string $pidfile): bool {
+	if (! @file_exists($pidfile)) {
+		return false;
+	}
 	exec(implode(' ', [
 		'/bin/pkill',
 		'-0',
-		'-F', $pidfile,
+		'-F', escapeshellarg($pidfile),
 		'2>/dev/null'
 	]), $_out, $ret);
 

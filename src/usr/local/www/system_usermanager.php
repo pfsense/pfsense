@@ -213,7 +213,7 @@ if ($_POST['save'] && !$read_only) {
 		$reqdfields = explode(" ", "usernamefld");
 		$reqdfieldsn = array(gettext("Username"));
 	} else {
-		if (empty($_POST['name'])) {
+		if ($_POST['createcert'] != "yes") {
 			$reqdfields = explode(" ", "usernamefld passwordfld1");
 			$reqdfieldsn = array(
 				gettext("Username"),
@@ -299,7 +299,7 @@ if ($_POST['save'] && !$read_only) {
 		}
 	}
 
-	if (!empty($_POST['name'])) {
+	if ($_POST['createcert'] == "yes") {
 		$ca = lookup_ca($_POST['caref']);
 		$ca = $ca['item'];
 		if (!$ca) {
@@ -441,7 +441,7 @@ if ($_POST['save'] && !$read_only) {
 		if (isset($id) && config_get_path("system/user/{$id}")) {
 			config_set_path("system/user/{$id}", $userent);
 		} else {
-			if (!empty($_POST['name'])) {
+			if ($_POST['createcert'] == "yes") {
 				$cert = array();
 				$cert['refid'] = uniqid();
 				$userent['cert'] = array();
@@ -773,7 +773,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 		'act',
 		null,
 		'hidden',
-		''
+		$act
 	));
 
 	$form->addGlobal(new Form_Input(
@@ -958,9 +958,9 @@ if ($act == "new" || $act == "edit" || $input_errors):
 	if ($act == 'new') {
 		if (count($nonPrvCas) > 0) {
 			$section->addInput(new Form_Checkbox(
-				'showcert',
+				'createcert',
 				'Certificate',
-				'Click to create a user certificate',
+				'Create a user certificate',
 				false
 			));
 		} else {
@@ -1165,7 +1165,7 @@ events.push(function() {
 		moveOptions($('[name="sysgroups[]"] option'), $('[name="groups[]"]'));
 	});
 
-	$("#showcert").click(function() {
+	$("#createcert").click(function() {
 		hideClass('cert-options', !this.checked);
 	});
 

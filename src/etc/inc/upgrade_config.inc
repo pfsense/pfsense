@@ -7318,6 +7318,30 @@ function upgrade_243_to_244() {
 	}
 }
 
+/**
+ * Migrate config.xml from ENT_HTML401 to ENT_XML1.
+ * Over time the default encode/decode flags for values stored in the
+ * config.xml file have changed which has resulted in unexpected behavior.
+ * Now that these flags are consistent use the previous decode flags to
+ * decode old configuration values and re-save them as ENT_XML1. See:
+ * https://redmine.pfsense.org/issues/16661
+ */
+function migrate_config_encoding_244_to_245(&$array) {
+	foreach ($array as &$value) {
+		if (is_array($value)) {
+			migrate_config_encoding_244_to_245($value);
+		} elseif (is_string($value)) {
+			$value = html_entity_decode($value, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401);
+		}
+	}
+}
+
+function upgrade_244_to_245() {
+	$full_config = config_get_path('', []);
+	migrate_config_encoding_244_to_245($full_config);
+	config_set_path('', $full_config);
+}
+
 /*
  * Special function that is called independent of current config version. It's
  * a workaround to have config_upgrade running on older versions after next

@@ -440,7 +440,6 @@ if (!g_get('disablehelpmenu')) {
 	$help_menu[] = array(gettext("Paid Support"), "https://redirects.netgate.com/support");
 	$help_menu[] = array(gettext("pfSense Book"), "https://redirects.netgate.com/book");
 	$help_menu[] = array(gettext("FreeBSD Handbook"), "https://redirects.netgate.com/fbsdhandbook");
-	$help_menu[] = array(gettext("User survey"), "https://redirects.netgate.com/survey_1");
 	if  (strpos(g_get('product_label'), 'Plus') === false) {
 		$help_menu[] = array(gettext("Upgrade to pfSense Plus"), "https://redirects.netgate.com/upgrade");
 	}

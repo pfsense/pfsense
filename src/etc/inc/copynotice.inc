@@ -88,32 +88,10 @@ $copyrightfile = "{$g['cf_conf_path']}/copyright";
 				<p>
 			</div>
 
-			<div id="main2" hidden class="modal-body modal-lg" style="background-color:#1e5175; color:white;">
-				<p align="center" style="font-size:24px">
-					<b>Thank you!</b>
-				</p>
-				<p>
-					Many people expend a lot of effort improving and expanding pfSense software. It would be very helpful if you would please take a moment to complete this brief and anonymous survey to help guide those efforts.
-				</p>
-				<p align="center">
-					<a href="https://redirects.netgate.com/survey_1" target="_blank" style="color: #bdf4fc; background: #1e5175;text-decoration: underline;">
-						User survey
-					</a>
-				</p>
-			</div>
-
-			<div id="f1" class="modal-footer modal-lg" style="background-color:#1e3f75; color:white;">
-				<button type="button" class="btn btn-xs btn-success" aria-label="Close" onClick="$('#main1').attr('hidden', true); $('#main2').attr('hidden', false);$('#f1').attr('hidden', true); $('#f2').attr('hidden', false);">
-					<span aria-hidden="true">
-						Accept
-					</span>
-				</button>
-			</div>
-
-			<div id="f2" hidden class="modal-footer modal-lg" style="background-color:#1e5175; color:white;">
+			<div id="f1" hidden class="modal-footer modal-lg" style="background-color:#1e3f75; color:white;">
 				<button type="button" class="btn btn-xs btn-success" aria-label="Close" onClick="$('.modal').modal('hide');">
 					<span aria-hidden="true">
-						Close
+						Accept
 					</span>
 				</button>
 			</div>

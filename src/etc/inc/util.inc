@@ -659,30 +659,30 @@ function killbypid($pidfile, $waitfor = 0) {
 
 function isvalidpid(string $pidfile): bool
 {
-    if (!is_file($pidfile) || !is_readable($pidfile)) {
-        return false;
-    }
+	if (!is_file($pidfile) || !is_readable($pidfile)) {
+		return false;
+	}
 
-    $contents = file_get_contents($pidfile);
-    if ($contents === false) {
-        return false;
-    }
+	$contents = file_get_contents($pidfile);
+	if ($contents === false) {
+		return false;
+	}
 
 	// Must be a positive integer
-    $pid = filter_var(trim($contents), FILTER_VALIDATE_INT, [
-        'options' => ['min_range' => 1],
-    ]);
-    if ($pid === false) {
-        return false;
-    }
+	$pid = filter_var(trim($contents), FILTER_VALIDATE_INT, [
+		'options' => ['min_range' => 1],
+	]);
+	if ($pid === false) {
+		return false;
+	}
 
-    // Signal 0 probes process existence without actually signalling.
-    if (posix_kill($pid, 0)) {
-        return true;
-    }
+	// Signal 0 probes process existence without actually signalling.
+	if (posix_kill($pid, 0)) {
+		return true;
+	}
 
-    // EPERM means the process exists but we lack permission to signal it.
-    return (posix_get_last_error() === POSIX_EPERM);
+	// EPERM means the process exists but we lack permission to signal it.
+	return (posix_get_last_error() === POSIX_EPERM);
 }
 
 function is_process_running(string $name): bool {

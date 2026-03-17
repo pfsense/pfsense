@@ -260,6 +260,9 @@ define('LOG_AUTH_EVENT_LOGOUT', 2);
 define('LOG_AUTH_EVENT_ERROR', 3);
 define('LOG_AUTH_EVENT_TIMEOUT', 4);
 
+// POSIX constants
+define('POSIX_EPERM', 1);
+
 /**
  * Get a list of valid rule label tags.
  *

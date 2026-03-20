@@ -88,7 +88,7 @@ $copyrightfile = "{$g['cf_conf_path']}/copyright";
 				<p>
 			</div>
 
-			<div id="f1" hidden class="modal-footer modal-lg" style="background-color:#1e3f75; color:white;">
+			<div id="f1" class="modal-footer modal-lg" style="background-color:#1e3f75; color:white;">
 				<button type="button" class="btn btn-xs btn-success" aria-label="Close" onClick="$('.modal').modal('hide');">
 					<span aria-hidden="true">
 						Accept

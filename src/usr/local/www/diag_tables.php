@@ -199,7 +199,7 @@ if ($bogons || $urltable || !empty($entries)) {
 	$res = exec('/usr/bin/grep -i -m 10 -E "^#" ' . $table_file, $comment_lines);
 
 	foreach ($comment_lines as $comment_line) {
-		$table_comments .= "$comment_line" . "<br />";
+		$table_comments .= htmlspecialchars($comment_line) . '<br />';
 	}
 
 	if ($table_comments) {

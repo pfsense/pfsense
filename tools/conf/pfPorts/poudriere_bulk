@@ -105,7 +105,6 @@ sysutils/%%PRODUCT_NAME%%-pkg-System_Patches
 sysutils/ccze
 sysutils/flashrom
 sysutils/htop
-sysutils/lsof
 sysutils/memtester
 sysutils/pstree
 sysutils/screen

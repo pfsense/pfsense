@@ -71,3 +71,4 @@ function anchor_list() {
 }
 
 anchor_list();
+print(PHP_EOL);

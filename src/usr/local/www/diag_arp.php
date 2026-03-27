@@ -143,23 +143,23 @@ if ($savemsg) {
 <?php
 	foreach ($arp_table as $entry): ?>
 				<tr>
-					<td><?=$entry['interface']?></td>
-					<td><?=$entry['ip-address']?></td>
+					<td><?=htmlspecialchars($entry['interface'])?></td>
+					<td><?=htmlspecialchars($entry['ip-address'])?></td>
 					<td>
-						<?=$entry['mac-address']?>
+						<?=htmlspecialchars($entry['mac-address'])?>
 <?php if ($entry['mac-man']):?>
-						<small>(<?=$entry['mac-man']?>)</small>
+						<small>(<?=htmlspecialchars($entry['mac-man'])?>)</small>
 <?php endif; ?>
 					</td>
-					<td><?=$entry['dnsresolve']?></td>
-					<td><?=$entry['expires']?></td>
-					<td><?=$entry['type']?></td>
+					<td><?=htmlspecialchars($entry['dnsresolve'])?></td>
+					<td><?=htmlspecialchars($entry['expires'])?></td>
+					<td><?=htmlspecialchars($entry['type'])?></td>
 					<td>
 <?php if ($entry['assigned']): /* only useful for assigned interfaces */ ?>
-						<a class="fa-solid fa-plus-square" title="<?=gettext('Add WOL mapping')?>" href="services_wol_edit.php?if=<?=htmlspecialchars($entry['if'])?>&amp;mac=<?=htmlspecialchars($entry['mac-address'])?>&amp;descr=<?=htmlspecialchars($entry['dnsresolve'])?>"></a>
-						<a class="fa-solid fa-power-off" title="<?=gettext('Send WOL packet')?>" href="services_wol.php?if=<?=htmlspecialchars($entry['if'])?>&amp;mac=<?=htmlspecialchars($entry['mac-address'])?>" usepost></a>
+						<a class="fa-solid fa-plus-square" title="<?=gettext('Add WOL mapping')?>" href="services_wol_edit.php?if=<?=htmlspecialchars(urlencode($entry['if']))?>&amp;mac=<?=htmlspecialchars(urlencode($entry['mac-address']))?>&amp;descr=<?=htmlspecialchars(urlencode($entry['dnsresolve']))?>"></a>
+						<a class="fa-solid fa-power-off" title="<?=gettext('Send WOL packet')?>" href="services_wol.php?if=<?=htmlspecialchars(urlencode($entry['if']))?>&amp;mac=<?=htmlspecialchars(urlencode($entry['mac-address']))?>" usepost></a>
 <?php endif; ?>
-						<a class="fa-solid fa-trash-can" title="<?=gettext('Delete ARP cache entry')?>" href="diag_arp.php?deleteentry=<?=$entry['ip-address']?>" usepost></a>
+						<a class="fa-solid fa-trash-can" title="<?=gettext('Delete ARP cache entry')?>" href="diag_arp.php?deleteentry=<?=htmlspecialchars(urlencode($entry['ip-address']))?>" usepost></a>
 					</td>
 				</tr>
 <?php

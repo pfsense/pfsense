@@ -156,7 +156,7 @@ include("head.inc"); ?>
 ?>
 
 <div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title">ovpns<?= $server['vpnid'] ?>: <?=htmlspecialchars($server['name']);?> / <?=gettext('Client Connections') . ": " . ($server['conns'][0]['common_name'] != '[error]' ? sizeof($server['conns']) : '0');?></h2></div>
+		<div class="panel-heading"><h2 class="panel-title">ovpns<?= htmlspecialchars($server['vpnid']) ?>: <?=htmlspecialchars($server['name']);?> / <?=gettext('Client Connections') . ": " . ($server['conns'][0]['common_name'] != '[error]' ? sizeof($server['conns']) : '0');?></h2></div>
 		<div class="panel-body table-responsive">
 			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 				<thead>
@@ -178,47 +178,47 @@ include("head.inc"); ?>
 								$remote_port = substr($conn['remote_host'], strpos($conn['remote_host'], ':') + 1);
 								$rulesfile = "{$g['tmp_path']}/ovpn_ovpns{$server['vpnid']}_{$conn['user_name']}_{$remote_port}.rules";
 					?>
-					<tr id="<?php echo "r:{$server['mgmt']}:{$conn['remote_host']}"; ?>">
+					<tr id="<?php echo htmlspecialchars("r:{$server['mgmt']}:{$conn['remote_host']}"); ?>">
 						<td>
-							<?=$conn['common_name'];?>
+							<?=htmlspecialchars($conn['common_name']);?>
 					<?php if (!empty($conn['common_name']) && !empty($conn['user_name']) && ($conn['user_name'] != "UNDEF")): ?>
 							<br />
 					<?php endif; ?>
 					<?php if (!empty($conn['user_name']) && ($conn['user_name'] != "UNDEF")): ?>
-							<?=$conn['user_name'];?>
+							<?=htmlspecialchars($conn['user_name']);?>
 					<?php endif; ?>
 						</td>
-						<td><?=$conn['remote_host'];?></td>
+						<td><?=htmlspecialchars($conn['remote_host']);?></td>
 						<td>
-							<?=$conn['virtual_addr'];?>
+							<?=htmlspecialchars($conn['virtual_addr']);?>
 					<?php if (!empty($conn['virtual_addr']) && !empty($conn['virtual_addr6'])): ?>
 							<br />
 					<?php endif; ?>
-							<?=$conn['virtual_addr6'];?>
+							<?=htmlspecialchars($conn['virtual_addr6']);?>
 						</td>
 						<td><?=$conn['connect_time'];?></td>
-						<td data-value="<?=trim($conn['bytes_sent'])?>"><?=format_bytes($conn['bytes_sent']);?></td>
-						<td data-value="<?=trim($conn['bytes_recv'])?>"><?=format_bytes($conn['bytes_recv']);?></td>
-						<td data-value="<?=trim($conn['cipher'])?>"><?=$conn['cipher'];?></td>
+						<td data-value="<?=htmlspecialchars(trim($conn['bytes_sent']))?>"><?=htmlspecialchars(format_bytes($conn['bytes_sent']));?></td>
+						<td data-value="<?=htmlspecialchars(trim($conn['bytes_recv']))?>"><?=htmlspecialchars(format_bytes($conn['bytes_recv']));?></td>
+						<td data-value="<?=htmlspecialchars(trim($conn['cipher']))?>"><?=htmlspecialchars($conn['cipher']);?></td>
 						<td>
 
 					<?php if (file_exists($rulesfile)): ?>
 							<a
-							onclick="showRuleContents('<?=$server['vpnid'];?>', '<?=$conn['user_name'];?>', '<?=$remote_port;?>');" style="cursor:pointer;"
+							onclick='showRuleContents(<?=json_encode(htmlspecialchars($server['vpnid']));?>, <?=json_encode(htmlspecialchars($conn['user_name']));?>, <?=json_encode(htmlspecialchars($remote_port));?>);' style="cursor:pointer;"
 							   title="<?php echo gettext("Show RADIUS ACL generated ruleset"); ?>">
 							<i class="fa-solid fa-info"></i>
 							</a>&nbsp;
 					<?php endif; ?>
 							<a
-							   onclick="killClient('<?=$server['mgmt'];?>', '<?=$conn['remote_host'];?>', '');" style="cursor:pointer;"
-							   id="<?php echo "i:{$server['mgmt']}:{$conn['remote_host']}"; ?>"
-							   title="<?php echo sprintf(gettext("Kill client connection from %s"), $conn['remote_host']); ?>">
+							   onclick='killClient(<?=json_encode(htmlspecialchars($server['mgmt']));?>, <?=json_encode(htmlspecialchars($conn['remote_host']));?>, "");' style="cursor:pointer;"
+							   id="<?php echo htmlspecialchars("i:{$server['mgmt']}:{$conn['remote_host']}"); ?>"
+							   title="<?php echo sprintf(gettext("Kill client connection from %s"), htmlspecialchars($conn['remote_host'])); ?>">
 							<i class="fa-solid fa-times"></i>
 							</a>&nbsp;
 							<a
-							   onclick="killClient('<?=$server['mgmt'];?>', '<?=$conn['remote_host'];?>', '<?=$conn['client_id'];?>');" style="cursor:pointer;"
-							   id="<?php echo "i:{$server['mgmt']}:{$conn['remote_host']}"; ?>"
-							   title="<?php echo sprintf(gettext("Halt client connection from %s"), $conn['remote_host']); ?>">
+							   onclick='killClient(<?=json_encode(htmlspecialchars($server['mgmt']));?>, <?=json_encode(htmlspecialchars($conn['remote_host']));?>, <?=json_encode(htmlspecialchars($conn['client_id']));?>);' style="cursor:pointer;"
+							   id="<?php echo htmlspecialchars("i:{$server['mgmt']}:{$conn['remote_host']}"); ?>"
+							   title="<?php echo sprintf(gettext("Halt client connection from %s"), htmlspecialchars($conn['remote_host'])); ?>">
 							<i class="fa-solid fa-times-circle text-danger"></i>
 							</a>
 						</td>
@@ -269,11 +269,11 @@ include("head.inc"); ?>
 <?php
 			foreach ($server['routes'] as $conn):
 ?>
-					<tr id="<?php echo "r:{$server['mgmt']}:{$conn['remote_host']}"; ?>">
-						<td><?=$conn['common_name'];?></td>
-						<td><?=$conn['remote_host'];?></td>
-						<td><?=$conn['virtual_addr'];?></td>
-						<td><?=$conn['last_time'];?></td>
+					<tr id="<?php echo htmlspecialchars("r:{$server['mgmt']}:{$conn['remote_host']}"); ?>">
+						<td><?=htmlspecialchars($conn['common_name']);?></td>
+						<td><?=htmlspecialchars($conn['remote_host']);?></td>
+						<td><?=htmlspecialchars($conn['virtual_addr']);?></td>
+						<td><?=htmlspecialchars($conn['last_time']);?></td>
 					</tr>
 <?php
 			endforeach;
@@ -321,23 +321,23 @@ include("head.inc"); ?>
 <?php
 		foreach ($sk_servers as $sk_server):
 ?>
-					<tr id="<?php echo "r:{$sk_server['port']}:{$sk_server['vpnid']}"; ?>">
+					<tr id="<?php echo htmlspecialchars("r:{$sk_server['port']}:{$sk_server['vpnid']}"); ?>">
 						<td>
-							ovpns<?=$sk_server['vpnid'];?><br/>
+							ovpns<?=htmlspecialchars($sk_server['vpnid']);?><br/>
 							<?=htmlspecialchars($sk_server['name']);?>
 						</td>
-						<td><?=$sk_server['status'];?></td>
-						<td><?=$sk_server['connect_time'];?></td>
+						<td><?=htmlspecialchars($sk_server['status']);?></td>
+						<td><?=htmlspecialchars($sk_server['connect_time']);?></td>
 						<td>
-							<?=$sk_server['virtual_addr'];?>
+							<?=htmlspecialchars($sk_server['virtual_addr']);?>
 					<?php if (!empty($sk_server['virtual_addr']) && !empty($sk_server['virtual_addr6'])): ?>
 							<br />
 					<?php endif; ?>
-							<?=$sk_server['virtual_addr6'];?>
+							<?=htmlspecialchars($sk_server['virtual_addr6']);?>
 						</td>
-						<td><?=$sk_server['remote_host'];?></td>
-						<td data-value="<?=trim($sk_server['bytes_sent'])?>"><?=format_bytes($sk_server['bytes_sent']);?></td>
-						<td data-value="<?=trim($sk_server['bytes_recv'])?>"><?=format_bytes($sk_server['bytes_recv']);?></td>
+						<td><?=htmlspecialchars($sk_server['remote_host']);?></td>
+						<td data-value="<?=htmlspecialchars(trim($sk_server['bytes_sent']))?>"><?=htmlspecialchars(format_bytes($sk_server['bytes_sent']));?></td>
+						<td data-value="<?=htmlspecialchars(trim($sk_server['bytes_recv']))?>"><?=htmlspecialchars(format_bytes($sk_server['bytes_recv']));?></td>
 						<td>
 							<?php $ssvc = find_service_by_openvpn_vpnid($sk_server['vpnid']); ?>
 							<?= get_service_status_icon($ssvc, false, true); ?>
@@ -381,36 +381,36 @@ include("head.inc"); ?>
 <?php
 		foreach ($clients as $client):
 ?>
-					<tr id="<?php echo "r:{$client['port']}:{$client['vpnid']}"; ?>">
+					<tr id="<?php echo htmlspecialchars("r:{$client['port']}:{$client['vpnid']}"); ?>">
 						<td>
-							ovpnc<?= $client['vpnid'] ?><br/>
+							ovpnc<?= htmlspecialchars($client['vpnid']) ?><br/>
 							<?=htmlspecialchars($client['name']);?>
 						</td>
-						<td><?=$client['status'];?></td>
-						<td><?=$client['connect_time'];?></td>
+						<td><?=htmlspecialchars($client['status']);?></td>
+						<td><?=htmlspecialchars($client['connect_time']);?></td>
 						<td>
 					<?php if (empty($client['local_host']) && empty($client['local_port'])): ?>
 							(pending)
 					<?php else: ?>
-							<?=$client['local_host'];?>:<?=$client['local_port'];?>
+							<?=htmlspecialchars($client['local_host']);?>:<?=htmlspecialchars($client['local_port']);?>
 					<?php endif; ?>
 						</td>
 						<td>
-							<?=$client['virtual_addr'];?>
+							<?=htmlspecialchars($client['virtual_addr']);?>
 					<?php if (!empty($client['virtual_addr']) && !empty($client['virtual_addr6'])): ?>
 							<br />
 					<?php endif; ?>
-							<?=$client['virtual_addr6'];?>
+							<?=htmlspecialchars($client['virtual_addr6']);?>
 						</td>
 						<td>
 					<?php if (empty($client['remote_host']) && empty($client['remote_port'])): ?>
 							(pending)
 					<?php else: ?>
-							<?=$client['remote_host'];?>:<?=$client['remote_port'];?>
+							<?=htmlspecialchars($client['remote_host']);?>:<?=htmlspecialchars($client['remote_port']);?>
 					<?php endif; ?>
 						</td>
-						<td data-value="<?=trim($client['bytes_sent'])?>"><?=format_bytes($client['bytes_sent']);?></td>
-						<td data-value="<?=trim($client['bytes_recv'])?>"><?=format_bytes($client['bytes_recv']);?></td>
+						<td data-value="<?=htmlspecialchars(trim($client['bytes_sent']))?>"><?=htmlspecialchars(format_bytes($client['bytes_sent']));?></td>
+						<td data-value="<?=htmlspecialchars(trim($client['bytes_recv']))?>"><?=htmlspecialchars(format_bytes($client['bytes_recv']));?></td>
 						<td>
 							<?php $ssvc = find_service_by_openvpn_vpnid($client['vpnid']); ?>
 							<?= get_service_status_icon($ssvc, false, true); ?>

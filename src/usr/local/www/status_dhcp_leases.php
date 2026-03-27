@@ -307,7 +307,7 @@ foreach ($leases['lease'] as $data):
 					</td>
 					<td><?=htmlspecialchars($data['ip'])?></td>
 <?php if ($data['cid']): ?>
-					<td style="cursor: help;" data-toggle="popover" data-container="body" data-trigger="hover focus" data-content="<?=gettext('Client ID')?>: <span class=&quot;cid&quot;><?=$data['cid']?></span>" data-html="true" data-original-title="<?=gettext('DHCP Client Information')?>">
+					<td style="cursor: help;" data-toggle="popover" data-container="body" data-trigger="hover focus" data-content="<?=gettext('Client ID')?>: <span class=&quot;cid&quot;><?=htmlspecialchars($data['cid'])?></span>" data-html="true" data-original-title="<?=gettext('DHCP Client Information')?>">
 <?php else: ?>
 					<td>
 <?php endif; ?>
@@ -332,17 +332,17 @@ foreach ($leases['lease'] as $data):
 					<? endif; ?>
 					<td>
 <?php if ($data['type'] == $dynamic_string): ?>
-						<a class="fa-regular fa-square-plus"	title="<?=gettext('Add static mapping')?>" href="services_dhcp_edit.php?if=<?=htmlspecialchars($data['if'])?>&amp;mac=<?=htmlspecialchars($data['mac'])?>&amp;hostname=<?=htmlspecialchars($data['hostname'])?>"></a>
+						<a class="fa-regular fa-square-plus"	title="<?=gettext('Add static mapping')?>" href="services_dhcp_edit.php?if=<?=htmlspecialchars(urlencode($data['if']))?>&amp;mac=<?=htmlspecialchars(urlencode($data['mac']))?>&amp;hostname=<?=htmlspecialchars(urlencode($data['hostname']))?>"></a>
 <?php endif; ?>
-						<a class="fa-solid fa-plus-square" title="<?=gettext('Add WOL mapping')?>" href="services_wol_edit.php?if=<?=htmlspecialchars($data['if'])?>&amp;mac=<?=htmlspecialchars($data['mac'])?>&amp;descr=<?=htmlspecialchars($data['hostname'])?>"></a>
+						<a class="fa-solid fa-plus-square" title="<?=gettext('Add WOL mapping')?>" href="services_wol_edit.php?if=<?=htmlspecialchars(urlencode($data['if']))?>&amp;mac=<?=htmlspecialchars(urlencode($data['mac']))?>&amp;descr=<?=htmlspecialchars(urlencode($data['hostname']))?>"></a>
 <?php if ($data['online'] != $online_string):?>
-						<a class="fa-solid fa-power-off" title="<?=gettext('Send WOL packet')?>" href="services_wol.php?if=<?=htmlspecialchars($data['if'])?>&amp;mac=<?=htmlspecialchars($data['mac'])?>" usepost></a>
+						<a class="fa-solid fa-power-off" title="<?=gettext('Send WOL packet')?>" href="services_wol.php?if=<?=htmlspecialchars(urlencode($data['if']))?>&amp;mac=<?=htmlspecialchars(urlencode($data['mac']))?>" usepost></a>
 <?php endif; ?>
 <?php if ($data['type'] == $static_string): ?>
-						<a class="fa-solid fa-pencil"	title="<?=gettext('Edit static mapping')?>" href="services_dhcp_edit.php?if=<?=htmlspecialchars($data['if'])?>&amp;id=<?=htmlspecialchars($data['staticmap_array_index'])?>"></a>
+						<a class="fa-solid fa-pencil"	title="<?=gettext('Edit static mapping')?>" href="services_dhcp_edit.php?if=<?=htmlspecialchars(urlencode($data['if']))?>&amp;id=<?=htmlspecialchars(urlencode($data['staticmap_array_index']))?>"></a>
 <?php endif; ?>
 <?php if ($data['type'] == $dynamic_string && $data['online'] != $online_string):?>
-						<a class="fa-solid fa-trash-can" title="<?=gettext('Delete lease')?>" href="status_dhcp_leases.php?deleteip=<?=htmlspecialchars($data['ip'])?>&amp;all=<?=intval($_REQUEST['all'])?>" usepost></a>
+						<a class="fa-solid fa-trash-can" title="<?=gettext('Delete lease')?>" href="status_dhcp_leases.php?deleteip=<?=htmlspecialchars(urlencode($data['ip']))?>&amp;all=<?=intval($_REQUEST['all'])?>" usepost></a>
 <?php endif; ?>
 					</td>
 				</tr>

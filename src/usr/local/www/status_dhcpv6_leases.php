@@ -395,7 +395,7 @@ foreach ($leases as $data):
 <?php endif; ?>
 					</td>
 					<td><?=$data['ip']?></td>
-					<td style="cursor: context-menu;" data-toggle="popover" data-container="body" data-trigger="hover focus" data-content="<?=gettext('DUID')?>: <span class=&quot;duid&quot;><?=$data['duid']?></span><?php if ($data['iaid']): ?><br /><?=gettext('IAID')?>: <span class=&quot;iaid&quot;><?=$data['iaid']?></span><?php endif; if ($mac): ?><br /><?=gettext('MAC Address')?>: <span class=&quot;mac&quot;><?=$mac?><?php if (isset($mac_man[$mac_hi])):?><br /><small>(<?=$mac_man[$mac_hi]?>)</small><?php endif; ?></span><?php endif; ?>" data-html="true" data-original-title="<?=gettext('DHCPv6 Client Information')?>"><?=$data['duid']?></td>
+					<td style="cursor: context-menu;" data-toggle="popover" data-container="body" data-trigger="hover focus" data-content="<?=gettext('DUID')?>: <span class=&quot;duid&quot;><?=htmlspecialchars($data['duid'])?></span><?php if ($data['iaid']): ?><br /><?=gettext('IAID')?>: <span class=&quot;iaid&quot;><?=htmlspecialchars($data['iaid'])?></span><?php endif; if ($mac): ?><br /><?=gettext('MAC Address')?>: <span class=&quot;mac&quot;><?=htmlspecialchars($mac)?><?php if (isset($mac_man[$mac_hi])):?><br /><small>(<?=$mac_man[$mac_hi]?>)</small><?php endif; ?></span><?php endif; ?>" data-html="true" data-original-title="<?=gettext('DHCPv6 Client Information')?>"><?=htmlspecialchars($data['duid'])?></td>
 					<td>
 <?php if ($data['hostname'] && $data['dnsreg']): ?>
 						<i class="fa-solid fa-globe" title="<?=gettext('Registered with the DNS Resolver')?>"></i>
@@ -414,16 +414,16 @@ foreach ($leases as $data):
 <?php endif; ?>
 					<td>
 <?php if ($data['type'] == $dynamic_string): ?>
-						<a class="fa-regular fa-square-plus" title="<?=gettext('Add static mapping')?>" href="services_dhcpv6_edit.php?if=<?=$data['if']?>&amp;duid=<?=$data['duid']?>&amp;hostname=<?=htmlspecialchars($data['hostname'])?>"></a>
+						<a class="fa-regular fa-square-plus" title="<?=gettext('Add static mapping')?>" href="services_dhcpv6_edit.php?if=<?=htmlspecialchars(urlencode($data['if']))?>&amp;duid=<?=htmlspecialchars(urlencode($data['duid']))?>&amp;hostname=<?=htmlspecialchars(urlencode($data['hostname']))?>"></a>
 <?php endif; ?>
 <?php if ($mac): /* we can only add a WOL mapping if MAC address is known */ ?>
-						<a class="fa-solid fa-plus-square" title="<?=gettext('Add WOL mapping')?>" href="services_wol_edit.php?if=<?=$data['if']?>&amp;mac=<?=$mac?>&amp;descr=<?=htmlentities($data['hostname'])?>"></a>
+						<a class="fa-solid fa-plus-square" title="<?=gettext('Add WOL mapping')?>" href="services_wol_edit.php?if=<?=htmlspecialchars(urlencode($data['if']))?>&amp;mac=<?=htmlspecialchars(urlencode($mac))?>&amp;descr=<?=htmlspecialchars(urlencode($data['hostname']))?>"></a>
 <?php endif; ?>
 <?php if ($data['type'] == $static_string): ?>
-						<a class="fa-solid fa-pencil" title="<?=gettext('Edit static mapping')?>" href="services_dhcpv6_edit.php?if=<?=htmlspecialchars($data['if'])?>&amp;id=<?=htmlspecialchars($data['staticmap_array_index'])?>"></a>
+						<a class="fa-solid fa-pencil" title="<?=gettext('Edit static mapping')?>" href="services_dhcpv6_edit.php?if=<?=htmlspecialchars(urlencode($data['if']))?>&amp;id=<?=htmlspecialchars(urlencode($data['staticmap_array_index']))?>"></a>
 <?php endif; ?>
 <?php if ($data['type'] == $dynamic_string && $data['online'] != $online_string):?>
-						<a class="fa-solid fa-trash-can" title="<?=gettext('Delete lease')?>" href="status_dhcpv6_leases.php?deleteip=<?=$data['ip']?>&amp;all=<?=intval($_REQUEST['all'])?>" usepost></a>
+						<a class="fa-solid fa-trash-can" title="<?=gettext('Delete lease')?>" href="status_dhcpv6_leases.php?deleteip=<?=htmlspecialchars(urlencode($data['ip']))?>&amp;all=<?=intval($_REQUEST['all'])?>" usepost></a>
 <?php endif; ?>
 					</td>
 				</tr>
@@ -506,9 +506,9 @@ foreach ($prefixes as $data):
 ?>
 			<tr>
 				<td><i class="<?=$icon?> act" title="<?=htmlspecialchars($data['act'])?>"></i></td>
-				<td><?=$data['prefix']?></td>
-				<td><?=$data['duid']?></td>
-				<td><?php foreach ($mappings[$data['duid']] as $iaid => $iproute):?><?=$iproute?><br />IAID: <?=$iaid?><br /><?php endforeach; ?></td>
+				<td><?=htmlspecialchars($data['prefix'])?></td>
+				<td><?=htmlspecialchars($data['duid'])?></td>
+				<td><?php foreach ($mappings[$data['duid']] as $iaid => $iproute):?><?=htmlspecialchars($iproute)?><br />IAID: <?=htmlspecialchars($iaid)?><br /><?php endforeach; ?></td>
 <?php if ($data['type'] != $static_string):?>
 				<td><?=adjust_gmt($data['start'])?></td>
 				<td><?=adjust_gmt($data['end'])?></td>
@@ -549,8 +549,8 @@ foreach ($prefixes as $data):
 <?php endif; ?>
 				</td>
 				<td><?=$data['ip']?></td>
-				<td style="cursor: context-menu;" data-toggle="popover" data-container="body" data-trigger="hover focus" data-content="<?=gettext('DUID')?>: <span class=&quot;duid&quot;><?=$data['duid']?></span><?php if ($data['iaid']): ?><br /><?=gettext('IAID')?>: <span class=&quot;iaid&quot;><?=$data['iaid']?></span><?php endif; if ($mac): ?><br /><?=gettext('MAC Address')?>: <span class=&quot;mac&quot;><?=$mac?><?php if (isset($mac_man[$mac_hi])):?><br /><small>(<?=$mac_man[$mac_hi]?>)</small><?php endif; ?></span><?php endif; ?>" data-html="true" data-original-title="<?=gettext('DHCPv6 Client Information')?>"><?=$data['duid']?></td>
-				<td><?=$data['routed-to']?></td>
+				<td style="cursor: context-menu;" data-toggle="popover" data-container="body" data-trigger="hover focus" data-content="<?=gettext('DUID')?>: <span class=&quot;duid&quot;><?=htmlspecialchars($data['duid'])?></span><?php if ($data['iaid']): ?><br /><?=gettext('IAID')?>: <span class=&quot;iaid&quot;><?=htmlspecialchars($data['iaid'])?></span><?php endif; if ($mac): ?><br /><?=gettext('MAC Address')?>: <span class=&quot;mac&quot;><?=htmlspecialchars($mac)?><?php if (isset($mac_man[$mac_hi])):?><br /><small>(<?=$mac_man[$mac_hi]?>)</small><?php endif; ?></span><?php endif; ?>" data-html="true" data-original-title="<?=gettext('DHCPv6 Client Information')?>"><?=htmlspecialchars($data['duid'])?></td>
+				<td><?=htmlspecialchars($data['routed-to'])?></td>
 				<td><?=htmlspecialchars($data['descr'])?></td>
 <?php if ($data['type'] != $static_string):?>
 				<td><?=adjust_gmt($data['starts'])?></td>
@@ -561,13 +561,13 @@ foreach ($prefixes as $data):
 <?php endif; ?>
 				<td>
 <?php if ($data['type'] == $dynamic_string): ?>
-					<a class="fa-regular fa-square-plus" title="<?=gettext('Add static mapping')?>" href="services_dhcpv6_edit.php?if=<?=$data['if']?>&amp;duid=<?=$data['duid']?>&amp;hostname=<?=htmlspecialchars($data['hostname'])?>"></a>
+					<a class="fa-regular fa-square-plus" title="<?=gettext('Add static mapping')?>" href="services_dhcpv6_edit.php?if=<?=htmlspecialchars(urlencode($data['if']))?>&amp;duid=<?=htmlspecialchars(urlencode($data['duid']))?>&amp;hostname=<?=htmlspecialchars(urlencode($data['hostname']))?>"></a>
 <?php endif; ?>
 <?php if ($data['type'] == $static_string): ?>
-					<a class="fa-solid fa-pencil" title="<?=gettext('Edit static mapping')?>" href="services_dhcpv6_edit.php?if=<?=htmlspecialchars($data['if'])?>&amp;id=<?=htmlspecialchars($data['staticmap_array_index'])?>"></a>
+					<a class="fa-solid fa-pencil" title="<?=gettext('Edit static mapping')?>" href="services_dhcpv6_edit.php?if=<?=htmlspecialchars(urlencode($data['if']))?>&amp;id=<?=htmlspecialchars(urlencode($data['staticmap_array_index']))?>"></a>
 <?php endif; ?>
 <?php if ($data['type'] == $dynamic_string && $data['online'] != $online_string):?>
-					<a class="fa-solid fa-trash-can" title="<?=gettext('Delete lease')?>" href="status_dhcpv6_leases.php?deletepd=<?=$data['ip']?>&amp;all=<?=intval($_REQUEST['all'])?>" usepost></a>
+					<a class="fa-solid fa-trash-can" title="<?=gettext('Delete lease')?>" href="status_dhcpv6_leases.php?deletepd=<?=htmlspecialchars(urlencode($data['ip']))?>&amp;all=<?=intval($_REQUEST['all'])?>" usepost></a>
 <?php endif; ?>
 				</td>
 			</tr>

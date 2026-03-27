@@ -1935,15 +1935,15 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 					<td>
 						<?=htmlspecialchars($mapent['hostname'])?>
 					</td>
-					<td <?php if ($mapent['cid']): ?>style="cursor: help;" data-toggle="popover" data-container="body" data-trigger="hover focus" data-content="<?=gettext('Client ID')?>: <span class=&quot;cid&quot;><?=$mapent['cid']?></span>" data-html="true" data-original-title="<?=gettext('DHCP Client Information')?>"<?php endif; ?>>
+					<td <?php if ($mapent['cid']): ?>style="cursor: help;" data-toggle="popover" data-container="body" data-trigger="hover focus" data-content="<?=gettext('Client ID')?>: <span class=&quot;cid&quot;><?=htmlspecialchars($mapent['cid'])?></span>" data-html="true" data-original-title="<?=gettext('DHCP Client Information')?>"<?php endif; ?>>
 						<?=htmlspecialchars($mapent['mac'])?>
 					</td>
 					<td>
 						<?=htmlspecialchars($mapent['descr'])?>
 					</td>
 					<td>
-						<a class="fa-solid fa-pencil" title="<?=gettext('Edit static mapping')?>"	href="services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>"></a>
-						<a class="fa-solid fa-trash-can text-danger" title="<?=gettext('Delete static mapping')?>"	href="services_dhcp.php?if=<?=htmlspecialchars($if)?>&amp;act=del&amp;id=<?=$i?>" usepost></a>
+						<a class="fa-solid fa-pencil" title="<?=gettext('Edit static mapping')?>"	href="services_dhcp_edit.php?if=<?=htmlspecialchars(urlencode($if))?>&amp;id=<?=$i?>"></a>
+						<a class="fa-solid fa-trash-can text-danger" title="<?=gettext('Delete static mapping')?>"	href="services_dhcp.php?if=<?=htmlspecialchars(urlencode($if))?>&amp;act=del&amp;id=<?=$i?>" usepost></a>
 					</td>
 				</tr>
 <?php
@@ -1956,7 +1956,7 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 </div>
 
 <nav class="action-buttons">
-	<a href="services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>" class="btn btn-success">
+	<a href="services_dhcp_edit.php?if=<?=htmlspecialchars(urlencode($if))?>" class="btn btn-success">
 		<i class="fa-solid fa-plus icon-embed-btn"></i>
 		<?=gettext('Add Static Mapping')?>
 	</a>

@@ -84,38 +84,38 @@ if (!function_exists('printPanel')) {
 						$evenRowClass = $rowIndex % 2 ? " listMReven" : " listMRodd";
 						$rowIndex++;
 
-		$opstring .=				"<tr name=\"" . "r:" . $server['mgmt'] . ":" . $conn['remote_host'] . "\" class=\"" . $evenRowClass . "\">";
+		$opstring .=				"<tr name=\"" . htmlspecialchars("r:" . $server['mgmt'] . ":" . $conn['remote_host']) . "\" class=\"" . $evenRowClass . "\">";
 		$opstring .=					"<td>";
-		$opstring .=						$conn['common_name'];
+		$opstring .=						htmlspecialchars($conn['common_name']);
 		$opstring .=					"</td>";
 		$opstring .=					"<td>";
-		$opstring .=						$conn['remote_host'];
+		$opstring .=						htmlspecialchars($conn['remote_host']);
 		$opstring .=					"</td>";
 		$opstring .=					"<td>";
 		$opstring .=						"<i class=\"fa-solid fa-times\" ";
-		$opstring .=							"onclick=\"killClient('" . $server['mgmt'] . "', '" . $conn['remote_host'] . "', '');\" ";
+		$opstring .=							"onclick='killClient(" . json_encode(htmlspecialchars($server['mgmt'])) . ", " . json_encode(htmlspecialchars($conn['remote_host'])) . ", \"\");' ";
 		$opstring .=							"style=\"cursor:pointer;\" ";
-		$opstring .=							"name=\"" . "i:" . $server['mgmt'] . ":" . $conn['remote_host'] . "\" ";
-		$opstring .=							"title=\"" . sprintf(gettext('Kill client connection from %s'), $conn['remote_host']) . "\">";
+		$opstring .=							"name=\"" . htmlspecialchars("i:" . $server['mgmt'] . ":" . $conn['remote_host']) . "\" ";
+		$opstring .=							"title=\"" . sprintf(gettext('Kill client connection from %s'), htmlspecialchars($conn['remote_host'])) . "\">";
 		$opstring .=						"</i>&nbsp;";
 		$opstring .=						"<i class=\"fa-solid fa-times-circle text-danger\" ";
-		$opstring .=							"onclick=\"killClient('" . $server['mgmt'] . "', '" . $conn['remote_host'] . "', '" . $conn['client_id'] . "');\" ";
+		$opstring .=							"onclick='killClient(" . json_encode(htmlspecialchars($server['mgmt'])) . ", " . json_encode(htmlspecialchars($conn['remote_host'])) . ", " . json_encode(htmlspecialchars($conn['client_id'])) . ");' ";
 		$opstring .=							"style=\"cursor:pointer;\" ";
-		$opstring .=							"name=\"" . "i:" . $server['mgmt'] . ":" . $conn['remote_host'] . "\" ";
-		$opstring .=							"title=\"" . sprintf(gettext('Halt client connection from %s'), $conn['remote_host']) . "\">";
+		$opstring .=							"name=\"" . htmlspecialchars("i:" . $server['mgmt'] . ":" . $conn['remote_host']) . "\" ";
+		$opstring .=							"title=\"" . sprintf(gettext('Halt client connection from %s'), htmlspecialchars($conn['remote_host'])) . "\">";
 		$opstring .=						"</i>";
 		$opstring .=					"</td>";
 		$opstring .=				"</tr>";
-		$opstring .=				"<tr name=\"" . "r:" . $server['mgmt'] . ":" . $conn['remote_host'] . "\" class=\"" . $evenRowClass . "\">";
+		$opstring .=				"<tr name=\"" . htmlspecialchars("r:" . $server['mgmt'] . ":" . $conn['remote_host']) . "\" class=\"" . $evenRowClass . "\">";
 		$opstring .=					"<td>";
-		$opstring .=						$conn['connect_time'];
+		$opstring .=						htmlspecialchars($conn['connect_time']);
 		$opstring .=					"</td>";
 		$opstring .=					"<td>";
-		$opstring .=						$conn['virtual_addr'];
+		$opstring .=						htmlspecialchars($conn['virtual_addr']);
 		if (!empty($conn['virtual_addr']) && !empty($conn['virtual_addr6'])) {
 			$opstring .=						"<br />";
 		}
-		$opstring .=						$conn['virtual_addr6'];
+		$opstring .=						htmlspecialchars($conn['virtual_addr6']);
 		$opstring .=					"</td>";
 		$opstring .=					"<td></td>";
 		$opstring .=				"</tr>";
@@ -163,12 +163,12 @@ if (!function_exists('printPanel')) {
 							continue;
 						}
 
-		$opstring .=				"<tr name=\"r:" . $sk_server['port'] . ":" . $sk_server['remote_host'] . "\">";
+		$opstring .=				"<tr name=\"" . htmlspecialchars("r:" . $sk_server['port'] . ":" . $sk_server['remote_host']) . "\">";
 		$opstring .=					"<td>";
 		$opstring .=						htmlspecialchars($sk_server['name']);
 		$opstring .=					"</td>";
 		$opstring .=					"<td>";
-		$opstring .=						$sk_server['remote_host'];
+		$opstring .=						htmlspecialchars($sk_server['remote_host']);
 		$opstring .=					"</td>";
 		$opstring .=					"<td>";
 
@@ -182,16 +182,16 @@ if (!function_exists('printPanel')) {
 
 		$opstring .=					"</td>";
 		$opstring .=				"</tr>";
-		$opstring .=				"<tr name=\"r:" . $sk_server['port'] . ":" . $sk_server['remote_host'] . "\">";
+		$opstring .=				"<tr name=\"" . htmlspecialchars("r:" . $sk_server['port'] . ":" . $sk_server['remote_host']) . "\">";
 		$opstring .=					"<td>";
-		$opstring .=						$sk_server['connect_time'];
+		$opstring .=						htmlspecialchars($sk_server['connect_time']);
 		$opstring .=					"</td>";
 		$opstring .=					"<td>";
-		$opstring .=						$sk_server['virtual_addr'];
+		$opstring .=						htmlspecialchars($sk_server['virtual_addr']);
 		if (!empty($sk_server['virtual_addr']) && !empty($sk_server['virtual_addr6'])) {
 			$opstring .=						"<br />";
 		}
-		$opstring .=						$sk_server['virtual_addr6'];
+		$opstring .=						htmlspecialchars($sk_server['virtual_addr6']);
 		$opstring .=					"</td>";
 		$opstring .=					"<td></td>";
 		$opstring .=				"</tr>";
@@ -240,12 +240,12 @@ if (!function_exists('printPanel')) {
 							continue;
 						}
 
-		$opstring .=				"<tr name=\"r:" . $client['port'] . ":" . $client['remote_host'] . "\">";
+		$opstring .=				"<tr name=\"" . htmlspecialchars("r:" . $client['port'] . ":" . $client['remote_host']) . "\">";
 		$opstring .=					"<td>";
 		$opstring .=						htmlspecialchars($client['name']);
 		$opstring .=					"</td>";
 		$opstring .=					"<td>";
-		$opstring .=						$client['remote_host'];
+		$opstring .=						htmlspecialchars($client['remote_host']);
 		$opstring .=					"</td>";
 		$opstring .=					"<td>";
 
@@ -259,16 +259,16 @@ if (!function_exists('printPanel')) {
 
 		$opstring .=					"</td>";
 		$opstring .=				"</tr>";
-		$opstring .=				"<tr name=\"r:" . $client['port'] . ":" . $client['remote_host'] . "\">";
+		$opstring .=				"<tr name=\"" . htmlspecialchars("r:" . $client['port'] . ":" . $client['remote_host']) . "\">";
 		$opstring .=					"<td>";
-		$opstring .=						$client['connect_time'];
+		$opstring .=						htmlspecialchars($client['connect_time']);
 		$opstring .=					"</td>";
 		$opstring .=					"<td>";
-		$opstring .=						$client['virtual_addr'];
+		$opstring .=						htmlspecialchars($client['virtual_addr']);
 		if (!empty($client['virtual_addr']) && !empty($client['virtual_addr6'])) {
 			$opstring .=						"<br />";
 		}
-		$opstring .=						$client['virtual_addr6'];
+		$opstring .=						htmlspecialchars($client['virtual_addr6']);
 		$opstring .=					"</td>";
 		$opstring .=					"<td></td>";
 		$opstring .=				"</tr>";
@@ -403,7 +403,7 @@ $widgetkey_nodash = str_replace("-", "", $widgetkey);
 ?>
 						<tr>
 							<td><?=htmlspecialchars($server['name'])?></td>
-							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=$server['vpnid']?>" type="checkbox" <?=(!in_array($server['vpnid'], $skipovpns) ? 'checked':'')?>></td>
+							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=htmlspecialchars($server['vpnid'])?>" type="checkbox" <?=(!in_array($server['vpnid'], $skipovpns) ? 'checked':'')?>></td>
 						</tr>
 <?php
 				endforeach;
@@ -411,7 +411,7 @@ $widgetkey_nodash = str_replace("-", "", $widgetkey);
 ?>
 						<tr>
 							<td><?=htmlspecialchars($sk_server['name'])?></td>
-							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=$sk_server['vpnid']?>" type="checkbox" <?=(!in_array($sk_server['vpnid'], $skipovpns) ? 'checked':'')?>></td>
+							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=htmlspecialchars($sk_server['vpnid'])?>" type="checkbox" <?=(!in_array($sk_server['vpnid'], $skipovpns) ? 'checked':'')?>></td>
 						</tr>
 <?php
 				endforeach;
@@ -419,7 +419,7 @@ $widgetkey_nodash = str_replace("-", "", $widgetkey);
 ?>
 						<tr>
 							<td><?=htmlspecialchars($client['name'])?></td>
-							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=$client['vpnid']?>" type="checkbox" <?=(!in_array($client['vpnid'], $skipovpns) ? 'checked':'')?>></td>
+							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=htmlspecialchars($client['vpnid'])?>" type="checkbox" <?=(!in_array($client['vpnid'], $skipovpns) ? 'checked':'')?>></td>
 						</tr>
 <?php
 				endforeach;

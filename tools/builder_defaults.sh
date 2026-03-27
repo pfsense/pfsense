@@ -55,9 +55,9 @@ fi
 
 # Define pfSense versions
 PKG_REPO_BRANCH_DEVEL="devel"
-#PKG_REPO_BRANCH_NEXT="v2_7_0"
-PKG_REPO_BRANCH_RELEASE="v2_6_0"
-PKG_REPO_BRANCH_PREVIOUS="v2_5_2"
+#PKG_REPO_BRANCH_NEXT="v2_7_3"
+PKG_REPO_BRANCH_RELEASE=${PKG_REPO_BRANCH_RELEASE:-"v2_7_2"}
+PKG_REPO_BRANCH_PREVIOUS=${PKG_REPO_BRANCH_PREVIOUS:-"v2_7_1"}
 
 # Make sure pkg will not be interactive
 export ASSUME_ALWAYS_YES=true
@@ -81,6 +81,7 @@ export PRODUCT_URL=${PRODUCT_URL:-""}
 export PRODUCT_SRC=${PRODUCT_SRC:-"${BUILDER_ROOT}/src"}
 export PRODUCT_EMAIL=${PRODUCT_EMAIL:-"coreteam@pfsense.org"}
 export XML_ROOTOBJ=${XML_ROOTOBJ:-$(echo "${PRODUCT_NAME}" | tr '[[:upper:]]' '[[:lower:]]')}
+export MIRROR_TYPE=${MIRROR_TYPE:-"srv"}
 
 if [ "${PRODUCT_NAME}" = "pfSense" -a "${BUILD_AUTHORIZED_BY_NETGATE}" != "yes" ]; then
 	echo ">>>ERROR: According the following license, only Netgate can build genuine pfSense® software"
@@ -130,8 +131,11 @@ case "${FREEBSD_REPO_BASE}" in
 		;;
 esac
 
+# PARALLEL_JOBS when building jails: use ncpu / 4 by default for best performance
+export PARALLEL_JOBS=${PARALLEL_JOBS:-$(( $(sysctl -qn hw.ncpu) / 4 ))}
+
 # Leave this alone.
-export SRCCONF=${SRCCONF:-"${FREEBSD_SRC_DIR}/release/conf/${PRODUCT_NAME}_src.conf"}
+export SRCCONF=${SRCCONF:-"${FREEBSD_SRC_DIR}/release/conf/${PRODUCT_NAME}_build_src.conf"}
 export SRC_ENV_CONF=${SRC_CONF:-"${FREEBSD_SRC_DIR}/release/conf/${PRODUCT_NAME}_src-env.conf"}
 export __MAKE_CONF=${__MAKE_CONF:-"${FREEBSD_SRC_DIR}/release/conf/${PRODUCT_NAME}_make.conf"}
 
@@ -320,8 +324,9 @@ export CORE_PKG_REAL_PATH="${CORE_PKG_PATH}/.real_${DATESTRING}"
 export CORE_PKG_ALL_PATH="${CORE_PKG_PATH}/All"
 
 export PKG_REPO_BASE=${PKG_REPO_BASE:-"${BUILDER_TOOLS}/templates/pkg_repos"}
-export PFSENSE_DEFAULT_REPO="${PRODUCT_NAME}-repo-devel"
+export PFSENSE_DEFAULT_REPO=${PFSENSE_DEFAULT_REPO:-"${PRODUCT_NAME}-repo"}
 export PKG_REPO_DEFAULT=${PKG_REPO_DEFAULT:-"${PKG_REPO_BASE}/${PFSENSE_DEFAULT_REPO}.conf"}
+export POUDRIERE_PFSENSE_SRC_REPO=${POUDRIERE_PFSENSE_SRC_REPO:-$(echo "${PRODUCT_NAME}" | tr '[[:upper:]]' '[[:lower:]]')}
 export PFSENSE_BUILD_REPO="${PFSENSE_DEFAULT_REPO}"
 export PKG_REPO_BUILD=${PKG_REPO_BUILD:-"${PKG_REPO_BASE}/${PFSENSE_BUILD_REPO}.conf"}
 export PKG_REPO_PATH=${PKG_REPO_PATH:-"/usr/local/etc/pkg/repos/${PRODUCT_NAME}.conf"}

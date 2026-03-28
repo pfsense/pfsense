@@ -479,6 +479,16 @@ input, select, textarea {
     color: #212121;
 }
 
+table>tbody>tr>td>input {
+    color: #009688;
+    background-color: transparent;
+}
+
+#newsep {
+    color: #212121;
+    background-color: #ffffff;
+}
+
 /* tree css */
 ul.tree li A:link, ul.tree li A:hover, ul.tree li A:visited {
     color : #ffffff;

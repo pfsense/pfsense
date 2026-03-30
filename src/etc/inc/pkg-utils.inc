@@ -332,6 +332,20 @@ function get_package_internal_name($package_data) {
 	}
 }
 
+function pkg_parse_json_output($raw) {
+	// New format: one JSON array object
+	$decoded = json_decode($raw, true);
+	if (is_array($decoded) && array_is_list($decoded)) {
+		return $decoded;
+	}
+
+	// Old format: one JSON object per line (NDJSON)
+	return array_filter(array_map(
+		fn($line) => json_decode($line, true),
+		explode("\n", chop($raw))
+	));
+}
+
 // Get information about packages.
 function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false,
     $installed_pkgs_only = false) {
@@ -405,10 +419,7 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false,
 		    "{$extra_param}-R --raw-format json-compact " .
 		    $pkgs, $search_out, $search_err);
 		if ($search_rc == 0) {
-			$search_items = explode("\n", chop($search_out));
-			array_walk($search_items, function(&$v, &$k) {
-				$v = json_decode($v, true);
-			});
+			$search_items = pkg_parse_json_output($search_out);
 		}
 	}
 
@@ -423,10 +434,7 @@ function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false,
 		$info_rc = pkg_exec("info -R --raw-format json-compact " .
 		    $pkgs, $info_out, $info_err);
 		if ($info_rc == 0) {
-			$info_items = explode("\n", chop($info_out));
-			array_walk($info_items, function(&$v, &$k) {
-				$v = json_decode($v, true);
-			});
+			$info_items = pkg_parse_json_output($info_out);
 		}
 	}
 

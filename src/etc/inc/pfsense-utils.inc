@@ -1801,18 +1801,18 @@ function get_interface_info($ifdescr) {
 		}
 		$matches = "";
 		foreach ($ifconfiginfo as $ici) {
-
+			$ici = ltrim($ici);
 			/* don't list media/speed for wireless cards, as it always
 			   displays 2 Mbps even though clients can connect at 11 Mbps */
-			if (preg_match("/media: .*? \((.*?)\)/", $ici, $matches)) {
+			if (preg_match("/^media: .*? \((.*?)\)/", $ici, $matches)) {
 				$ifinfo['media'] = $matches[1];
-			} else if (preg_match("/media: Ethernet (.*)/", $ici, $matches)) {
+			} else if (preg_match("/^media: Ethernet (.*)/", $ici, $matches)) {
 				$ifinfo['media'] = $matches[1];
-			} else if (preg_match("/media: IEEE 802.11 Wireless Ethernet (.*)/", $ici, $matches)) {
+			} else if (preg_match("/^media: IEEE 802.11 Wireless Ethernet (.*)/", $ici, $matches)) {
 				$ifinfo['media'] = $matches[1];
 			}
 
-			if (preg_match("/status: (.*)$/", $ici, $matches)) {
+			if (preg_match("/^status: (.*)$/", $ici, $matches)) {
 				if ($matches[1] != "active") {
 					$ifinfo['status'] = $matches[1];
 				}
@@ -1820,10 +1820,10 @@ function get_interface_info($ifdescr) {
 					$ifinfo['status'] = gettext("up");
 				}
 			}
-			if (preg_match("/channel (\S*)/", $ici, $matches)) {
+			if (preg_match("/^channel (\S*)/", $ici, $matches)) {
 				$ifinfo['channel'] = $matches[1];
 			}
-			if (preg_match("/ssid (\".*?\"|\S*)/", $ici, $matches)) {
+			if (preg_match("/^ssid (\".*?\"|\S*)/", $ici, $matches)) {
 				if ($matches[1][0] == '"') {
 					$ifinfo['ssid'] = substr($matches[1], 1, -1);
 				}
@@ -1831,23 +1831,23 @@ function get_interface_info($ifdescr) {
 					$ifinfo['ssid'] = $matches[1];
 				}
 			}
-			if (preg_match("/laggproto (.*)$/", $ici, $matches)) {
+			if (preg_match("/^laggproto (.*)$/", $ici, $matches)) {
 				$ifinfo['laggproto'] = $matches[1];
 			}
-			if (preg_match("/laggport: (.*)$/", $ici, $matches)) {
+			if (preg_match("/^laggport: (.*)$/", $ici, $matches)) {
 				$ifinfo['laggport'][] = $matches[1];
 			}
-			if (preg_match("/plugged: (.*)$/", $ici, $matches)) {
+			if (preg_match("/^plugged: (.*)$/", $ici, $matches)) {
 				$ifinfo['plugged'] = $matches[1];
 			}
-			if (preg_match("/vendor: (.*)$/", $ici, $matches)) {
+			if (preg_match("/^vendor: (.*)$/", $ici, $matches)) {
 				$ifinfo['vendor'] = $matches[1];
 			}
-			if (preg_match("/module temperature: (.*) voltage: (.*)$/", $ici, $matches)) {
+			if (preg_match("/^module temperature: (.*) voltage: (.*)$/", $ici, $matches)) {
 				$ifinfo['temperature'] = $matches[1];
 				$ifinfo['voltage'] = $matches[2];
 			}
-			if (preg_match("/RX power: (.*) TX bias: (.*)$/", $ici, $matches)) {
+			if (preg_match("/\bRX power: (.*) TX bias: (.*)$/", $ici, $matches)) {
 				$ifinfo['rx'] = $matches[1];
 				$ifinfo['tx'] = $matches[2];
 			}

@@ -169,7 +169,7 @@ if ($user_settings['widgets'][$widgetkey]['rssfeed']) {
 ?>
 	<a href="<?=$item->get_permalink()?>" target="_blank" class="list-group-item">
 		<h4 class="list-group-item-heading">
-			<?=$item->get_title()?>
+			<?=htmlspecialchars(strip_tags($item->get_title()))?>
 		</h4>
 		<p class="list-group-item-text">
 			<?=textLimit($content, $rsswidgettextlength)?>

@@ -85,13 +85,6 @@ core_pkg_create() {
 
 	local _template_path=${BUILDER_TOOLS}/templates/core_pkg/${_template}
 
-	# Use default pkg repo to obtain ABI and ALTABI
-	local _abi=$(sed -e "s/%%ARCH%%/${TARGET_ARCH}/g" \
-	    ${PKG_REPO_DEFAULT%%.conf}.abi)
-	local _altabi_arch=$(get_altabi_arch ${TARGET_ARCH})
-	local _altabi=$(sed -e "s/%%ARCH%%/${_altabi_arch}/g" \
-	    ${PKG_REPO_DEFAULT%%.conf}.altabi)
-
 	${BUILDER_SCRIPTS}/create_core_pkg.sh \
 		-t "${_template_path}" \
 		-f "${_flavor}" \
@@ -100,8 +93,6 @@ core_pkg_create() {
 		-s "${_findroot}" \
 		-F "${_filter}" \
 		-d "${CORE_PKG_REAL_PATH}/All" \
-		-a "${_abi}" \
-		-A "${_altabi}" \
 		|| print_error_pfS
 }
 
@@ -174,13 +165,13 @@ build_all_kernels() {
 
 		ensure_kernel_exists $KERNEL_DESTDIR
 
-		echo ">>> Creating pkg of $KERNEL_NAME-debug kernel to staging area..."  | tee -a ${LOGFILE}
-		core_pkg_create kernel-debug ${KERNEL_NAME} ${CORE_PKG_VERSION} ${KERNEL_DESTDIR} \
+		echo ">>> Creating pkg of $KERNEL_NAME-symbols kernel to staging area..."  | tee -a ${LOGFILE}
+		core_pkg_create kernel-symbols ${KERNEL_NAME} ${CORE_PKG_VERSION} ${KERNEL_DESTDIR} \
 		    "./usr/lib/debug/boot" \*.debug
 		rm -rf ${KERNEL_DESTDIR}/usr
 
 		echo ">>> Creating pkg of $KERNEL_NAME kernel to staging area..."  | tee -a ${LOGFILE}
-		core_pkg_create kernel ${KERNEL_NAME} ${CORE_PKG_VERSION} ${KERNEL_DESTDIR} "./boot/kernel ./boot/modules"
+		core_pkg_create kernel ${KERNEL_NAME} ${CORE_PKG_VERSION} ${KERNEL_DESTDIR} "./boot/kernel"
 
 		rm -rf $KERNEL_DESTDIR 2>&1 1>/dev/null
 	done
@@ -198,7 +189,7 @@ install_default_kernel() {
 
 	# Copy kernel package to chroot, otherwise pkg won't find it to install
 	if ! pkg_chroot_add ${FINAL_CHROOT_DIR} kernel-${KERNEL_NAME}; then
-		echo ">>> ERROR: Error installing kernel package $(get_pkg_name kernel-${KERNEL_NAME}).txz" | tee -a ${LOGFILE}
+		echo ">>> ERROR: Error installing kernel package $(get_pkg_name kernel-${KERNEL_NAME}).pkg" | tee -a ${LOGFILE}
 		print_error_pfS
 	fi
 
@@ -211,10 +202,10 @@ install_default_kernel() {
 	fi
 	mkdir -p $FINAL_CHROOT_DIR/pkgs
 	if [ -z "${2}" -o -n "${INSTALL_EXTRA_KERNELS}" ]; then
-		cp ${CORE_PKG_ALL_PATH}/$(get_pkg_name kernel-${KERNEL_NAME}).txz $FINAL_CHROOT_DIR/pkgs
+		cp ${CORE_PKG_ALL_PATH}/$(get_pkg_name kernel-${KERNEL_NAME}).pkg $FINAL_CHROOT_DIR/pkgs
 		if [ -n "${INSTALL_EXTRA_KERNELS}" ]; then
 			for _EXTRA_KERNEL in $INSTALL_EXTRA_KERNELS; do
-				_EXTRA_KERNEL_PATH=${CORE_PKG_ALL_PATH}/$(get_pkg_name kernel-${_EXTRA_KERNEL}).txz
+				_EXTRA_KERNEL_PATH=${CORE_PKG_ALL_PATH}/$(get_pkg_name kernel-${_EXTRA_KERNEL}).pkg
 				if [ -f "${_EXTRA_KERNEL_PATH}" ]; then
 					echo -n ". adding ${_EXTRA_KERNEL_PATH} on image /pkgs folder"
 					cp ${_EXTRA_KERNEL_PATH} $FINAL_CHROOT_DIR/pkgs
@@ -573,26 +564,8 @@ clone_directory_contents() {
 
 clone_to_staging_area() {
 	# Clone everything to the final staging area
-	echo -n ">>> Cloning everything to ${STAGE_CHROOT_DIR} staging area..."
+	echo ">>> Cloning everything to ${STAGE_CHROOT_DIR} staging area..."
 	LOGFILE=${BUILDER_LOGS}/cloning.${TARGET}.log
-
-	tar -C ${PRODUCT_SRC} -c -f - . | \
-		tar -C ${STAGE_CHROOT_DIR} -x -p -f -
-
-	mkdir -p ${STAGE_CHROOT_DIR}/etc/mtree
-	mtree -Pcp ${STAGE_CHROOT_DIR}/var > ${STAGE_CHROOT_DIR}/etc/mtree/var.dist
-	mtree -Pcp ${STAGE_CHROOT_DIR}/etc > ${STAGE_CHROOT_DIR}/etc/mtree/etc.dist
-	if [ -d ${STAGE_CHROOT_DIR}/usr/local/etc ]; then
-		mtree -Pcp ${STAGE_CHROOT_DIR}/usr/local/etc > ${STAGE_CHROOT_DIR}/etc/mtree/localetc.dist
-	fi
-
-	## Add buildtime and lastcommit information
-	# This is used for detecting updates.
-	echo "$BUILTDATESTRING" > $STAGE_CHROOT_DIR/etc/version.buildtime
-	# Record last commit info if it is available.
-	if [ -f $SCRATCHDIR/build_commit_info.txt ]; then
-		cp $SCRATCHDIR/build_commit_info.txt $STAGE_CHROOT_DIR/etc/version.lastcommit
-	fi
 
 	local _exclude_files="${SCRATCHDIR}/base_exclude_files"
 	sed \
@@ -602,6 +575,9 @@ clone_to_staging_area() {
 		> ${_exclude_files}
 
 	mkdir -p ${STAGE_CHROOT_DIR}${PRODUCT_SHARE_DIR} >/dev/null 2>&1
+
+        # Copy signing keys
+	cp -r ${PRODUCT_SRC}${PRODUCT_SHARE_DIR}/keys ${STAGE_CHROOT_DIR}${PRODUCT_SHARE_DIR}/keys
 
 	# Include a sample pkg stable conf to base
 	setup_pkg_repo \
@@ -622,39 +598,8 @@ clone_to_staging_area() {
 		-X ${_exclude_files} \
 		.
 
-	core_pkg_create rc "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
+	core_pkg_create boot "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR} "./boot"
 	core_pkg_create base "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
-	core_pkg_create default-config "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
-
-	local DEFAULTCONF=${STAGE_CHROOT_DIR}/conf.default/config.xml
-
-	# Save current WAN and LAN if value
-	local _old_wan_if=$(xml sel -t -v "${XML_ROOTOBJ}/interfaces/wan/if" ${DEFAULTCONF})
-	local _old_lan_if=$(xml sel -t -v "${XML_ROOTOBJ}/interfaces/lan/if" ${DEFAULTCONF})
-
-	# Change default interface names to match vmware driver
-	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/wan/if" -v "vmx0" ${DEFAULTCONF}
-	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/lan/if" -v "vmx1" ${DEFAULTCONF}
-	core_pkg_create default-config "vmware" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
-
-	# Restore default values to be used by serial package
-	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/wan/if" -v "${_old_wan_if}" ${DEFAULTCONF}
-	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/lan/if" -v "${_old_lan_if}" ${DEFAULTCONF}
-
-	# Activate serial console in config.xml
-	xml ed -L -P -d "${XML_ROOTOBJ}/system/enableserial" ${DEFAULTCONF}
-	xml ed -P -s "${XML_ROOTOBJ}/system" -t elem -n "enableserial" \
-		${DEFAULTCONF} > ${DEFAULTCONF}.tmp
-	xml fo -t ${DEFAULTCONF}.tmp > ${DEFAULTCONF}
-	rm -f ${DEFAULTCONF}.tmp
-
-	echo force > ${STAGE_CHROOT_DIR}/cf/conf/enableserial_force
-
-	core_pkg_create default-config-serial "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
-	core_pkg_create default-config "bhyve" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
-
-	rm -f ${STAGE_CHROOT_DIR}/cf/conf/enableserial_force
-	rm -f ${STAGE_CHROOT_DIR}/cf/conf/config.xml
 
 	# Make sure pkg is present
 	pkg_bootstrap ${STAGE_CHROOT_DIR}
@@ -714,39 +659,12 @@ customize_stagearea_for_image() {
 	# Prepare final stage area
 	create_final_staging_area
 
-	pkg_chroot_add ${FINAL_CHROOT_DIR} rc
+	pkg_chroot_add ${FINAL_CHROOT_DIR} boot
 	pkg_chroot_add ${FINAL_CHROOT_DIR} base
 
-	# Set base/rc pkgs as vital to avoid user end up removing it for any reason
-	pkg_chroot ${FINAL_CHROOT_DIR} set -v 1 -y $(get_pkg_name rc)
+	# Set base/boot pkgs as vital to avoid user end up removing it for any reason
+	pkg_chroot ${FINAL_CHROOT_DIR} set -v 1 -y $(get_pkg_name boot)
 	pkg_chroot ${FINAL_CHROOT_DIR} set -v 1 -y $(get_pkg_name base)
-
-	if [ "${_image_type}" = "iso" -o \
-	     "${_image_type}" = "memstick" -o \
-	     "${_image_type}" = "memstickserial" -o \
-	     "${_image_type}" = "memstickadi" ]; then
-		mkdir -p ${FINAL_CHROOT_DIR}/pkgs
-		cp ${CORE_PKG_ALL_PATH}/*default-config*.txz ${FINAL_CHROOT_DIR}/pkgs
-	fi
-
-	pkg_chroot_add ${FINAL_CHROOT_DIR} ${_default_config}
-
-	# XXX: Workaround to avoid pkg to complain regarding release
-	#      repo on first boot since packages are installed from
-	#      staging server during build phase
-	if [ -n "${USE_PKG_REPO_STAGING}" ]; then
-		_read_cmd="select value from repodata where key='packagesite'"
-		if [ -n "${_IS_RELEASE}" -o -n "${_IS_RC}" ]; then
-			local _tgt_server="${PKG_REPO_SERVER_RELEASE}"
-		else
-			local _tgt_server="${PKG_REPO_SERVER_DEVEL}"
-		fi
-		for _db in ${FINAL_CHROOT_DIR}/var/db/pkg/repo-*sqlite; do
-			_cur=$(/usr/local/bin/sqlite3 ${_db} "${_read_cmd}")
-			_new=$(echo "${_cur}" | sed -e "s,^${PKG_REPO_SERVER_STAGING},${_tgt_server},")
-			/usr/local/bin/sqlite3 ${_db} "update repodata set value='${_new}' where key='packagesite'"
-		done
-	fi
 
 	if [ -n "$_image_variant" -a \
 	    -d ${BUILDER_TOOLS}/templates/custom_logos/${_image_variant} ]; then
@@ -1008,7 +926,6 @@ setup_pkg_repo() {
 	local _target_arch="${4}"
 	local _staging="${5}"
 	local _pkg_conf="${6}"
-	local _mirror_type="srv"
 	local _signature_type="fingerprints"
 
 	if [ -z "${_template}" -o ! -f "${_template}" ]; then
@@ -1032,7 +949,9 @@ setup_pkg_repo() {
 
 	sed \
 		-e "s/%%ARCH%%/${_target_arch}/" \
-		-e "s/%%MIRROR_TYPE%%/${_mirror_type}/" \
+		-e "s/%%OSVERSION%%/${GIT_REPO_BRANCH_OR_TAG}/" \
+		-e "s/%%VERSION%%/${POUDRIERE_PORTS_BRANCH}/" \
+		-e "s/%%MIRROR_TYPE%%/${MIRROR_TYPE}/" \
 		-e "s/%%PKG_REPO_BRANCH_DEVEL%%/${_pkg_repo_branch_devel}/g" \
 		-e "s/%%PKG_REPO_BRANCH_RELEASE%%/${_pkg_repo_branch_release}/g" \
 		-e "s,%%PKG_REPO_SERVER_DEVEL%%,${_pkg_repo_server_devel},g" \
@@ -1184,7 +1103,7 @@ pkg_chroot_add() {
 	fi
 
 	local _target="${1}"
-	local _pkg="$(get_pkg_name ${2}).txz"
+	local _pkg="$(get_pkg_name ${2}).pkg"
 
 	if [ ! -d "${_target}" ]; then
 		echo ">>> ERROR: Target dir ${_target} not found"
@@ -1240,6 +1159,7 @@ install_pkg_install_ports() {
 		echo "Failed!"
 		print_error_pfS
 	fi
+	pkg_chroot ${STAGE_CHROOT_DIR} install "${PRODUCT_NAME}-default-config"
 	# Make sure required packages are set as non-automatic
 	pkg_chroot ${STAGE_CHROOT_DIR} set -A 0 pkg ${MAIN_PKG} ${custom_package_list}
 	# pkg and MAIN_PKG are vital
@@ -1568,7 +1488,13 @@ poudriere_rename_ports() {
 
 		cp -r ${d} ${_pdir}/${_pname}
 
-		if [ -f ${_pdir}/${_pname}/pkg-plist ]; then
+		# Composer module is special
+		if echo "${_pname}" | grep -q "composer"; then
+			sed -i '' -e "s,pfSense-composer-deps,${PRODUCT_NAME}-composer-deps,g" \
+			${_pdir}/${_pname}/Makefile ${_pdescr} ${_plist}
+			continue
+		fi
+		if [ -f ${_pdir}/${_pname}/pkg-plist ] && [ "${_pname}" != "${PRODUCT_NAME}" ]; then
 			_plist=${_pdir}/${_pname}/pkg-plist
 		fi
 
@@ -1576,6 +1502,12 @@ poudriere_rename_ports() {
 			_pdescr=${_pdir}/${_pname}/pkg-descr
 		fi
 
+		# main package is special
+		if [ "${_pname}" == "${PRODUCT_NAME}" ]; then
+			sed -i '' -e "s,pfSense-devd,${PRODUCT_NAME}-devd,g" \
+				  -e "s,pfSense-ddb,${PRODUCT_NAME}-ddb,g" \
+				${_pdir}/${_pname}/pkg-plist
+		fi
 		sed -i '' -e "s,pfSense,${PRODUCT_NAME},g" \
 			  -e "s,https://www.pfsense.org,${PRODUCT_URL},g" \
 			  -e "/^MAINTAINER=/ s,^.*$,MAINTAINER=	${PRODUCT_EMAIL}," \
@@ -1593,10 +1525,12 @@ poudriere_rename_ports() {
 			sed -i '' -e "s,COMPILE_DL_PFSENSE,COMPILE_DL_${_product_capital}," \
 				  -e "s,pfSense_module_entry,${PRODUCT_NAME}_module_entry,g" \
 				  -e "s,php_pfSense.h,php_${PRODUCT_NAME}\.h,g" \
+				  -e "s,pfSense_arginfo.h,${PRODUCT_NAME}_arginfo\.h,g" \
+				  -e "s,pfSense_private.h,${PRODUCT_NAME}_private\.h,g" \
 				  -e "/ZEND_GET_MODULE/ s,pfSense,${PRODUCT_NAME}," \
 				  -e "/PHP_PFSENSE_WORLD_EXTNAME/ s,pfSense,${PRODUCT_NAME}," \
 				${_pdir}/${_pname}/files/pfSense.c \
-				${_pdir}/${_pname}/files/dummynet.c \
+				${_pdir}/${_pname}/files/pfSense_private.h \
 				${_pdir}/${_pname}/files/php_pfSense.h
 		fi
 
@@ -1726,10 +1660,6 @@ poudriere_init() {
 		print_error_pfS
 	fi
 
-	# PARALLEL_JOBS us ncpu / 4 for best performance
-	local _parallel_jobs=$(sysctl -qn hw.ncpu)
-	_parallel_jobs=$((_parallel_jobs / 4))
-
 	echo ">>> Creating poudriere.conf" | tee -a ${LOGFILE}
 	cat <<EOF >/usr/local/etc/poudriere.conf
 ZPOOL=${ZFS_TANK}
@@ -1745,7 +1675,7 @@ CHECK_CHANGED_DEPS=yes
 ATOMIC_PACKAGE_REPOSITORY=yes
 COMMIT_PACKAGES_ON_FAILURE=no
 ALLOW_MAKE_JOBS=yes
-PARALLEL_JOBS=${_parallel_jobs}
+PARALLEL_JOBS=${PARALLEL_JOBS}
 EOF
 
 	if pkg info -e ccache; then
@@ -2036,8 +1966,12 @@ PKG_REPO_SERVER_DEVEL=${PKG_REPO_SERVER_DEVEL}
 PKG_REPO_SERVER_RELEASE=${PKG_REPO_SERVER_RELEASE}
 POUDRIERE_PORTS_NAME=${POUDRIERE_PORTS_NAME}
 PFSENSE_DEFAULT_REPO=${PFSENSE_DEFAULT_REPO}
+PFSENSE_SRC_REPO=${POUDRIERE_PFSENSE_SRC_REPO}
 PRODUCT_NAME=${PRODUCT_NAME}
 REPO_BRANCH_PREFIX=${REPO_PATH_PREFIX}
+PFSENSE_COMMITHASH=$(git -C ${BUILDER_ROOT} log -1 --format='%H')
+PFSENSE_DATESTRING=${DATESTRING}
+MIRROR_TYPE=${MIRROR_TYPE}
 EOF
 
 	local _value=""

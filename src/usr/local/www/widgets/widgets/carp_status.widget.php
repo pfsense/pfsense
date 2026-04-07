@@ -24,7 +24,6 @@
 
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
-require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/carp_status.inc");
 
 $carp_enabled = get_carp_status();

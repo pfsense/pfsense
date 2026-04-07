@@ -23,7 +23,6 @@
 
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
-require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/ntp_status.inc");
 
 // For this widget the update period is 6 x larger than most others. It typically defaults

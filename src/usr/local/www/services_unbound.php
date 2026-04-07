@@ -50,6 +50,7 @@ $pconfig['enable'] = config_path_enabled('unbound');
 $pconfig['enablessl'] = config_path_enabled('unbound', 'enablessl');
 $pconfig['strictout'] = config_path_enabled('unbound', 'strictout');
 $pconfig['dnssec'] = config_path_enabled('unbound', 'dnssec');
+$pconfig['respip'] = config_path_enabled('unbound', 'respip');
 $pconfig['python'] = config_path_enabled('unbound', 'python');
 $pconfig['forwarding'] = config_path_enabled('unbound', 'forwarding');
 $pconfig['forward_tls_upstream'] = config_path_enabled('unbound', 'forward_tls_upstream');
@@ -180,6 +181,7 @@ if ($_POST['save']) {
 		config_set_path('unbound/sslcertref', $pconfig['sslcertref']);
 		config_set_path('unbound/strictout', isset($pconfig['strictout']));
 		config_set_path('unbound/dnssec', isset($pconfig['dnssec']));
+		config_set_path('unbound/respip', isset($pconfig['respip']));
 
 		config_set_path('unbound/python', isset($pconfig['python']));
 		if (isset($pconfig['python'])) {
@@ -375,6 +377,13 @@ $section->addInput(new Form_Checkbox(
 	gettext('Enable DNSSEC Support'),
 	$pconfig['dnssec']
 ));
+
+$section->addInput(new Form_Checkbox(
+	'respip',
+	'RPZ Module',
+	'Enable RPZ Module',
+	$pconfig['respip']
+))->setHelp('Enable the respip Module providing support for <a target="_blank" href="https://unbound.docs.nlnetlabs.nl/en/latest/topics/filtering/rpz.html">Response Policy Zones</a>.');
 
 $section->addInput(new Form_Checkbox(
 	'python',

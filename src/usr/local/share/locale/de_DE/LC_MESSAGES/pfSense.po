@@ -10516,7 +10516,7 @@ msgstr "*Zielnetzwerk"
 
 #: src/usr/local/www/system_routes_edit.php:252
 msgid "Destination network for this static route"
-msgstr "Zielnetzwerk für diese statishe Route"
+msgstr "Zielnetzwerk für diese statische Route"
 
 #: src/usr/local/www/system_routes_edit.php:260
 msgid "*Gateway"
@@ -10831,7 +10831,7 @@ msgstr ""
 #: src/usr/local/www/services_ntpd_pps.php:204
 #: src/usr/local/www/services_ntpd_gps.php:497
 msgid "Flags"
-msgstr "Fahne"
+msgstr "Flags"
 
 #: src/usr/local/www/services_ntpd_pps.php:225
 #: src/usr/local/www/services_ntpd_gps.php:553

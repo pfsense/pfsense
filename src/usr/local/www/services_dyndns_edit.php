@@ -109,6 +109,8 @@ if ($_POST['save'] || $_POST['force']) {
 		"yandex" => array("apex" => false, "wildcard" => false, "username_none" => true),
 		"yandex-v6" => array("apex" => false, "wildcard" => false, "username_none" => true),
 		"dnsexit" => array("apex" => false, "wildcard" => false, "username_none" => true),
+		"duckdns" => array("apex" => false, "wildcard" => false, "username_none" => true),
+		"duckdns-v6" => array("apex" => false, "wildcard" => false, "username_none" => true),
 	);
 
 	if (isset($ddns_attr[$pconfig['type']]['username_none']) &&
@@ -409,6 +411,7 @@ $group->setHelp('Enter the complete fully qualified domain name. Example: myhost
 				'deSEC: Enter the FQDN.%1$s' .
 				'DNSimple: Enter only the domain name.%1$s' .
 				'DNS Made Easy: Dynamic DNS ID (NOT hostname)%1$s' .
+				'DuckDNS: Enter only the subdomain (the part before .duckdns.org).%1$s' .
 				'GleSYS: Enter the record ID.%1$s' .
 				'he.net tunnelbroker: Enter the tunnel ID.%1$s' .
 				'Cloudflare, ClouDNS, DigitalOcean, GoDaddy, GratisDNS, Hover, Linode, LuaDNS, Name.com, Namecheap, Porkbun: Enter the hostname and domain name separately.
@@ -475,6 +478,7 @@ $section->addInput(new Form_Input(
 			'DNSimple: User account ID (In the URL after the \'/a/\')%1$s' .
 			'Domeneshop: Enter the API token.%1$s' .
 			'Dreamhost: Enter a value to appear in the DNS record comment.%1$s' .
+			'DuckDNS: Username is not required.%1$s' .
 			'GleSYS: Enter the API user.%1$s' .
 			'Godaddy: Enter the API key.%1$s' .
 			'LuaDNS: Enter account email.%1$s' .
@@ -496,6 +500,7 @@ $section->addPassword(new Form_Input(
 			'DNS Made Easy: Dynamic DNS Password%1$s' .
 			'Domeneshop: Enter the API secret.%1$s' .
 			'Dreamhost: Enter the API Key.%1$s' .
+			'DuckDNS: Enter the token from the DuckDNS account page.%1$s' .
 			'FreeDNS (freedns.afraid.org): Enter the "Token" provided by FreeDNS. The token is after update.php? for API v1 or after  u/ for v2.%1$s' .
 			'Gandi LiveDNS: Enter PAT token%1$s' .
 			'GleSYS: Enter the API key.%1$s' .
@@ -667,6 +672,8 @@ events.push(function() {
 			case "domeneshop-v6":
 			case "dreamhost":
 			case "dreamhost-v6":
+			case "duckdns":
+			case "duckdns-v6":
 			case "dyfi":
 			case "nicru":
 			case "nicru-v6":

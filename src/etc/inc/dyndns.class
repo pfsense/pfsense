@@ -241,6 +241,7 @@
 			$this->_curlIpresolveV4 = match ($dnsService) {
 				'dnsimple-v6' => true,
 				'dreamhost-v6' => true,
+				'duckdns-v6' => true,
 				'duiadns-v6' => true,
 				'easydns-v6' => true,
 				'freedns-v6' => true,
@@ -297,6 +298,8 @@
 				break;
 			case 'desec':
 			case 'desec-v6':
+			case 'duckdns':
+			case 'duckdns-v6':
 				if (!$dnsPass) $this->_error(4);
 				if (!$dnsHost) $this->_error(5);
 				break;
@@ -362,6 +365,7 @@
 				case 'dnsimple-v6':
 				case 'domeneshop-v6':
 				case 'dreamhost-v6':
+				case 'duckdns-v6':
 				case 'duiadns-v6':
 				case 'dynv6-v6':
 				case 'easydns-v6':
@@ -481,6 +485,8 @@
 					case 'dnsomatic':
 					case 'domeneshop':
 					case 'domeneshop-v6':
+					case 'duckdns':
+					case 'duckdns-v6':
 					case 'duiadns':
 					case 'duiadns-v6':
 					case 'dyfi':
@@ -858,6 +864,14 @@
 				case 'dnsexit':
 					$needsIP = TRUE;
 					curl_setopt($ch, CURLOPT_URL, 'https://api.dnsexit.com/dns/ud/?apikey=' . $this->_dnsPass . '&host=' . $this->_dnsHost . '&ip=' . $this->_dnsIP);
+					break;
+				case 'duckdns':
+					$needsIP = TRUE;
+					curl_setopt($ch, CURLOPT_URL, 'https://www.duckdns.org/update?domains=' . $this->_dnsHost . '&token=' . $this->_dnsPass . '&ip=' . $this->_dnsIP);
+					break;
+				case 'duckdns-v6':
+					$needsIP = TRUE;
+					curl_setopt($ch, CURLOPT_URL, 'https://www.duckdns.org/update?domains=' . $this->_dnsHost . '&token=' . $this->_dnsPass . '&ipv6=' . $this->_dnsIP);
 					break;
 				case 'loopia':
 					$needsIP = TRUE;
@@ -2531,6 +2545,19 @@
 					} else if (preg_match("/Updated/i", $data)) {
 						$status = $status_intro . $success_str . gettext("IP Address Changed Successfully!");
 						$successful_update = true;
+					} else {
+						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
+						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " " . $data, LOG_PREFIX_DDNS);
+						$this->_debug($data);
+					}
+					break;
+				case 'duckdns':
+				case 'duckdns-v6':
+					if (preg_match("/^OK/i", trim($data))) {
+						$status = $status_intro . $success_str . gettext("IP Address Changed Successfully!");
+						$successful_update = true;
+					} else if (preg_match("/^KO/i", trim($data))) {
+						$status = $status_intro . $error_str . gettext("Update failed. Verify the hostname (subdomain) and token are correct.");
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
 						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " " . $data, LOG_PREFIX_DDNS);

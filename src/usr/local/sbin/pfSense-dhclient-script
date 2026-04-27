@@ -206,6 +206,15 @@ delete_old_routes() {
 		fi
 	fi
 
+	if [ -f "/tmp/${interface}_dhcp_server_route" ]; then
+		old_server=$(cat "/tmp/${interface}_dhcp_server_route")
+		if [ -n "$old_server" ]; then
+			$ROUTE delete -host "$old_server" >/dev/null 2>&1
+			_logger "LOG_NOTICE" "${ROUTE} delete -host \"${old_server}\""
+		fi
+		/bin/mv "/tmp/${interface}_dhcp_server_route" "/tmp/${interface}_dhcp_server_route.last"
+	fi
+
 	arp_flush
 }
 
@@ -280,6 +289,29 @@ add_new_routes() {
 			fi
 			shift; shift
 		done
+	fi
+
+	# Install a host route for the DHCP server identifier so that unicast DHCP renewals (T1) egress
+	# this interface rather than falling back to the system default route. Without this, in Multi-WAN
+	# setups where the DHCP server is not on a directly-connected subnet of this WAN, unicast
+	# renewals are sent out the default-WAN interface with this WAN's source IP, are silently dropped
+	# upstream, and the lease eventually expires.
+	if [ -n "$new_dhcp_server_identifier" ] && \
+		 [ -n "$new_routers" ] && \
+		 [ "$new_dhcp_server_identifier" != "$new_ip_address" ] && \
+		 [ "$new_dhcp_server_identifier" != "255.255.255.255" ]; then
+		set -- $new_routers
+		# Only a single router is used above
+		router="$1"
+		if [ -n "$router" ] && \
+			 [ "$router" != "0.0.0.0" ] && \
+			 [ "$router" != "255.255.255.255" ] && \
+			 [ "$router" != "$new_ip_address" ]; then
+			$ROUTE delete -host "$new_dhcp_server_identifier" >/dev/null 2>&1
+			$ROUTE add -host "$new_dhcp_server_identifier" "$router"
+			_logger "LOG_NOTICE" "${ROUTE} add -host \"${new_dhcp_server_identifier}\" \"${router}\""
+			echo "$new_dhcp_server_identifier" > "/tmp/${interface}_dhcp_server_route"
+		fi
 	fi
 }
 
@@ -399,7 +431,7 @@ TIMEOUT)
 	/bin/sleep 1
 	if [ -n "$new_routers" ]; then
 		_logger "LOG_NOTICE" "New Routers (${interface}): ${new_routers}"
-		set "$new_routers"
+		set -- $new_routers
 		if /sbin/ping -q -c 1 -t 1 "$1"; then
 			if [ "$new_ip_address" != "$alias_ip_address" ]; then
 				add_new_alias

@@ -277,6 +277,9 @@ if (($act == "edit") || ($act == "dup")) {
 		$pconfig['ping_action_seconds'] = $this_server_config['ping_action_seconds'];
 		$pconfig['ping_action_push'] = empty($this_server_config['ping_action_push']) ? '' : 'yes';
 		$pconfig['inactive_seconds'] = $this_server_config['inactive_seconds'] ?: 0;
+
+		$pconfig['mfa_enabled'] = $this_server_config['mfa_enabled'];
+		$pconfig['mfa_provider'] = $this_server_config['mfa_provider'];
 	}
 }
 
@@ -687,6 +690,17 @@ if ($_POST['save']) {
 	    !array_key_exists($pconfig['verbosity_level'], $openvpn_verbosity_level)) {
 		$input_errors[] = gettext("The selected Verbosity Level is not valid.");
 	}
+	if ($pconfig['mfa_enabled']) {
+		global $config;
+		if (empty($config['mfa_providers'])) {
+			$input_errors[] = gettext("Cannot enable MFA: No MFA provider packages are installed.");
+		} elseif (empty($pconfig['mfa_provider']) || !isset($config['mfa_providers'][$pconfig['mfa_provider']])) {
+			$input_errors[] = gettext("A valid MFA provider must be selected when MFA is enabled.");
+		}
+		if ($pconfig['mode'] != "server_user" && $pconfig['mode'] != "server_tls_user") {
+			$input_errors[] = gettext("MFA can only be enabled with 'Remote Access (User Auth)' or 'Remote Access (SSL/TLS + User Auth)' modes.");
+		}
+	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
@@ -855,6 +869,13 @@ if ($_POST['save']) {
 		$server['ping_action_seconds'] = $pconfig['ping_action_seconds'];
 		$server['ping_action_push'] = $pconfig['ping_action_push'];
 		$server['inactive_seconds'] = $pconfig['inactive_seconds'];
+
+		$server['mfa_enabled'] = $_POST['mfa_enabled'] ? 'yes' : 'no';
+        if ($_POST['mfa_enabled']) {
+        	$server['mfa_provider'] = $pconfig['mfa_provider'];
+        } else {
+			unset($server['mfa_provider']);
+        }
 
 		if (($act == 'new') || (!empty($server['disable']) ^ !empty($this_server_config['disable'])) ||
 		    ($server['tunnel_network'] != $this_server_config['tunnel_network']) ||
@@ -1585,6 +1606,41 @@ if ($act=="new" || $act=="edit"):
 	));
 
 	$form->add($section);
+
+	$section_mfa = new Form_Section('Secondary Authentication (MFA)');
+
+	global $config;
+	$available_providers = is_array($config['mfa_providers']) ? $config['mfa_providers'] : array();
+
+	if (empty($available_providers)) {
+		$section_mfa->addInput(new Form_Checkbox(
+			'mfa_enabled',
+			'Enable MFA',
+			'No MFA provider packages are currently enabled or installed.',
+			false
+		))->setDisabled();
+	} else {
+		$section_mfa->addInput(new Form_Checkbox(
+			'mfa_enabled',
+			'Enable MFA',
+			'',
+			$pconfig['mfa_enabled'] === 'yes'
+		));
+
+		$provider_list = array();
+		foreach ($available_providers as $provider_key => $data) {
+			$provider_list[$provider_key] = $data['name'];
+		}
+
+		$section_mfa->addInput(new Form_Select(
+			'mfa_provider',
+			'MFA provider',
+			$pconfig['mfa_provider'],
+			$provider_list
+		))->setHelp('Select which MFA service to use.');
+	}
+
+	$form->add($section_mfa);
 
 	$section = new Form_Section("Advanced Client Settings");
 	$section->addClass("clientadv");
@@ -2358,6 +2414,11 @@ events.push(function() {
 		update_track6_prefix();
 	}
 
+	function vpnmfa_change() {
+		var hide = ! $('#mfa_enabled').prop('checked');
+		hideInput('mfa_provider', hide);
+	}
+
 	// ---------- Monitor elements for change and call the appropriate display functions ------------------------------
 
 	// NTP
@@ -2516,6 +2577,12 @@ events.push(function() {
 		$('[id="data_ciphers[]"] option').prop("selected", true);
 	});
 
+	// MFA
+	$('#mfa_enabled').click(function () {
+		vpnmfa_change();
+	});
+
+
 	// ---------- Set initial page display state ----------------------------------------------------------------------
 	mode_change();
 	protocol_change();
@@ -2535,6 +2602,7 @@ events.push(function() {
 	allow_compression_change();
 	duplicate_cn_change();
 	ipv6_type_change();
+	vpnmfa_change();
 });
 //]]>
 </script>

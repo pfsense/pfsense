@@ -45,6 +45,8 @@ if (isset($_GET['username'])) {
 	$strictusercn = $_GET['strictcn'] == "false" ? false : true;
 	$dev = $_GET['dev'];
 	$untrusted_port = $_GET['untrusted_port'];
+	$untrusted_ip = $_GET['untrusted_ip'];
+	$untrusted_ip6 = $_GET['untrusted_ip6'];
 } else {
 	/* read data from environment */
 	$username = getenv("username");
@@ -52,6 +54,8 @@ if (isset($_GET['username'])) {
 	$common_name = getenv("common_name");
 	$dev = getenv("dev");
 	$untrusted_port = getenv("untrusted_port");
+	$untrusted_ip = getenv("untrusted_ip");
+	$untrusted_ip6 = getenv("untrusted_ip6");
 }
 
 if (!$username) {
@@ -103,6 +107,52 @@ foreach ($authmodes as $authmode) {
 
 	$authenticated = authenticate_user($username, $password, $authcfg, $attributes);
 	if ($authenticated == true) {
+		$clean_modeid = str_replace("server", "", $modeid);
+        $server_conf = null;
+        global $config;
+        
+        if (is_array($config['openvpn']['openvpn-server'])) {
+            foreach ($config['openvpn']['openvpn-server'] as $s) {
+                if ($s['vpnid'] == $clean_modeid) {
+                    $server_conf = $s;
+                    break;
+                }
+            }
+        }
+
+        if ($server_conf && isset($server_conf['mfa_enabled']) && $server_conf['mfa_enabled'] === 'yes') {
+            $provider_id = $server_conf['mfa_provider'];
+            
+			$service_name = "OpenVPN";
+            if (!empty($server_conf['description'])) {
+                $service_name .= " (" . $server_conf['description'] . ")";
+            } else {
+                $service_name .= " (" . $clean_modeid . ")";
+            }
+
+            if (isset($config['mfa_providers'][$provider_id])) {
+                $provider = $config['mfa_providers'][$provider_id];
+                
+                if (file_exists($provider['include_file'])) {
+                    require_once($provider['include_file']);
+                    
+                    $func_name = $provider['function'];
+                    if (function_exists($func_name)) {
+						$ip_sent = !empty($untrusted_ip) ? $untrusted_ip : $untrusted_ip6;
+                        $authenticated = $func_name($username, $service_name, $ip_sent);
+                    } else {
+                        syslog(LOG_ERR, "OpenVPN MFA: Function {$func_name} wasn't found in package!");
+                        $authenticated = false;
+                    }
+                } else {
+                     syslog(LOG_ERR, "OpenVPN MFA: Missing file {$provider['include_file']}! Is the package damaged or missing files?");
+                    $authenticated = false;
+                }
+            } else {
+                syslog(LOG_ERR, "OpenVPN MFA: Unknown provider '{$provider_id}'!");
+                $authenticated = false;
+            }
+        }	
 		break;
 	}
 }

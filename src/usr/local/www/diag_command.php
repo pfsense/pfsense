@@ -56,7 +56,7 @@ if ($_POST['submit'] == "DOWNLOAD" && !empty($_POST['dlPath'])) {
     if ($realPath !== false) {
         foreach ($safe_paths as $safe_path) {
             // Verify the resolved path is inside an allowed directory
-            if ($safe_path && strpos($realPath, $safe_path) === 0) {
+            if ($safe_path && ($realPath === $safe_path || strpos($realPath, $safe_path . DIRECTORY_SEPARATOR) === 0)) {
                 $is_allowed = true;
                 break;
             }
@@ -71,7 +71,11 @@ if ($_POST['submit'] == "DOWNLOAD" && !empty($_POST['dlPath'])) {
         // Log unauthorized diagnostic access attempts
         log_error(sprintf(gettext("Unauthorized diagnostic download attempt blocked: %s"), $dlPath));
     }
+} else if ($_POST['submit'] == "UPLOAD" && is_uploaded_file($_FILES['ulfile']['tmp_name'])) {
+    move_uploaded_file($_FILES['ulfile']['tmp_name'], g_get('tmp_path') . "/" . $_FILES['ulfile']['name']);
+    $ulmsg = sprintf(gettext('Uploaded file to %s.'), g_get('tmp_path') . "/" . htmlentities($_FILES['ulfile']['name']));
 }
+
 // Function: is Blank
 // Returns true or false depending on blankness of argument.
 

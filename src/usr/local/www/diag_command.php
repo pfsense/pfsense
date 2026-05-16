@@ -41,14 +41,37 @@ $allowautocomplete = true;
 
 require_once("guiconfig.inc");
 
-if ($_POST['submit'] == "DOWNLOAD" && file_exists($_POST['dlPath'])) {
-	session_cache_limiter('public');
-	send_user_download('file', $_POST['dlPath']);
-} else if ($_POST['submit'] == "UPLOAD" && is_uploaded_file($_FILES['ulfile']['tmp_name'])) {
-	move_uploaded_file($_FILES['ulfile']['tmp_name'], g_get('tmp_path') . "/" . $_FILES['ulfile']['name']);
-	$ulmsg = sprintf(gettext('Uploaded file to %s.'), g_get('tmp_path') . "/" . htmlentities($_FILES['ulfile']['name']));
-}
+if ($_POST['submit'] == "DOWNLOAD" && !empty($_POST['dlPath'])) {
+    $dlPath = $_POST['dlPath'];
+    $realPath = realpath($dlPath);
 
+    // Enforce restricted safe directories for diagnostic downloads
+    $safe_paths = [
+        realpath(g_get('tmp_path')), // Standard temp directory
+        realpath('/var/log/'),       // System log directory
+        realpath('/cf/conf/')        // Configuration directory
+    ];
+
+    $is_allowed = false;
+    if ($realPath !== false) {
+        foreach ($safe_paths as $safe_path) {
+            // Verify the resolved path is inside an allowed directory
+            if ($safe_path && strpos($realPath, $safe_path) === 0) {
+                $is_allowed = true;
+                break;
+            }
+        }
+    }
+
+    // Only proceed if the path is in the safelist and is a regular file
+    if ($is_allowed && is_file($realPath)) {
+        session_cache_limiter('public');
+        send_user_download('file', $realPath);
+    } else {
+        // Log unauthorized diagnostic access attempts
+        log_error(sprintf(gettext("Unauthorized diagnostic download attempt blocked: %s"), $dlPath));
+    }
+}
 // Function: is Blank
 // Returns true or false depending on blankness of argument.
 

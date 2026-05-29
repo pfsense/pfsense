@@ -594,7 +594,17 @@ function setup_gateways_monitor() {
 			 * not strictly necessary but is a added level of protection.
 			 */
 			if (!$skip_static_route && !isset($gateway['dpinger_dont_add_static_route']) && ($gateway['monitor'] != $gateway['gateway']) && is_ipaddrv4($gateway['gateway'])) {
-				if (interface_isppp_type($gateway['friendlyiface'])) {
+				/*
+				 * Point-to-point links (PPP family and OpenVPN tun) must pin the
+				 * monitor route to the interface rather than the gateway IP. The
+				 * gateway IP route resolves via whichever interface owns the
+				 * connected subnet, so when two tunnels share a subnet — routine
+				 * with commercial VPN providers that assign tunnel IPs from one
+				 * pool — the probe egresses the wrong tunnel and the monitor
+				 * reflects the wrong gateway's health.
+				 */
+				if (interface_isppp_type($gateway['friendlyiface']) ||
+				    (substr($gateway['interface'], 0, 4) == 'ovpn')) {
 					logger(LOG_INFO, localize_text('Removing static route for monitor %1$s and adding a new route through %2$s', $gateway['monitor'], $gateway['interface']), LOG_PREFIX_GWMON);
 					route_add_or_change($gateway['monitor'], '', $gateway['interface']);
 					system_staticroutes_configure($gateway['friendlyiface']);
@@ -635,7 +645,14 @@ function setup_gateways_monitor() {
 			 */
 
 			if (!$skip_static_route && !isset($gateway['dpinger_dont_add_static_route']) && ($gateway['gateway'] != $gateways_arr[$gwname]['monitor']) && is_ipaddrv6($gateway['gateway'])) {
-				if (interface_isppp_type($gateway['friendlyiface'])) {
+				/*
+				 * Point-to-point links (PPP family and OpenVPN tun) must pin the
+				 * monitor route to the interface rather than the gateway IP. See
+				 * the IPv4 branch above for the shared-subnet failure mode this
+				 * avoids.
+				 */
+				if (interface_isppp_type($gateway['friendlyiface']) ||
+				    (substr($gateway['interface'], 0, 4) == 'ovpn')) {
 					logger(LOG_INFO, localize_text('Removing static route for monitor %1$s and adding a new route through %2$s', $gateway['monitor'], $gateway['interface']), LOG_PREFIX_GWMON);
 					route_add_or_change($gateway['monitor'], '', $gateway['interface']);
 					system_staticroutes_configure($gateway['friendlyiface']);

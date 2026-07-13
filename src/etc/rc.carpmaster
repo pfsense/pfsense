@@ -118,17 +118,27 @@ if ($rafound) {
 }
 
 /* Reconfigure DHCP Relay when necessary */
-if (config_path_enabled('dhcrelay') &&
-    (config_get_path('dhcrelay/carpstatusvip') == "_vip{$vip['uniqid']}")) {
-	logger(LOG_NOTICE, localize_text("Starting DHCP Relay service because of transition to CARP master."), LOG_PREFIX_HA);
-	services_dhcrelay_configure();
+$dhcrelay_carpvip = config_get_path('dhcrelay/carpstatusvip');
+if (config_path_enabled('dhcrelay') && !empty($dhcrelay_carpvip)) {
+	foreach ($vips as $vip) {
+		if ($dhcrelay_carpvip == "_vip{$vip['uniqid']}") {
+			logger(LOG_NOTICE, localize_text("Starting DHCP Relay service because of transition to CARP master."), LOG_PREFIX_HA);
+			services_dhcrelay_configure();
+			break;
+		}
+	}
 }
 
 /* Reconfigure DHCPv6 Relay when necessary */
-if (config_path_enabled('dhcrelay6') &&
-    (config_get_path('dhcrelay6/carpstatusvip') == "_vip{$vip['uniqid']}")) {
-	logger(LOG_NOTICE, localize_text("Starting DHCPv6 Relay service because of transition to CARP master."), LOG_PREFIX_HA);
-	services_dhcrelay6_configure();
+$dhcrelay6_carpvip = config_get_path('dhcrelay6/carpstatusvip');
+if (config_path_enabled('dhcrelay6') && !empty($dhcrelay6_carpvip)) {
+	foreach ($vips as $vip) {
+		if ($dhcrelay6_carpvip == "_vip{$vip['uniqid']}") {
+			logger(LOG_NOTICE, localize_text("Starting DHCPv6 Relay service because of transition to CARP master."), LOG_PREFIX_HA);
+			services_dhcrelay6_configure();
+			break;
+		}
+	}
 }
 
 /* Reconfigure captive portal when necessary :

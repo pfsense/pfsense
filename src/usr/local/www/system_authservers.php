@@ -200,6 +200,16 @@ if ($act == "edit") {
 			}
 
 		}
+
+		if ($pconfig['type'] == "oidc") {
+			$pconfig['oidc_issuer'] = $a_server[$id]['oidc_issuer'];
+			$pconfig['oidc_client_id'] = $a_server[$id]['oidc_client_id'];
+			$pconfig['oidc_client_secret'] = $a_server[$id]['oidc_client_secret'];
+			$pconfig['oidc_scopes'] = $a_server[$id]['oidc_scopes'];
+			$pconfig['oidc_allowed_domains'] = $a_server[$id]['oidc_allowed_domains'];
+			$pconfig['oidc_user_claim'] = $a_server[$id]['oidc_user_claim'];
+			$pconfig['oidc_group_claim'] = $a_server[$id]['oidc_group_claim'];
+		}
 	}
 }
 
@@ -210,6 +220,8 @@ if ($act == "new") {
 	$pconfig['radius_srvcs'] = "both";
 	$pconfig['radius_auth_port'] = "1812";
 	$pconfig['radius_acct_port'] = "1813";
+	$pconfig['oidc_scopes'] = "openid email profile";
+	$pconfig['oidc_user_claim'] = "email";
 }
 
 if ($dup) {
@@ -273,6 +285,21 @@ if ($_POST['save']) {
 		if (!isset($id)) {
 			$reqdfields[] = "radius_secret";
 			$reqdfieldsn[] = gettext("Shared Secret");
+		}
+	}
+
+	if ($pconfig['type'] == "oidc") {
+		$reqdfields = explode(" ", "name type oidc_issuer oidc_client_id oidc_client_secret");
+		$reqdfieldsn = array(
+			gettext("Descriptive name"),
+			gettext("Type"),
+			gettext("Issuer URL"),
+			gettext("Client ID"),
+			gettext("Client secret"));
+
+		if (!empty($pconfig['oidc_issuer']) &&
+		    !preg_match('#^https://#i', $pconfig['oidc_issuer'])) {
+			$input_errors[] = gettext("The OIDC Issuer URL must be an https:// URL.");
 		}
 	}
 
@@ -418,6 +445,16 @@ if ($_POST['save']) {
 				$server['radius_acct_port'] = $pconfig['radius_acct_port'];
 				unset($server['radius_auth_port']);
 			}
+		}
+
+		if ($server['type'] == "oidc") {
+			$server['oidc_issuer'] = rtrim($pconfig['oidc_issuer'], '/');
+			$server['oidc_client_id'] = $pconfig['oidc_client_id'];
+			$server['oidc_client_secret'] = $pconfig['oidc_client_secret'];
+			$server['oidc_scopes'] = empty($pconfig['oidc_scopes']) ? "openid email profile" : $pconfig['oidc_scopes'];
+			$server['oidc_allowed_domains'] = $pconfig['oidc_allowed_domains'];
+			$server['oidc_user_claim'] = empty($pconfig['oidc_user_claim']) ? "email" : $pconfig['oidc_user_claim'];
+			$server['oidc_group_claim'] = $pconfig['oidc_group_claim'];
 		}
 
 		if (isset($id) && config_get_path("system/authserver/{$id}")) {
@@ -906,6 +943,71 @@ if (isset($id) && $a_server[$id])
 		$id
 	));
 }
+
+$form->add($section);
+
+// ==== OpenID Connect (SSO) settings =========================================
+$section = new Form_Section('OpenID Connect (SSO) Server Settings');
+$section->addClass('toggle-oidc collapse');
+
+if ($pconfig['type'] == 'oidc') {
+	$section->addClass('in');
+}
+
+$section->addInput(new Form_StaticText(
+	'Redirect URI',
+	'<code>' . htmlspecialchars(oidc_redirect_uri()) . '</code>'
+))->setHelp('Register this exact URL as an authorized redirect URI in the identity provider (e.g. the Google Cloud console).');
+
+$section->addInput(new Form_Input(
+	'oidc_issuer',
+	'*Issuer URL',
+	'text',
+	$pconfig['oidc_issuer'],
+	['placeholder' => 'https://accounts.google.com']
+))->setHelp('OpenID Connect issuer (discovery) base URL. For Google Workspace use %s.', '<code>https://accounts.google.com</code>');
+
+$section->addInput(new Form_Input(
+	'oidc_client_id',
+	'*Client ID',
+	'text',
+	$pconfig['oidc_client_id']
+));
+
+$section->addInput(new Form_Input(
+	'oidc_client_secret',
+	'*Client secret',
+	'password',
+	$pconfig['oidc_client_secret']
+));
+
+$section->addInput(new Form_Input(
+	'oidc_scopes',
+	'Scopes',
+	'text',
+	$pconfig['oidc_scopes']
+))->setHelp('Space-separated OAuth scopes. Default: %s.', '<code>openid email profile</code>');
+
+$section->addInput(new Form_Input(
+	'oidc_allowed_domains',
+	'Allowed domains',
+	'text',
+	$pconfig['oidc_allowed_domains']
+))->setHelp('Space/comma-separated list of email/hosted domains permitted to sign in (matched against the %1$s claim or the email domain). Leave blank to allow any domain (privileges are still governed by group mapping).', '<code>hd</code>');
+
+$section->addInput(new Form_Input(
+	'oidc_user_claim',
+	'Username claim',
+	'text',
+	$pconfig['oidc_user_claim']
+))->setHelp('ID-token claim used as the pfSense username. Default: %s.', '<code>email</code>');
+
+$section->addInput(new Form_Input(
+	'oidc_group_claim',
+	'Group claim',
+	'text',
+	$pconfig['oidc_group_claim']
+))->setHelp('Optional ID-token claim holding the user\'s group names. Groups matching a pfSense group name grant that group\'s privileges.');
 
 $form->add($section);
 

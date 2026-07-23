@@ -102,6 +102,8 @@ $pconfig['session_timeout'] = config_get_path('system/webgui/session_timeout');
 
 $pconfig['authmode'] = config_get_path('system/webgui/authmode', "Local Database");
 
+$pconfig['disable_basicauth'] = config_path_enabled('system/webgui', 'disable_basicauth') ? true : false;
+
 /* Default to bcrypt hashing if unset.
  * See https://redmine.pfsense.org/issues/12855
  */
@@ -140,6 +142,12 @@ if ($_POST) {
 	$authcfg = auth_get_authserver($_POST['authmode']);
 	if (($authcfg['type'] == 'radius') && !isset($authcfg['radius_auth_port'])) {
 		$input_errors[] = gettext("RADIUS Authentication Server must provide Authentication service.");
+	}
+
+	/* Disabling password login is only safe when the web GUI uses an SSO
+	 * (OIDC) auth server; otherwise there would be no way to log in. */
+	if (isset($_POST['disable_basicauth']) && ($authcfg['type'] != 'oidc')) {
+		$input_errors[] = gettext("Password login can only be disabled when the Authentication Server is an OpenID Connect (SSO) server.");
 	}
 
 	if (($authcfg['type'] == 'ldap') && empty($authcfg['ldap_pam_groupdn']) &&
@@ -186,6 +194,12 @@ if ($_POST) {
 			config_set_path('system/webgui/shellauth', true);
 		} else {
 			config_del_path('system/webgui/shellauth');
+		}
+
+		if (isset($_POST['disable_basicauth'])) {
+			config_set_path('system/webgui/disable_basicauth', true);
+		} else {
+			config_del_path('system/webgui/disable_basicauth');
 		}
 
 		if (isset($_POST['auth_refresh_time']) && $_POST['auth_refresh_time'] != "") {
@@ -247,6 +261,16 @@ $section->addInput(new Form_Select(
 	$pconfig['authmode'],
 	$auth_servers
 ));
+
+$section->addInput(new Form_Checkbox(
+	'disable_basicauth',
+	'Disable password login',
+	'Disable username/password (basic) authentication for the web GUI',
+	$pconfig['disable_basicauth']
+))->setHelp('When checked, the web GUI login page only offers SSO sign-in and the ' .
+	'password form is hidden. Requires the Authentication Server above to be an ' .
+	'OpenID Connect (SSO) server. If SSO becomes unavailable, recover via the ' .
+	'console or SSH by selecting a different Authentication Server.');
 
 $section->addInput(new Form_Select(
 	'pwhash',

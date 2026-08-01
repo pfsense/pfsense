@@ -20,6 +20,11 @@
 function graph_init() {
 
 	window.charts = {};
+	$(window).off('scroll.trafficgraphs').on('scroll.trafficgraphs', function() {
+		$.each(window.charts, function(key, chart) {
+			chart.interactiveLayer.tooltip.hidden(true);
+		});
+	});
     window.myData = {};
     window.updateIds = 0;
     window.updateTimerIds = 0;

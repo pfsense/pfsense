@@ -217,6 +217,49 @@ tr.disabled a:not(".btn") {
 .navbar-right>li>a {
     padding: 14px 15px 10px 15px;
 }
+
+#pf-navbar>.navbar-right {
+    position: relative;
+}
+
+.navbar-nav>li.menu-search {
+    padding: 0;
+    position: relative;
+}
+
+.menu-search .form-control {
+    height: 32px;
+    margin: 0;
+}
+
+.menu-search .form-control[hidden] {
+    display: none;
+}
+
+.navbar-nav>li.menu-search-expanded {
+    z-index: 1;
+}
+
+.navbar-inverse .navbar-nav>li.menu-search-expanded>a {
+    border-bottom-color: #B71C1C;
+}
+
+.menu-search-expanded .form-control {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 5px);
+    width: 320px;
+    z-index: 1;
+}
+
+.ui-autocomplete.menu-search-results {
+    max-height: 50vh;
+    max-width: calc(100vw - 16px);
+    min-width: 320px;
+    margin-left: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
 /* end navigation */
 
 .alert {
@@ -428,7 +471,7 @@ form .btn + .btn {
     width: calc(50% - 15px);
 }
 
-@media (max-width: 991px) {
+@media (max-width: 979px) {
     .col-sm-10 .form-control {
         width: 100%;
     }
@@ -878,7 +921,7 @@ table[data-sortable].sortable-theme-bootstrap thead th {
     }
 }
 
-@media (max-width: 991px) {
+@media (max-width: 979px) {
     /* change top navbar from horizontal to vertical */
     .navbar-header {
         float: none;
@@ -903,6 +946,33 @@ table[data-sortable].sortable-theme-bootstrap thead th {
     .navbar-nav>li>a {
         padding-top: 10px;
         padding-bottom: 10px;
+    }
+    .menu-search .form-control {
+        height: 46px;
+        margin: 0;
+        padding-left: 40px;
+        position: static;
+        width: 100%;
+    }
+    .navbar-inverse .navbar-nav>li.menu-search-expanded>a,
+    .navbar-inverse .navbar-nav>li.menu-search-expanded>a:focus,
+    .navbar-inverse .navbar-nav>li.menu-search-expanded>a:hover {
+        background-color: transparent;
+        border-bottom: 0;
+        color: #777;
+        height: 46px;
+        left: 0;
+        padding: 10px 9px;
+        position: absolute;
+        top: 0;
+        z-index: 1;
+    }
+    .navbar-nav>li.menu-search-expanded {
+        background-color: #212121;
+        padding: 0;
+        position: relative;
+        right: auto;
+        width: auto;
     }
     .navbar-text {
         float: none;

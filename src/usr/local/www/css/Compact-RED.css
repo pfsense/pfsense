@@ -81,6 +81,14 @@ body {
 .nav>li>a {
     padding: 5px 19px 0px 19px;
 }
+
+@media (max-width: 1199px) {
+    .nav>li>a {
+        padding-right: 9px;
+        padding-left: 9px;
+    }
+}
+
 .navbar-inverse .navbar-nav >li>a {
     border-bottom: 5px solid #600;
 }
@@ -109,6 +117,29 @@ body {
 
 .navbar-right>li>a {
     padding: 2px 15px 1px 15px;
+}
+
+.navbar-nav>li.menu-search {
+    padding: 0;
+}
+
+.menu-search .form-control {
+    height: 29.5px;
+    margin: 0;
+}
+
+@media (max-width: 979px) {
+    .navbar-nav>li.menu-search-expanded {
+        background-color: #600;
+    }
+
+    .navbar-inverse .navbar-nav>li.menu-search-expanded>a,
+    .navbar-inverse .navbar-nav>li.menu-search-expanded>a:focus,
+    .navbar-inverse .navbar-nav>li.menu-search-expanded>a:hover {
+        background-color: transparent;
+        height: 29.5px;
+        padding: 2px 10px 1px;
+    }
 }
 
 .navbar-toggle {

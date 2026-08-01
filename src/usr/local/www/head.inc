@@ -532,6 +532,15 @@ if (are_notices_pending()) {
 			 	endforeach?>
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
+				<li class="menu-search">
+					<a href="#" id="menu-search-toggle" role="button" aria-controls="menu-search-input" aria-expanded="false">
+						<i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+						<span class="sr-only"><?=htmlspecialchars(gettext("Search settings"))?></span>
+					</a>
+					<label class="sr-only" for="menu-search-input"><?=htmlspecialchars(gettext("Search settings"))?></label>
+					<input type="search" class="form-control" id="menu-search-input"
+					    placeholder="<?=htmlspecialchars(gettext("Search settings"))?>" autocomplete="off" hidden>
+				</li>
 				<?php if ($display_notices):?>
 					<?php $notices = get_notices()?>
 					<li class="dropdown">

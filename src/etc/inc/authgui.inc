@@ -178,6 +178,14 @@ function display_error_form($http_code, $desc) {
  * make an external request. Falls back to the server's descriptive name, which
  * is why the label is kept short here -- long names wrap the button. */
 function sso_provider($authcfg) {
+	/* Admin-supplied login-button icon overrides the built-in defaults.
+	 * Restricted to an https URL and escaped; the login page is pre-auth. */
+	$icon_url = trim($authcfg['oidc_icon'] ?? '');
+	if ($icon_url !== '' && preg_match('#^https://#i', $icon_url)) {
+		return array('label' => $authcfg['name'],
+			'icon' => '<img src="' . htmlspecialchars($icon_url, ENT_QUOTES) .
+				'" alt="" aria-hidden="true" />');
+	}
 	if (stripos($authcfg['oidc_issuer'], 'accounts.google.com') !== false) {
 		return array('label' => 'Google', 'icon' =>
 			'<svg viewBox="0 0 48 48" aria-hidden="true">' .

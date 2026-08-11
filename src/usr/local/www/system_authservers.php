@@ -209,6 +209,7 @@ if ($act == "edit") {
 			$pconfig['oidc_allowed_domains'] = $a_server[$id]['oidc_allowed_domains'];
 			$pconfig['oidc_user_claim'] = $a_server[$id]['oidc_user_claim'];
 			$pconfig['oidc_group_claim'] = $a_server[$id]['oidc_group_claim'];
+			$pconfig['oidc_icon'] = $a_server[$id]['oidc_icon'];
 		}
 	}
 }
@@ -455,6 +456,7 @@ if ($_POST['save']) {
 			$server['oidc_allowed_domains'] = $pconfig['oidc_allowed_domains'];
 			$server['oidc_user_claim'] = empty($pconfig['oidc_user_claim']) ? "email" : $pconfig['oidc_user_claim'];
 			$server['oidc_group_claim'] = $pconfig['oidc_group_claim'];
+			$server['oidc_icon'] = $pconfig['oidc_icon'];
 		}
 
 		if (isset($id) && config_get_path("system/authserver/{$id}")) {
@@ -1008,6 +1010,14 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['oidc_group_claim']
 ))->setHelp('Optional ID-token claim holding the user\'s group names; values matching a pfSense group name grant that group\'s privileges. For providers that do not emit a groups claim (e.g. Google), map the hosted domain by using %1$s. Leave blank to derive privileges from a matching local account instead.', '<code>hd</code>');
+
+$section->addInput(new Form_Input(
+	'oidc_icon',
+	'Login button icon',
+	'text',
+	$pconfig['oidc_icon'],
+	['placeholder' => 'https://idp.example.com/logo.svg']
+))->setHelp('Optional https URL of an image shown on the "Sign in with" button. Leave blank to use the provider default (Google logo, or a generic icon).');
 
 $form->add($section);
 

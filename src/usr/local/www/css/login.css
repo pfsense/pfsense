@@ -249,11 +249,13 @@ form.login a:hover
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
 }
 
-.btn-sso svg
+.btn-sso svg,
+.btn-sso img
 {
     width: 26px;
     height: 26px;
     flex: none;
+    object-fit: contain;
 }
 
 .logoCol {

@@ -145,7 +145,14 @@ if (function_exists("display_error_form") && !config_path_enabled('system/webgui
 }
 
 // If the HTTP_REFERER is something other than ourselves then disallow.
-if (function_exists("display_error_form") && !config_path_enabled('system/webgui', 'nohttpreferercheck')) {
+// The OIDC login callback is a legitimate cross-origin redirect from the
+// identity provider, so its Referer is the IdP host. It is already
+// CSRF-protected by the OAuth state parameter, so exempt it rather than
+// forcing admins to whitelist every IdP under Alternate Hostnames.
+$oidc_callback = ((($_GET['oauth'] ?? '') === 'callback') &&
+    (basename($_SERVER['SCRIPT_NAME'] ?? '') === 'index.php'));
+if (function_exists("display_error_form") && !config_path_enabled('system/webgui', 'nohttpreferercheck') &&
+    !$oidc_callback) {
 	if ($_SERVER['HTTP_REFERER']) {
 		if (file_exists("{$g['tmp_path']}/setupwizard_lastreferrer")) {
 			if ($_SERVER['HTTP_REFERER'] == file_get_contents("{$g['tmp_path']}/setupwizard_lastreferrer")) {
@@ -2117,9 +2124,16 @@ function oidc_http($url, $post = null) {
 	return json_decode($body, true);
 }
 
+/* Normalise a configured issuer to its base URL, tolerating a pasted
+ * .well-known/openid-configuration discovery URL and a trailing slash. */
+function oidc_issuer_base($issuer) {
+	$issuer = preg_replace('#/\.well-known/openid-configuration/?$#i', '', (string)$issuer);
+	return rtrim($issuer, '/');
+}
+
 /* Fetch (and cache) the provider's discovery document. */
 function oidc_discover($authcfg) {
-	$issuer = rtrim($authcfg['oidc_issuer'] ?? '', '/');
+	$issuer = oidc_issuer_base($authcfg['oidc_issuer'] ?? '');
 	if (empty($issuer)) {
 		return null;
 	}
@@ -2182,8 +2196,8 @@ function oidc_validate_claims($claims, $authcfg, $nonce, $now = null) {
 	}
 	$now = ($now === null) ? time() : $now;
 
-	/* issuer: allow the configured issuer with/without scheme-trailing slash */
-	$issuer = rtrim($authcfg['oidc_issuer'] ?? '', '/');
+	/* issuer: normalise trailing slash / pasted discovery URL before compare */
+	$issuer = oidc_issuer_base($authcfg['oidc_issuer'] ?? '');
 	$claim_iss = rtrim($claims['iss'] ?? '', '/');
 	if (empty($claim_iss) || strcasecmp($claim_iss, $issuer) !== 0) {
 		return false;

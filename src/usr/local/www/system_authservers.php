@@ -448,7 +448,7 @@ if ($_POST['save']) {
 		}
 
 		if ($server['type'] == "oidc") {
-			$server['oidc_issuer'] = rtrim($pconfig['oidc_issuer'], '/');
+			$server['oidc_issuer'] = oidc_issuer_base($pconfig['oidc_issuer']);
 			$server['oidc_client_id'] = $pconfig['oidc_client_id'];
 			$server['oidc_client_secret'] = $pconfig['oidc_client_secret'];
 			$server['oidc_scopes'] = empty($pconfig['oidc_scopes']) ? "openid email profile" : $pconfig['oidc_scopes'];
@@ -965,7 +965,7 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['oidc_issuer'],
 	['placeholder' => 'https://accounts.google.com']
-))->setHelp('OpenID Connect issuer (discovery) base URL. For Google Workspace use %s.', '<code>https://accounts.google.com</code>');
+))->setHelp('OpenID Connect issuer (discovery) base URL. For Google Workspace use %1$s. A full %2$s URL is also accepted and trimmed to the base issuer.', '<code>https://accounts.google.com</code>', '<code>/.well-known/openid-configuration</code>');
 
 $section->addInput(new Form_Input(
 	'oidc_client_id',
@@ -1007,7 +1007,7 @@ $section->addInput(new Form_Input(
 	'Group claim',
 	'text',
 	$pconfig['oidc_group_claim']
-))->setHelp('Optional ID-token claim holding the user\'s group names. Groups matching a pfSense group name grant that group\'s privileges.');
+))->setHelp('Optional ID-token claim holding the user\'s group names; values matching a pfSense group name grant that group\'s privileges. For providers that do not emit a groups claim (e.g. Google), map the hosted domain by using %1$s. Leave blank to derive privileges from a matching local account instead.', '<code>hd</code>');
 
 $form->add($section);
 

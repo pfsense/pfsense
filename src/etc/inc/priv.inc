@@ -263,6 +263,8 @@ function getAllowedPages($username, &$attributes = array()) {
 				$_SESSION["radius_allowed_groups"] = $allowed_groups;
 				$_SESSION["auth_check_time"] = time();
 			}
+		} elseif ($authcfg['type'] == "oidc") {
+			$allowed_groups = oidc_get_groups($attributes);
 		}
 
 	}

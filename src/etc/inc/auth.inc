@@ -145,7 +145,14 @@ if (function_exists("display_error_form") && !config_path_enabled('system/webgui
 }
 
 // If the HTTP_REFERER is something other than ourselves then disallow.
-if (function_exists("display_error_form") && !config_path_enabled('system/webgui', 'nohttpreferercheck')) {
+// The OIDC login callback is a legitimate cross-origin redirect from the
+// identity provider, so its Referer is the IdP host. It is already
+// CSRF-protected by the OAuth state parameter, so exempt it rather than
+// forcing admins to whitelist every IdP under Alternate Hostnames.
+$oidc_callback = ((($_GET['oauth'] ?? '') === 'callback') &&
+    (basename($_SERVER['SCRIPT_NAME'] ?? '') === 'index.php'));
+if (function_exists("display_error_form") && !config_path_enabled('system/webgui', 'nohttpreferercheck') &&
+    !$oidc_callback) {
 	if ($_SERVER['HTTP_REFERER']) {
 		if (file_exists("{$g['tmp_path']}/setupwizard_lastreferrer")) {
 			if ($_SERVER['HTTP_REFERER'] == file_get_contents("{$g['tmp_path']}/setupwizard_lastreferrer")) {
@@ -380,6 +387,8 @@ function get_user_privileges(& $user) {
 			$_SESSION["radius_allowed_groups"] = $allowed_groups;
 			$_SESSION["auth_check_time"] = time();
 		}
+	} elseif ($authcfg['type'] == "oidc") {
+		$allowed_groups = oidc_get_groups($_SESSION['user_radius_attributes']);
 	}
 
 	if (empty($allowed_groups)) {
@@ -2058,6 +2067,263 @@ function save_widget_settings($username, $settings, $message = "") {
 	}
 }
 
+/* ---- OpenID Connect (SSO) helpers -------------------------------------- *
+ * Redirect-based auth (Google et al). Unlike ldap/radius this is not a
+ * password check, so it is driven from session_auth() via ?oauth=start /
+ * ?oauth=callback rather than authenticate_user(). Tokens are fetched over a
+ * TLS-verified back-channel (code flow), so the ID token is trusted without
+ * local signature verification.
+ * Local JWKS signature verification would only be required if tokens were
+ * ever accepted via the front channel (implicit flow).
+ */
+
+function oidc_b64url_decode($data) {
+	return base64_decode(strtr($data, '-_', '+/') .
+	    str_repeat('=', (4 - strlen($data) % 4) % 4));
+}
+
+function oidc_b64url_encode($data) {
+	return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
+}
+
+/* Fixed redirect URI the IdP must be configured with. Follows the configured
+ * GUI protocol -- hardcoding https would never match a GUI served over http.
+ * An authorization code is only as protected as the GUI itself; the protocol
+ * is the administrator's choice, made in System > Advanced. */
+function oidc_redirect_uri() {
+	$proto = (config_get_path('system/webgui/protocol') == 'http') ? 'http' : 'https';
+	return "{$proto}://{$_SERVER['HTTP_HOST']}/index.php?oauth=callback";
+}
+
+/* Split the allowed-domains config field into a lowercase list. */
+function oidc_allowed_domains($authcfg) {
+	return array_filter(array_map('trim',
+	    preg_split('/[\s,]+/', strtolower($authcfg['oidc_allowed_domains'] ?? ''))));
+}
+
+/* Minimal curl wrapper with TLS verification always on.
+ * $post: null => GET; array => form POST. Returns decoded JSON or null. */
+function oidc_http($url, $post = null) {
+	$ch = curl_init($url);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+	curl_setopt($ch, CURLOPT_TIMEOUT, 20);
+	if (is_array($post)) {
+		curl_setopt($ch, CURLOPT_POST, true);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post));
+	}
+	$body = curl_exec($ch);
+	$err = curl_error($ch);
+	curl_close($ch);
+	if ($body === false) {
+		logger(LOG_ERR, localize_text("OIDC HTTP request to %s failed: %s", $url, $err), LOG_PREFIX_AUTHPROVIDER_OIDC);
+		return null;
+	}
+	return json_decode($body, true);
+}
+
+/* Normalise a configured issuer to its base URL, tolerating a pasted
+ * .well-known/openid-configuration discovery URL and a trailing slash. */
+function oidc_issuer_base($issuer) {
+	$issuer = preg_replace('#/\.well-known/openid-configuration/?$#i', '', (string)$issuer);
+	return rtrim($issuer, '/');
+}
+
+/* Fetch (and cache) the provider's discovery document. */
+function oidc_discover($authcfg) {
+	$issuer = oidc_issuer_base($authcfg['oidc_issuer'] ?? '');
+	if (empty($issuer)) {
+		return null;
+	}
+	$cache = g_get('tmp_path', '/tmp') . '/oidc_disc_' . md5($issuer) . '.json';
+	/* Cache for an hour; issuers rarely rotate endpoints. */
+	if (is_file($cache) && (time() - filemtime($cache) < 3600)) {
+		$doc = json_decode(@file_get_contents($cache), true);
+		if (is_array($doc)) {
+			return $doc;
+		}
+	}
+	$doc = oidc_http("{$issuer}/.well-known/openid-configuration");
+	if (is_array($doc) && !empty($doc['authorization_endpoint']) && !empty($doc['token_endpoint'])) {
+		@file_put_contents($cache, json_encode($doc));
+		return $doc;
+	}
+	logger(LOG_ERR, localize_text("OIDC discovery failed for issuer %s.", $issuer), LOG_PREFIX_AUTHPROVIDER_OIDC);
+	return null;
+}
+
+/* Begin the login: stash state/nonce/PKCE and redirect to the IdP. Never returns. */
+function oidc_start($authcfg) {
+	global $_SESSION;
+
+	$doc = oidc_discover($authcfg);
+	if (!$doc) {
+		$_SESSION['Login_Error'] = gettext("SSO provider is unreachable or misconfigured.");
+		return;
+	}
+
+	$state = oidc_b64url_encode(random_bytes(24));
+	$nonce = oidc_b64url_encode(random_bytes(24));
+	$verifier = oidc_b64url_encode(random_bytes(32));
+	$challenge = oidc_b64url_encode(hash('sha256', $verifier, true));
+
+	$_SESSION['oidc_state'] = $state;
+	$_SESSION['oidc_nonce'] = $nonce;
+	$_SESSION['oidc_verifier'] = $verifier;
+	phpsession_end(true);
+
+	/* pfSense issues PHPSESSID with SameSite=Strict, so the browser withholds it
+	 * on the IdP's cross-site redirect back to ?oauth=callback -- the state just
+	 * stored would be invisible and every first login would fail the state check.
+	 * Re-issue the same session id as Lax, which is sent on top-level GET
+	 * navigations and still blocks cross-site POST CSRF. */
+	$cp = session_get_cookie_params();
+	setcookie(session_name(), session_id(), array(
+		'expires'  => 0,
+		'path'     => empty($cp['path']) ? '/' : $cp['path'],
+		'secure'   => $cp['secure'],
+		'httponly' => $cp['httponly'],
+		'samesite' => 'Lax',
+	));
+
+	$params = array(
+		'response_type' => 'code',
+		'client_id' => $authcfg['oidc_client_id'],
+		'redirect_uri' => oidc_redirect_uri(),
+		'scope' => empty($authcfg['oidc_scopes']) ? 'openid email profile' : $authcfg['oidc_scopes'],
+		'state' => $state,
+		'nonce' => $nonce,
+		'code_challenge' => $challenge,
+		'code_challenge_method' => 'S256',
+	);
+	header('Location: ' . $doc['authorization_endpoint'] . '?' . http_build_query($params));
+	exit;
+}
+
+/* Validate ID-token claims. Pure function so it can be unit-tested.
+ * Returns the username string on success, or false. */
+function oidc_validate_claims($claims, $authcfg, $nonce, $now = null) {
+	if (!is_array($claims)) {
+		return false;
+	}
+	$now = ($now === null) ? time() : $now;
+
+	/* issuer: normalise trailing slash / pasted discovery URL before compare */
+	$issuer = oidc_issuer_base($authcfg['oidc_issuer'] ?? '');
+	$claim_iss = rtrim($claims['iss'] ?? '', '/');
+	if (empty($claim_iss) || strcasecmp($claim_iss, $issuer) !== 0) {
+		return false;
+	}
+
+	/* audience must contain our client id */
+	$aud = $claims['aud'] ?? '';
+	$aud = is_array($aud) ? $aud : array($aud);
+	if (!in_array($authcfg['oidc_client_id'], $aud, true)) {
+		return false;
+	}
+
+	/* expiry (small skew) and nonce binding */
+	if (empty($claims['exp']) || ($claims['exp'] + 60) < $now) {
+		return false;
+	}
+	if (empty($nonce) || ($claims['nonce'] ?? '') !== $nonce) {
+		return false;
+	}
+
+	/* pick username from the configured claim (default email) */
+	$user_claim = empty($authcfg['oidc_user_claim']) ? 'email' : $authcfg['oidc_user_claim'];
+	$username = $claims[$user_claim] ?? '';
+	if (empty($username)) {
+		return false;
+	}
+
+	/* hosted-domain restriction: match hd claim, else the email domain */
+	$allowed = oidc_allowed_domains($authcfg);
+	if (!empty($allowed)) {
+		$domain = strtolower($claims['hd'] ?? '');
+		if (empty($domain) && !empty($claims['email']) && strpos($claims['email'], '@') !== false) {
+			$domain = strtolower(substr(strrchr($claims['email'], '@'), 1));
+		}
+		if (!in_array($domain, $allowed, true)) {
+			return false;
+		}
+	}
+
+	return $username;
+}
+
+/* Handle the IdP redirect back to us. Returns username on success (and fills
+ * $attributes with mapped groups), false on rejection, null on transport error. */
+function oidc_callback($authcfg, &$attributes = array()) {
+	global $_SESSION;
+
+	if (empty($_GET['state']) || empty($_SESSION['oidc_state']) ||
+	    !hash_equals($_SESSION['oidc_state'], $_GET['state'])) {
+		logger(LOG_WARNING, localize_text("OIDC callback with invalid state."), LOG_PREFIX_AUTHPROVIDER_OIDC);
+		return false;
+	}
+	$nonce = $_SESSION['oidc_nonce'] ?? '';
+	$verifier = $_SESSION['oidc_verifier'] ?? '';
+	unset($_SESSION['oidc_state'], $_SESSION['oidc_nonce'], $_SESSION['oidc_verifier']);
+
+	if (empty($_GET['code'])) {
+		return false;
+	}
+
+	$doc = oidc_discover($authcfg);
+	if (!$doc) {
+		return null;
+	}
+
+	$token = oidc_http($doc['token_endpoint'], array(
+		'grant_type' => 'authorization_code',
+		'code' => $_GET['code'],
+		'redirect_uri' => oidc_redirect_uri(),
+		'client_id' => $authcfg['oidc_client_id'],
+		'client_secret' => $authcfg['oidc_client_secret'],
+		'code_verifier' => $verifier,
+	));
+	if (!is_array($token) || empty($token['id_token'])) {
+		logger(LOG_ERR, localize_text("OIDC token exchange failed."), LOG_PREFIX_AUTHPROVIDER_OIDC);
+		return null;
+	}
+
+	$parts = explode('.', $token['id_token']);
+	if (count($parts) !== 3) {
+		return false;
+	}
+	$claims = json_decode(oidc_b64url_decode($parts[1]), true);
+
+	$username = oidc_validate_claims($claims, $authcfg, $nonce);
+	if ($username === false) {
+		logger(LOG_WARNING, localize_text("OIDC login rejected for issuer %s.", $authcfg['oidc_issuer']), LOG_PREFIX_AUTHPROVIDER_OIDC);
+		return false;
+	}
+
+	/* Map the group claim (if any) into attributes for privilege lookup. */
+	$groups = array();
+	if (!empty($authcfg['oidc_group_claim']) && !empty($claims[$authcfg['oidc_group_claim']])) {
+		$g = $claims[$authcfg['oidc_group_claim']];
+		$groups = is_array($g) ? $g : array($g);
+	}
+	$attributes['oidc_groups'] = $groups;
+
+	return $username;
+}
+
+/* Map an OIDC user's claimed groups to local group names. */
+function oidc_get_groups($attributes) {
+	$groups = array();
+	foreach (($attributes['oidc_groups'] ?? array()) as $g) {
+		$groups[] = trim($g);
+	}
+	return $groups;
+}
+
+/* ---- end OpenID Connect helpers ---------------------------------------- */
+
 function auth_get_authserver($name) {
 	foreach (config_get_path('system/authserver', []) as $authcfg) {
 		if ($authcfg['name'] == $name) {
@@ -2090,6 +2356,9 @@ function getUserGroups($username, $authcfg, &$attributes = array()) {
 			break;
 		case 'radius':
 			$allowed_groups = @radius_get_groups($attributes);
+			break;
+		case 'oidc':
+			$allowed_groups = oidc_get_groups($attributes);
 			break;
 		default:
 			$user = getUserEntry($username);
@@ -2139,6 +2408,11 @@ function authenticate_user($username, $password, $authcfg = NULL, &$attributes =
 			} catch (Exception $e) {
 				logger(LOG_ERR, localize_text("RADIUS authentication error: %s", $e->getMessage()), LOG_PREFIX_AUTHPROVIDER_RADIUS);
 			}
+			break;
+		case 'oidc':
+			/* OIDC is redirect-based; password auth is never valid for it.
+			 * Login happens via the ?oauth=callback flow in session_auth(). */
+			$authenticated = false;
 			break;
 		default:
 			/* lookup user object by name */
@@ -2209,7 +2483,44 @@ function session_auth() {
 
 	/* Validate incoming login request */
 	$attributes = array('nas_identifier' => 'webConfigurator-' . gethostname());
-	if (isset($_POST['login']) && !empty($_POST['usernamefld'])) {
+
+	/* SSO (OpenID Connect) redirect flow: ?oauth=start | ?oauth=callback */
+	if (isset($_GET['oauth'])) {
+		$authcfg = auth_get_authserver(config_get_path('system/webgui/authmode'));
+		if (($authcfg['type'] ?? '') == 'oidc') {
+			if ($_GET['oauth'] == 'start') {
+				oidc_start($authcfg);
+				/* oidc_start() only returns here on a config/connectivity error */
+			} elseif ($_GET['oauth'] == 'callback') {
+				$username = oidc_callback($authcfg, $attributes);
+				if (!empty($username)) {
+					// Generate a new id to avoid session fixation
+					session_regenerate_id();
+					$_SESSION['Logged_In'] = "True";
+					$_SESSION['remoteauth'] = true;
+					$_SESSION['authsource'] = "OIDC/{$authcfg['name']}";
+					$_SESSION['Username'] = $username;
+					$_SESSION['user_radius_attributes'] = $attributes;
+					$_SESSION['last_access'] = time();
+					$_SESSION['protocol'] = config_get_path('system/webgui/protocol');
+					$_SESSION['REMOTE_ADDR'] = $_SERVER['REMOTE_ADDR'];
+					phpsession_end(true);
+					log_auth_event(LOG_AUTH_EVENT_LOGIN, $username, get_user_remote_address() . get_user_remote_authsource());
+					header("Location: /");
+					exit;
+				}
+				if (empty($_SESSION['Login_Error'])) {
+					$_SESSION['Login_Error'] = gettext("SSO login failed.");
+				}
+				log_auth_event(LOG_AUTH_EVENT_ERROR, 'oidc', get_user_remote_address(false));
+			}
+		}
+	}
+
+	/* Password login. Skipped entirely when basic auth is disabled for the UI
+	 * (SSO-only). Recovery from a broken SSO config is via console/SSH. */
+	if (isset($_POST['login']) && !empty($_POST['usernamefld']) &&
+	    !config_path_enabled('system/webgui', 'disable_basicauth')) {
 		$authcfg = auth_get_authserver(config_get_path('system/webgui/authmode'));
 		$remoteauth = authenticate_user($_POST['usernamefld'], $_POST['passwordfld'], $authcfg, $attributes);
 		if ($remoteauth || authenticate_user($_POST['usernamefld'], $_POST['passwordfld'])) {

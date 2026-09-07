@@ -123,7 +123,8 @@ $firewall_rules_dscp_types = array(
 
 $auth_server_types = array(
 	'ldap' => "LDAP",
-	'radius' => "RADIUS");
+	'radius' => "RADIUS",
+	'oidc' => "OpenID Connect (SSO)");
 
 $ldap_urltypes = array(
 	'Standard TCP' => 389,

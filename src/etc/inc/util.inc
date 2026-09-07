@@ -239,6 +239,7 @@ define('LOG_PREFIX_WEBGUI', 'webConfigurator');
 define('LOG_PREFIX_AUTHPROVIDER_LOCAL', 'Local Auth');
 define('LOG_PREFIX_AUTHPROVIDER_LDAP', 'LDAP Auth');
 define('LOG_PREFIX_AUTHPROVIDER_RADIUS', 'RADIUS Auth');
+define('LOG_PREFIX_AUTHPROVIDER_OIDC', 'OIDC Auth');
 define('LOG_PREFIX_CAPTIVEPORTAL', 'Captive Portal');
 define('LOG_PREFIX_GWMON', 'Gateway Monitoring');
 define('LOG_PREFIX_IPSEC', 'IPsec');

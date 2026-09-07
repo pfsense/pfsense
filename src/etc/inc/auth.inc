@@ -2174,6 +2174,20 @@ function oidc_start($authcfg) {
 	$_SESSION['oidc_verifier'] = $verifier;
 	phpsession_end(true);
 
+	/* pfSense issues PHPSESSID with SameSite=Strict, so the browser withholds it
+	 * on the IdP's cross-site redirect back to ?oauth=callback -- the state just
+	 * stored would be invisible and every first login would fail the state check.
+	 * Re-issue the same session id as Lax, which is sent on top-level GET
+	 * navigations and still blocks cross-site POST CSRF. */
+	$cp = session_get_cookie_params();
+	setcookie(session_name(), session_id(), array(
+		'expires'  => 0,
+		'path'     => empty($cp['path']) ? '/' : $cp['path'],
+		'secure'   => $cp['secure'],
+		'httponly' => $cp['httponly'],
+		'samesite' => 'Lax',
+	));
+
 	$params = array(
 		'response_type' => 'code',
 		'client_id' => $authcfg['oidc_client_id'],

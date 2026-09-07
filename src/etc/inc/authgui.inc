@@ -350,6 +350,14 @@ function display_login_form() {
 <?php
 						if (!empty($_POST['usernamefld']) || !empty($_SESSION['Login_Error'])) {
 							print("<h4>" . htmlspecialchars($_SESSION['Login_Error']) . "</h4>");
+							/* One-shot. The session is closed at this point
+							 * (display_login_form() runs before the
+							 * phpsession_begin() below), so reopen it or the
+							 * clear is never written and the banner reprints
+							 * on every later render. */
+							phpsession_begin();
+							unset($_SESSION['Login_Error']);
+							phpsession_end(true);
 						}
 ?>
 						</div>

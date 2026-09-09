@@ -444,6 +444,20 @@ $pbclass = ($completion == 100) ? "progress-bar progress-bar-success":"progress-
 
 $form = new Form(false);
 
+if (isset($pkg['step'][$stepid]['autocomplete']) &&
+    ($pkg['step'][$stepid]['autocomplete'] == 'on')) {
+	$form->setAttribute('autocomplete', 'on');
+	if (!empty($pkg['step'][$stepid]['autocompleteusername'])) {
+		$form->addGlobal(new Form_Input(
+			'usernamefld',
+			null,
+			'hidden',
+			$pkg['step'][$stepid]['autocompleteusername'],
+			['autocomplete' => 'username']
+		));
+	}
+}
+
 $form->addGlobal(new Form_Input(
 	'stepid',
 	null,
@@ -622,12 +636,16 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 					$etitle =  fixup_string($field['name']);
 				}
 
-				$section->addInput(new Form_Input(
+				$input = new Form_Input(
 					$name,
 					$etitle,
 					'password',
 					$value
-				))->setHelp($field['description'])
+				);
+				if (!empty($field['autocomplete'])) {
+					$input->setAttribute('autocomplete', $field['autocomplete']);
+				}
+				$section->addInput($input)->setHelp($field['description'])
 				  ->setOnchange(($field['validate']) ? "FieldValidate(this.value, \"" . $field['validate'] . "\", \"" . $field['message'] ."\")":"");
 
 				break;

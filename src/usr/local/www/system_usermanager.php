@@ -766,6 +766,8 @@ foreach (config_get_path('system/user', []) as $i => $userent):
 }
 
 $form = new Form;
+/* Allow password managers to offer generation for WebGUI login passwords. */
+$form->setAttribute('autocomplete', 'on');
 
 if ($act == "new" || $act == "edit" || $input_errors):
 
@@ -828,7 +830,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 		'*Username',
 		'text',
 		$pconfig['usernamefld'],
-		['autocomplete' => 'new-password']
+		['autocomplete' => 'username']
 	));
 
 	if ($ro) {
@@ -864,7 +866,10 @@ if ($act == "new" || $act == "edit" || $input_errors):
 		'Confirm Password',
 		'password',
 		null,
-		['autocomplete' => 'new-password']
+		[
+			'aria-label' => gettext('Confirm Password'),
+			'autocomplete' => 'new-password'
+		]
 	))->setHelp('Type the new password again for confirmation.');
 
 	$section->add($group);

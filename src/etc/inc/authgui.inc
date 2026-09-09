@@ -273,7 +273,10 @@ function display_login_form() {
 		$login_title = sprintf(gettext("%s - Login"), g_get('product_label'));
 	}
 
-	$loginautocomplete = config_path_enabled('system/webgui','loginautocomplete') ? '' : 'autocomplete="off"';
+	$loginautocompleteenabled = config_path_enabled('system/webgui','loginautocomplete');
+	$loginautocomplete = $loginautocompleteenabled ? 'autocomplete="on"' : 'autocomplete="off"';
+	$loginusernameautocomplete = $loginautocompleteenabled ? 'autocomplete="username"' : 'autocomplete="off"';
+	$loginpasswordautocomplete = $loginautocompleteenabled ? 'autocomplete="current-password"' : 'autocomplete="off"';
 
 	if (is_ipaddr($http_host) && !$local_ip &&
 		!config_path_enabled('system/webgui','nohttpreferercheck')) {
@@ -350,8 +353,10 @@ function display_login_form() {
 					<div class="loginCont center-block">
 		                <form method="post" <?=$loginautocomplete?> class="login">
 			                <p class="form-title">Sign In</p>
-			                <input name="usernamefld" id="usernamefld" type="text" placeholder="Username" autocorrect="off" autocapitalize="none"/>
-			                <input name="passwordfld" id="passwordfld" type="password" placeholder="Password" />
+			                <label class="sr-only" for="usernamefld"><?=gettext('Username')?></label>
+			                <input name="usernamefld" id="usernamefld" type="text" placeholder="<?=gettext('Username')?>" <?=$loginusernameautocomplete?> autocorrect="off" autocapitalize="none"/>
+			                <label class="sr-only" for="passwordfld"><?=gettext('Password')?></label>
+			                <input name="passwordfld" id="passwordfld" type="password" placeholder="<?=gettext('Password')?>" <?=$loginpasswordautocomplete?> />
 			                <input type="submit" name="login" value="Sign In" class="btn btn-success btn-sm" />
 		                </form>
 					</div>

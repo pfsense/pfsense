@@ -24,6 +24,11 @@
 
 class Form_Input extends Form_Element
 {
+	private const AUTOCOMPLETE_TYPES = [
+		'color', 'date', 'datetime-local', 'email', 'month', 'number',
+		'password', 'range', 'search', 'tel', 'text', 'time', 'url', 'week'
+	];
+
 	public $column;
 	protected $_tagName = 'input';
 	protected $_tagSelfClosing = false;
@@ -44,6 +49,10 @@ class Form_Input extends Form_Element
 
 		$this->_attributes['name'] = $name;
 		$this->_attributes['id'] = $name;
+		if (in_array($this->_tagName, ['select', 'textarea'], true) ||
+		    (($this->_tagName == 'input') && in_array($type, self::AUTOCOMPLETE_TYPES, true))) {
+			$this->_attributes['autocomplete'] = 'off';
+		}
 		$this->_title = $title;
 
 		if (isset($type))

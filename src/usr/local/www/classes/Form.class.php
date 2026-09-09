@@ -30,6 +30,7 @@ class Form extends Form_Element
 	protected $_attributes = array(
 		'class' => array('form-horizontal' => true),
 		'method' => 'post',
+		'autocomplete' => 'off',
 	);
 	protected $_sections = array();
 	protected $_global = array();

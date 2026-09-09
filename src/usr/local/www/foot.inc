@@ -52,6 +52,19 @@
 
 	<script type="text/javascript">
 	//<![CDATA[
+		/*
+		 * Prevent browser autofill on WebGUI configuration forms. Preserve explicit
+		 * values such as "new-password", which is more effective for credentials.
+		 */
+		var autocompleteSelector = 'form:not([autocomplete]), textarea:not([autocomplete]), ' +
+			'select:not([autocomplete]), input:not([autocomplete]):not([type="button"])' +
+			':not([type="checkbox"]):not([type="file"]):not([type="hidden"])' +
+			':not([type="image"]):not([type="radio"]):not([type="reset"])' +
+			':not([type="submit"])';
+		document.querySelectorAll(autocompleteSelector).forEach(function(element) {
+			element.setAttribute('autocomplete', 'off');
+		});
+
 		// Un-hide the "Top of page" icons if the page is larger than the window
 		if ($(document).height() > $(window).height()) {
 		    $('[id^=tp]').show();

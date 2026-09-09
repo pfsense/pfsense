@@ -698,6 +698,8 @@
 <step>
 	<id>7</id>
 	<title>Change admin Account Password</title>
+	<autocomplete>on</autocomplete>
+	<autocompleteusername>admin</autocompleteusername>
 	<description>
 		<![CDATA[
 		<p>Change the password for the admin account.</p>
@@ -708,10 +710,12 @@
 		<field>
 			<name>New admin Password</name>
 			<type>password</type>
+			<autocomplete>new-password</autocomplete>
 		</field>
 		<field>
 			<name>Confirm admin Password</name>
 			<type>password</type>
+			<autocomplete>new-password</autocomplete>
 		</field>
 		<field>
 			<name>Next</name>

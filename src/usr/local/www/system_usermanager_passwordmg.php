@@ -121,6 +121,15 @@ $tab_array[] = array(gettext("Authentication Servers"), false, "system_authserve
 display_top_tabs($tab_array);
 
 $form = new Form();
+/* Allow password managers to offer generation for the WebGUI login password. */
+$form->setAttribute('autocomplete', 'on');
+$form->addGlobal(new Form_Input(
+	'usernamefld',
+	null,
+	'hidden',
+	$_SESSION['Username'],
+	['autocomplete' => 'username']
+));
 
 $section = new Form_Section('Change Password');
 

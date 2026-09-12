@@ -210,6 +210,8 @@
 
 		var $_existingRecords;
 		var $_curlProxy;
+		/* host routes created by _exec(), see below */
+		var $_gwRoutes = array();
 
 		/*
 		 * Public Constructor Function (added 12 July 05) [beta]
@@ -570,6 +572,112 @@
 			}
 
 			unlock($dyndnslck);
+		}
+
+		/* Route requests via the gateway of the monitored interface:
+		 * CURLOPT_INTERFACE only binds the source IP address; locally
+		 * generated traffic still follows the system routing table and
+		 * therefore leaves via the default gateway. Upstreams with
+		 * uRPF/BCP38 filtering silently drop such packets. _exec() now
+		 * resolves the destination of every request, installs temporary
+		 * host routes via the gateway of the monitored interface and
+		 * pins the handle to those addresses (CURLOPT_RESOLVE). */
+
+		function _dyndns_gateway() {
+			if (!function_exists('get_interface_gateway')) {
+				require_once('gwlb.inc');
+			}
+
+			if ($this->_addressFamilyRequest == AF_INET6) {
+				$gw = get_interface_gateway_v6($this->_dnsRequestIf);
+			} else {
+				$gw = get_interface_gateway($this->_dnsRequestIf);
+			}
+			/* gateway group: use the gateway of the currently active member */
+			if (!is_ipaddr($gw) && function_exists('return_gateway_groups_array')) {
+				$groups = return_gateway_groups_array(true);
+				$gw = $groups[$this->_dnsRequestIf][0]['gateway'] ?? '';
+			}
+
+			return $gw;
+		}
+
+		function _gw_route_add($dest) {
+			$gw = $this->_dyndns_gateway();
+
+			if (!is_ipaddr($dest) || !is_ipaddr($gw) ||
+			    (is_ipaddrv4($dest) != is_ipaddrv4($gw))) {
+				return;
+			}
+			/* never manipulate routing for private or reserved destinations */
+			if (!filter_var($dest, FILTER_VALIDATE_IP,
+			    FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+				return;
+			}
+
+			$fam = ($this->_addressFamilyRequest == AF_INET6) ? '-inet6' : '';
+			if (mwexec("/sbin/route {$fam} add -host " . escapeshellarg($dest) .
+			    " " . escapeshellarg($gw), true) == 0) {
+				/* route created by us, remove it again in _gw_routes_cleanup() */
+				$this->_gwRoutes[$dest] = true;
+			} else {
+				/* route already exists (e.g. leftover from a previous run):
+				 * make sure it points at the correct gateway, but do not
+				 * track it, so foreign static routes survive the cleanup */
+				mwexec("/sbin/route {$fam} change -host " . escapeshellarg($dest) .
+				    " " . escapeshellarg($gw), true);
+			}
+		}
+
+		function _gw_routes_cleanup() {
+			$fam = ($this->_addressFamilyRequest == AF_INET6) ? '-inet6' : '';
+
+			foreach (array_keys($this->_gwRoutes) as $dest) {
+				mwexec("/sbin/route {$fam} delete -host " . escapeshellarg($dest), true);
+			}
+			$this->_gwRoutes = array();
+		}
+
+		/* curl_exec() wrapper: sends the request through a temporary host route
+		 * via the monitored interface's gateway instead of the default gateway */
+		function _exec($ch) {
+			$url = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
+			$host = trim(strval(parse_url($url, PHP_URL_HOST)), '[]');
+			$scheme = strtolower(strval(parse_url($url, PHP_URL_SCHEME)));
+			$port = parse_url($url, PHP_URL_PORT);
+			$port = empty($port) ? (($scheme == 'https') ? 443 : 80) : $port;
+
+			if (($this->_dnsService != 'ods') && !empty($this->_dnsRequestIf)) {
+				if (is_ipaddr($host)) {
+					$this->_gw_route_add($host);
+				} elseif (!empty($host)) {
+					$records = @dns_get_record($host,
+					    ($this->_addressFamilyRequest == AF_INET6) ? DNS_AAAA : DNS_A) ?: array();
+					$resolve = array();
+					foreach ($records as $record) {
+						$ip = ($this->_addressFamilyRequest == AF_INET6) ?
+						    ($record['ipv6'] ?? '') : ($record['ip'] ?? '');
+						if (!is_ipaddr($ip)) {
+							continue;
+						}
+						$this->_gw_route_add($ip);
+						$resolve[] = "{$host}:{$port}:{$ip}";
+					}
+					if (!empty($resolve)) {
+						/* pin the handle to the addresses we just routed */
+						curl_setopt($ch, CURLOPT_RESOLVE, $resolve);
+					}
+				}
+			}
+
+			$response = curl_exec($ch);
+			$this->_gw_routes_cleanup();
+
+			return $response;
+		}
+
+		function __destruct() {
+			$this->_gw_routes_cleanup();
 		}
 
 		/*
@@ -949,7 +1057,7 @@
 					// Check if a record already exists for this host.
 					curl_setopt($ch, CURLOPT_URL, "{$namedotcom_api}?perPage=1000");
 					curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
-					$response = json_decode(curl_exec($ch), true);
+					$response = json_decode($this->_exec($ch), true);
 					$http_code = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
 					if ($http_code != "200") {
 						logger(LOG_ERR, localize_text("Error message: %s", (is_array($response) ? implode('; ', $response) : $response)), LOG_PREFIX_DDNS);
@@ -1017,7 +1125,7 @@
 					curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post_data));
 					curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
 					curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-					$response = json_decode(curl_exec($ch), true);
+					$response = json_decode($this->_exec($ch), true);
 					$http_code = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
 					if ($http_code != "200") {
 						logger(LOG_ERR, localize_text("Error message: %s", (is_array($response) ? implode('; ', $response) : $response)), LOG_PREFIX_DDNS);
@@ -1086,7 +1194,7 @@
 					curl_setopt($ch, CURLOPT_URL, "https://pddimp.yandex.ru/api2/admin/dns/list?domain={$this->_dnsDomain}");
 					curl_setopt($ch, CURLOPT_HTTPHEADER, array('PddToken: ' . $this->_dnsPass));
 					curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
-					$output = json_decode(curl_exec($ch), true);
+					$output = json_decode($this->_exec($ch), true);
 					if (is_array($output["records"])) {
 						foreach($output["records"] as $record) {
 							if (($record["domain"] == $this->_dnsDomain) &&
@@ -1222,7 +1330,7 @@
 						$getZoneId = "https://{$dnsServer}/client/v4/zones/?name={$this->_dnsDomain}";
 						curl_setopt($ch, CURLOPT_URL, $getZoneId);
 						curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
-						$output = json_decode(curl_exec($ch));
+						$output = json_decode($this->_exec($ch));
 						$zone = $output->result[0]->id;
 					} else {
 						curl_setopt($ch, CURLOPT_HTTPHEADER, array(
@@ -1237,7 +1345,7 @@
 						$getHostId = "https://{$dnsServer}/client/v4/zones/{$zone}/dns_records?name={$this->_FQDN}&type={$recordType}";
 						curl_setopt($ch, CURLOPT_URL, $getHostId);
 						curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
-						$output = json_decode(curl_exec($ch));
+						$output = json_decode($this->_exec($ch));
 						$host = $output->result[0]->id;
 						if ($host) { // If host ID was found update host
 							$hostData = array(
@@ -1384,7 +1492,7 @@
 					curl_setopt($ch, CURLOPT_URL, "https://www.hover.com/api/login");
 					curl_setopt($ch, CURLOPT_HEADER, 1); //return the full headers to extract the cookies
 					curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
-					$output = curl_exec($ch);
+					$output = $this->_exec($ch);
 
 					//extract the cookies
 					preg_match_all("/^Set-cookie: (.*?);/ism", $output, $cookies);
@@ -1400,7 +1508,7 @@
 					curl_setopt($ch, CURLOPT_URL, "https://www.hover.com/api/dns");
 					curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
 					curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
-					$output = curl_exec($ch);
+					$output = $this->_exec($ch);
 					$pregHost = preg_quote($this->_dnsHost);
 					$pregDomain = preg_quote($this->_dnsDomain);
 					preg_match("/^{\"succeeded\":true.*?domain_name\":\"{$pregDomain}.*?entries.*?{\"id\":\"([^\"]*?)\",\"name\":\"{$pregHost}\",\"type\":\"A\".*?\$/", $output, $hostID);
@@ -1432,7 +1540,7 @@
 					curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 					curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
 					curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
-					$output = curl_exec($ch);
+					$output = $this->_exec($ch);
 					$last_url = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
 
 					// extract the cookies
@@ -1452,7 +1560,7 @@
 					curl_setopt($ch, CURLOPT_HEADER, 1); //return the full headers to extract the cookies
 					curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
 					curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
-					$output = curl_exec($ch);
+					$output = $this->_exec($ch);
 
 					// extract the cookies
 					preg_match_all("/^Set-cookie: (.*?);/ism", $output, $cookies);
@@ -1470,7 +1578,7 @@
 					curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
 					curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
 					curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
-					$output = curl_exec($ch);
+					$output = $this->_exec($ch);
 					$result = json_decode($output, true);
 					$records = $result['result']['data'];
 
@@ -1541,7 +1649,7 @@
 					curl_setopt($ch, CURLOPT_HTTPHEADER, array("Authorization: Bearer {$this->_dnsPass}"));
 					curl_setopt($ch, CURLOPT_URL, $url);
 					curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
-					$output = json_decode(curl_exec($ch));
+					$output = json_decode($this->_exec($ch));
 					if (!is_array($output->domain_records)) {
 						$output->domain_records = array();
 					}
@@ -1575,7 +1683,7 @@
 									echo "getting $_next\n";
 									curl_setopt($ch, CURLOPT_URL, $_next);
 									curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
-									$output = json_decode(curl_exec($ch));
+									$output = json_decode($this->_exec($ch));
 									if (!is_array($output->domain_records)) {
 										$output->domain_records = array();
 									}
@@ -1622,7 +1730,7 @@
 					curl_setopt($ch, CURLOPT_URL, $url);
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
 					curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
-					$output = json_decode(curl_exec($ch));
+					$output = json_decode($this->_exec($ch));
 					$recordID = key(get_object_vars($output));
 
 					// Step 2: Set the record
@@ -1664,7 +1772,7 @@
 					curl_setopt($ch, CURLOPT_HEADER, 1);
 					curl_setopt($ch, CURLOPT_NOBODY, 1);
 					curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
-					$output = curl_exec($ch);
+					$output = $this->_exec($ch);
 					$pattern = '/Bearer authorization_uri="https:\\/\\/login.windows.net\\/(?<tid>[^"]*)/i';
 					preg_match($pattern, $output, $result);
 					if (isset($result['tid'])) {
@@ -1680,7 +1788,7 @@
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
 					curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 					curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
-					$server_output = curl_exec($ch);
+					$server_output = $this->_exec($ch);
 					$httpcode = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
 					preg_match("/\"access_token\":\"(?<tok>[^\"]*)\"/", $server_output, $result);
 					if (isset($result['tok'])) {
@@ -1725,7 +1833,7 @@
 					// get domain id
 					curl_setopt($ch, CURLOPT_URL, "{$linode_api}/domains");
 					curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
-					$domains_output = curl_exec($ch);
+					$domains_output = $this->_exec($ch);
 					$domains_result = json_decode($domains_output, TRUE);
 					foreach($domains_result["data"] as $domains_entry) {
 						if ($domains_entry["domain"] == $this->_dnsDomain) {
@@ -1756,7 +1864,7 @@
 					// get existing record if present
 					curl_setopt($ch, CURLOPT_URL, "{$linode_api}/domains/{$domain_id}/records");
 					curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
-					$records_output = curl_exec($ch);
+					$records_output = $this->_exec($ch);
 					$http_code = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
 					if ( $http_code != 200 )
 					{
@@ -1856,7 +1964,7 @@
 
 					/* Lookup Zone ID */
 					curl_setopt($ch, CURLOPT_URL, "{$server}/zones");
-					$response = curl_exec($ch);
+					$response = $this->_exec($ch);
 					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 					if ($http_code != 200) {
 						logger(LOG_ERR, localize_text("Could not get zone list"), LOG_PREFIX_DDNS);
@@ -1885,7 +1993,7 @@
 
 					/* Lookup Record ID */
 					curl_setopt($ch, CURLOPT_URL, "{$server}/zones/{$zone_id}/records");
-					$response = curl_exec($ch);
+					$response = $this->_exec($ch);
 					$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 					if ($http_code != 200) {
 						logger(LOG_ERR, localize_text("Could not get record list"), LOG_PREFIX_DDNS);
@@ -1933,7 +2041,7 @@
 					set_curlproxy($ch);
 				}
 				curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
-				$response = curl_exec($ch);
+				$response = $this->_exec($ch);
 				$header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
 				$header = substr($response, 0, $header_size);
 				$data = substr($response, $header_size);
@@ -2009,7 +2117,7 @@
 			if ($remove_allowed) {
 				curl_setopt($ch, CURLOPT_HEADER, 1);
 				curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
-				$response = curl_exec($ch);
+				$response = $this->_exec($ch);
 				$header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
 				$header = substr($response, 0, $header_size);
 				$data = substr($response, $header_size);
@@ -2066,7 +2174,7 @@
 			if ($lookup_allowed) {
 				curl_setopt($ch, CURLOPT_HEADER, 1);
 				curl_setopt($ch, CURLOPT_FORBID_REUSE, true);
-				$response = curl_exec($ch);
+				$response = $this->_exec($ch);
 				$header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
 				$header = substr($response, 0, $header_size);
 				$data = substr($response, $header_size);

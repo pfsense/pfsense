@@ -1951,6 +1951,72 @@ function resolve_host_addresses($host, $recordtypes = array(DNS_A, DNS_AAAA, DNS
 	return $resolved;
 }
 
+/**
+ * Resolve every A/AAAA address for a hostname, following CNAME chains and
+ * sampling the resolver several times so a single rotating answer cannot
+ * leave the alias table incomplete. Previously observed addresses are merged
+ * in from /var/db/dnscache and the aggregated set is persisted for the next
+ * reload, so addresses keep the table even after the domain rotates away.
+ */
+function resolve_alias_host_addresses($host, $samples = 3) {
+	$all = array();
+
+	if (is_ipaddr($host)) {
+		return array($host);
+	}
+
+	/* Retain addresses observed on previous reloads */
+	if (is_dir("/var/db/dnscache") && is_readable("/var/db/dnscache/{$host}")) {
+		foreach (file("/var/db/dnscache/{$host}") as $line) {
+			$line = trim($line);
+			if (is_ipaddr($line) && !isset($all[$line])) {
+				$all[$line] = true;
+			}
+		}
+	}
+
+	/* Sample the resolver several times to collect rotating single answers */
+	for ($i = 0; $i < $samples; $i++) {
+		foreach (resolve_host_addresses($host, array(DNS_A | DNS_AAAA), false) as $addr) {
+			if (is_ipaddr($addr) && !isset($all[$addr])) {
+				$all[$addr] = true;
+			}
+		}
+	}
+
+	/* Follow CNAME chains to their terminal addresses */
+	$stack = array($host);
+	$visited = array($host => true);
+	while (!empty($stack)) {
+		$cname = array_pop($stack);
+		foreach (resolve_host_addresses($cname, array(DNS_CNAME), false) as $target) {
+			if (!is_fqdn($target) || isset($visited[$target])) {
+				continue;
+			}
+			$visited[$target] = true;
+			$stack[] = $target;
+			foreach (resolve_host_addresses($target, array(DNS_A | DNS_AAAA), false) as $addr) {
+				if (is_ipaddr($addr) && !isset($all[$addr])) {
+					$all[$addr] = true;
+				}
+			}
+		}
+	}
+
+	if (empty($all)) {
+		return array();
+	}
+
+	$ips = array_keys($all);
+
+	/* Persist the aggregated set so the alias table survives reloads */
+	if (is_dir("/var/db/dnscache") || @mkdir("/var/db/dnscache", 0755, true)) {
+		@file_put_contents("/var/db/dnscache/{$host}", implode("\n", $ips) . "\n");
+	}
+
+	return $ips;
+}
+
 function add_hostname_to_watch($hostname) {
 	if (!is_dir("/var/db/dnscache")) {
 		mkdir("/var/db/dnscache");

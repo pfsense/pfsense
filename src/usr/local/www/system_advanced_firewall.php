@@ -342,6 +342,17 @@ $section->addInput(new Form_Input(
 	'(300s).', '<br/>');
 
 $section->addInput(new Form_Checkbox(
+	'aliasesresolveall',
+	'Resolve and retain all FQDN addresses',
+	'When checked, host aliases resolve all A/AAAA records (multi-sample, CNAME follow, retention)',
+	$pconfig['aliasesresolveall']
+))->setHelp('Normally, host aliases resolve each hostname once per interval, keeping only the '.
+	'current answer in the table. Enabling this samples the resolver several times, follows '.
+	'CNAME chains, and retains previously seen addresses so every known address stays in the '.
+	'table. %1$sThis avoids traffic leaving via the wrong gateway when a hostname uses rotating '.
+	'single-answer DNS (e.g. Cloudflare).', '<br/>');
+
+$section->addInput(new Form_Checkbox(
 	'checkaliasesurlcert',
 	'Check certificate of aliases URLs',
 	'Verify HTTPS certificates when downloading alias URLs',

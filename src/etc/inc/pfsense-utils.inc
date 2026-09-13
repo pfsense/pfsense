@@ -1957,8 +1957,16 @@ function resolve_host_addresses($host, $recordtypes = array(DNS_A, DNS_AAAA, DNS
  * leave the alias table incomplete. Previously observed addresses are merged
  * in from /var/db/dnscache and the aggregated set is persisted for the next
  * reload, so addresses keep the table even after the domain rotates away.
+ *
+ * DNS cost is kept low: the first time a hostname is seen it is sampled
+ * $samples times to seed a full address set, but on subsequent reloads
+ * (when a retained set already exists) only a single refresh sample is
+ * taken and the previously observed addresses carry the rest.
+ *
+ * Retained sets for hostnames that have not been resolved (e.g. removed
+ * from all aliases) for $prune_older_than_days days are removed.
  */
-function resolve_alias_host_addresses($host, $samples = 3) {
+function resolve_alias_host_addresses($host, $samples = 3, $prune_older_than_days = 30) {
 	$all = array();
 
 	if (is_ipaddr($host)) {
@@ -1973,6 +1981,9 @@ function resolve_alias_host_addresses($host, $samples = 3) {
 				$all[$line] = true;
 			}
 		}
+		/* A retained set already exists; a single refresh sample is enough
+		 * to pick up rotation since the previous reload. */
+		$samples = 1;
 	}
 
 	/* Sample the resolver several times to collect rotating single answers */
@@ -2012,6 +2023,19 @@ function resolve_alias_host_addresses($host, $samples = 3) {
 	/* Persist the aggregated set so the alias table survives reloads */
 	if (is_dir("/var/db/dnscache") || @mkdir("/var/db/dnscache", 0755, true)) {
 		@file_put_contents("/var/db/dnscache/{$host}", implode("\n", $ips) . "\n");
+
+		/* Prune retained sets for hostnames that have stopped resolving
+		 * (e.g. removed from every alias) so stale addresses do not linger
+		 * in the alias tables indefinitely. */
+		$stale_files = glob("/var/db/dnscache/*");
+		if (is_array($stale_files)) {
+			foreach ($stale_files as $file) {
+				$mtime = @filemtime($file);
+				if ($mtime !== false && ((time() - $mtime) > ($prune_older_than_days * 86400))) {
+					@unlink($file);
+				}
+			}
+		}
 	}
 
 	return $ips;

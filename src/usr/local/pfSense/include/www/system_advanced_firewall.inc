@@ -41,6 +41,7 @@ function getSystemAdvancedFirewall($json = false) {
 	$pconfig['adaptiveend'] = config_get_path('system/adaptiveend');
 	$pconfig['adaptivestart'] = config_get_path('system/adaptivestart');
 	$pconfig['aliasesresolveinterval'] = config_get_path('system/aliasesresolveinterval');
+	$pconfig['aliasesresolveall'] = config_get_path('system/aliasesresolveall', 'yes');
 	$pconfig['bogonsinterval'] = config_get_path('system/bogons/interval');
 	$pconfig['bypassstaticroutes'] = config_path_enabled('filter', 'bypassstaticroutes');
 	$pconfig['checkaliasesurlcert'] = config_path_enabled('system', 'checkaliasesurlcert');
@@ -279,11 +280,17 @@ function saveSystemAdvancedFirewall($post, $json = false) {
 
 		$setup_sysctl = ($post['maximumtableentries'] != config_get_path('system/maximumtableentries'));
 		$restart_filterdns = ($post['aliasesresolveinterval'] != config_get_path('system/aliasesresolveinterval'));
+		$restart_filterdns = ($restart_filterdns || (($post['aliasesresolveall'] == 'yes') != (config_get_path('system/aliasesresolveall', 'yes') == 'yes')));
 
 		config_set_path('system/optimization', $post['optimization']);
 		$maxstates_changed = (config_get_path('system/maximumstates') != $post['maximumstates']) ? true : false;
 		config_set_path('system/maximumstates', $post['maximumstates']);
 		config_set_path('system/aliasesresolveinterval', $post['aliasesresolveinterval']);
+		if ($post['aliasesresolveall'] == 'yes') {
+			config_set_path('system/aliasesresolveall', 'yes');
+		} else {
+			config_set_path('system/aliasesresolveall', 'no');
+		}
 		config_set_path('system/maximumtableentries', $post['maximumtableentries']);
 		config_set_path('system/maximumfrags', $post['maximumfrags']);
 

@@ -188,6 +188,43 @@ function handle_argument_group($iface, $action) {
 	}
 }
 
+function handle_mbim_event($realif, $action) {
+	global $g;
+
+	if (!preg_match('/^umb[0-9]+$/', $realif)) {
+		return;
+	}
+	$interface = convert_real_interface_to_friendly_interface_name($realif);
+	if (empty($interface) ||
+	    config_get_path("interfaces/{$interface}/ipaddr", '') != 'mbim' ||
+	    !config_path_enabled("interfaces/{$interface}")) {
+		return;
+	}
+
+	$lock = lock("mbimhotplug{$realif}", LOCK_EX);
+	if ($action == 'start') {
+		/* A recreated driver instance has no local/peer pair or pfSense
+		 * volatile state. Delay full configuration briefly for USB attach settle. */
+		$info = interface_mbim_get_ipv4_info($realif);
+		$state = interface_mbim_read_state($realif);
+		$runtime_missing = !is_ipaddrv4($info['address'] ?? '') ||
+		    !is_ipaddrv4($info['gateway'] ?? '') ||
+		    !is_ipaddrv4($state['address'] ?? '') ||
+		    !is_ipaddrv4($state['gateway'] ?? '');
+		if ($runtime_missing) {
+			sleep(2);
+			unlock($lock);
+			interface_configure($interface, true, true);
+			return;
+		} else {
+			interface_mbim_reconcile($interface);
+		}
+	} elseif ($action == 'stop') {
+		handle_argument_group($interface, $action);
+	}
+	unlock($lock);
+}
+
 if (isset($_GET['interface'])) {
 	if (!empty($_GET['interface'])) {
 		$realiface = $_GET['interface'];
@@ -205,7 +242,7 @@ $action = ltrim($action, '$');
 $realiface = ltrim($realiface, '$');
 
 if (!in_array($action, ['start', 'stop'])) {
-		log_error("HOTPLUG event: Action parameter ($action) passed is wrong - only start/stop are allowed!");
+	log_error("HOTPLUG event: Action parameter ($action) passed is wrong - only start and stop are allowed!");
 		return;
 }
 
@@ -232,9 +269,13 @@ if (!empty($realiface)) {
 		return;
 	}
 	$rclinkuplock = lock("rclinkup{$realiface}", LOCK_EX);
-	$interface = convert_real_interface_to_friendly_interface_name($realiface);
-	if (!empty($interface)) {
-		handle_argument_group($interface, $action);
+	if (preg_match('/^umb[0-9]+$/', $realiface)) {
+		handle_mbim_event($realiface, $action);
+	} else {
+		$interface = convert_real_interface_to_friendly_interface_name($realiface);
+		if (!empty($interface)) {
+			handle_argument_group($interface, $action);
+		}
 	}
 	/* Check if there is any child on this one as ppp types and trigger them */
 	foreach(config_get_path('ppps/ppp', []) as $ppp) {

@@ -1684,6 +1684,11 @@ function get_interface_info($ifdescr) {
 
 	$link_type = config_get_path("interfaces/{$ifdescr}/ipaddr");
 	switch ($link_type) {
+		case "mbim":
+			$ifinfo['mbim_link'] = ($ifinfo['status'] == "up" && is_ipaddrv4($ifinfo['ipaddr'])) ? "up" : "down";
+			$ifinfo['gateway'] = get_interface_gateway($ifdescr);
+			$ifinfo['mbim_status'] = get_mbim_status($ifinfo['if']);
+			break;
 		/* DHCP? -> see if dhclient is up */
 		case "dhcp":
 			/* see if dhclient is up */
@@ -1872,6 +1877,55 @@ function get_interface_info($ifdescr) {
 	}
 
 	return $ifinfo;
+}
+
+/* Return non-secret modem status from umbctl. Routing information remains
+ * exclusively sourced from ifconfig through the normal interface helpers. */
+function get_mbim_status($interface) {
+	if (!preg_match('/^umb[0-9]+$/', $interface)) {
+		return [];
+	}
+
+	$umbctl = '';
+	foreach (['/usr/sbin/umbctl', '/sbin/umbctl', '/usr/local/sbin/umbctl'] as $candidate) {
+		if (is_executable($candidate)) {
+			$umbctl = $candidate;
+			break;
+		}
+	}
+	if (empty($umbctl)) {
+		return [];
+	}
+
+	$output = [];
+	exec(escapeshellarg($umbctl) . ' ' . escapeshellarg($interface), $output, $retval);
+	if ($retval != 0 || empty($output)) {
+		return [];
+	}
+
+	$status = [];
+	foreach ($output as $line) {
+		if (preg_match('/^\S+:\s+state\s+([^,]+),\s+mode\s+([^,]+),\s+registration\s+(.+)$/i', $line, $match)) {
+			$status['state'] = trim($match[1]);
+			$status['mode'] = trim($match[2]);
+			$status['registration'] = trim($match[3]);
+		} elseif (preg_match('/^\s*provider\s+"([^"]*)",\s+dataclass\s+([^,]+),\s+signal\s+(.+)$/i', $line, $match)) {
+			$status['provider'] = trim($match[1]);
+			$status['dataclass'] = trim($match[2]);
+			$status['signal'] = trim($match[3]);
+		} elseif (preg_match('/^\s*phone number\s+"[^"]*",\s+roaming\s+"[^"]*"\s+\(([^)]+)\)$/i', $line, $match)) {
+			$status['roaming'] = trim($match[1]);
+		} elseif (preg_match('/^\s*APN\s+"([^"]*)",\s+TX\s+([^,]+),\s+RX\s+(.+)$/i', $line, $match)) {
+			$status['apn'] = trim($match[1]);
+			$status['tx'] = trim($match[2]);
+			$status['rx'] = trim($match[3]);
+		} elseif (preg_match('/^\s*firmware\s+"([^"]*)",\s+hardware\s+"([^"]*)"$/i', $line, $match)) {
+			$status['firmware'] = trim($match[1]);
+			$status['hardware'] = trim($match[2]);
+		}
+	}
+
+	return $status;
 }
 
 //returns cpu speed of processor. Good for determining capabilities of machine

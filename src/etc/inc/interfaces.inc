@@ -1849,6 +1849,13 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 				}
 			}
 			break;
+		case "mbim":
+			/* IPv4 addressing on umb(4) interfaces is driver managed. Do not
+			 * remove it manually, but do administratively stop the interface. */
+			if (does_interface_exist($realif)) {
+				pfSense_interface_flags($realif, -IFF_UP);
+			}
+			break;
 		case "dhcp":
 			kill_dhclient_process($realif);
 			unlink_if_exists("{$g['varetc_path']}/dhclient_{$interface}.conf");
@@ -1949,6 +1956,9 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 	}
 	if (file_exists("{$g['tmp_path']}/{$realif}_routerv6")) {
 		rename("{$g['tmp_path']}/{$realif}_routerv6", "{$g['tmp_path']}/{$realif}_routerv6.last");
+	}
+	if ($ifcfg['ipaddr'] == 'mbim') {
+		unlink_if_exists(interface_mbim_state_path($realif));
 	}
 	unlink_if_exists("{$g['varetc_path']}/nameserver_{$realif}");
 	unlink_if_exists("{$g['varetc_path']}/nameserver_v6{$interface}");
@@ -4011,7 +4021,7 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		}
 	}
 
-	if (!platform_booting() && (substr($realif, 0, 4) != "ovpn") && (substr($realif, 0, 5) != "ipsec")) {
+	if (!platform_booting() && ($wancfg['ipaddr'] != 'mbim') && (substr($realif, 0, 4) != "ovpn") && (substr($realif, 0, 5) != "ipsec")) {
 		/* remove all IPv4 and IPv6 addresses */
 		$tmpifaces = pfSense_getall_interface_addresses($realif);
 		if (is_array($tmpifaces)) {
@@ -4217,6 +4227,11 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		case 'dhcp':
 			interface_dhcp_configure($interface);
 			break;
+		case 'mbim':
+			if (interface_mbim_configure($interface, $wancfg) == 0) {
+				send_event("interface newip {$realif}");
+			}
+			break;
 		case 'pppoe':
 		case 'l2tp':
 		case 'pptp':
@@ -4328,6 +4343,198 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 
 	interfaces_staticarp_configure($interface);
 	return 0;
+}
+
+/* Configure a FreeBSD umb(4) interface. IPv4 addressing and the peer gateway
+ * are driver managed; umbctl is only used for modem settings. */
+function interface_mbim_configure($interface, $ifcfg) {
+	global $g;
+
+	$realif = get_real_interface($interface);
+	if (!preg_match('/^umb[0-9]+$/', $realif)) {
+		log_error(sprintf(gettext('MBIM configuration rejected on non-umb interface %s'), $realif));
+		return 1;
+	}
+
+	$umbctl = '';
+	foreach (['/usr/sbin/umbctl', '/sbin/umbctl', '/usr/local/sbin/umbctl'] as $candidate) {
+		if (is_executable($candidate)) {
+			$umbctl = $candidate;
+			break;
+		}
+	}
+	if (empty($umbctl)) {
+		log_error(gettext('MBIM configuration failed because umbctl was not found.'));
+		return 1;
+	}
+
+	$mbimcfg = (isset($ifcfg['mbim']) && is_array($ifcfg['mbim'])) ? $ifcfg['mbim'] : [];
+	if (!empty($mbimcfg['pin'])) {
+		$value = base64_decode($mbimcfg['pin']);
+		if ($value === false || $value === '') {
+			log_error(sprintf(gettext('MBIM has an invalid stored PIN setting on %s.'), $realif));
+			return 1;
+		}
+		if (!interface_mbim_apply_setting($umbctl, $realif, 'pin', $value)) {
+			return 1;
+		}
+	}
+	/* PUK is consumed once by the next full configuration attempt. Clear it
+	 * regardless of the modem result so reconnect/reconciliation cannot retry it. */
+	if (!empty($mbimcfg['puk'])) {
+		$value = base64_decode($mbimcfg['puk']);
+		$applied = ($value !== false && $value !== '') &&
+		    interface_mbim_apply_setting($umbctl, $realif, 'puk', $value);
+		config_del_path("interfaces/{$interface}/mbim/puk");
+		write_config(gettext('Consumed one-time MBIM PUK recovery credential'));
+		if (!$applied) {
+			return 1;
+		}
+	}
+	foreach (['apn', 'username', 'password'] as $setting) {
+		$value = ($setting == 'password') ? base64_decode($mbimcfg[$setting] ?? '') : ($mbimcfg[$setting] ?? '');
+		if ($value === false) {
+			log_error(sprintf(gettext('MBIM has an invalid stored %s setting on %s.'), $setting, $realif));
+			return 1;
+		}
+		if (!interface_mbim_apply_setting($umbctl, $realif, $setting, $value)) {
+			return 1;
+		}
+	}
+	if (($mbimcfg['roaming'] ?? '') == 'allow') {
+		if (!interface_mbim_apply_setting($umbctl, $realif, 'roaming')) {
+			return 1;
+		}
+	} elseif (($mbimcfg['roaming'] ?? '') == 'deny') {
+		if (!interface_mbim_apply_setting($umbctl, $realif, '-roaming')) {
+			return 1;
+		}
+	}
+
+	mwexec('/sbin/ifconfig ' . escapeshellarg($realif) . ' up');
+	$info = interface_mbim_wait_for_ipv4($realif);
+	if (!is_ipaddrv4($info['address'] ?? '') || !is_ipaddrv4($info['gateway'] ?? '')) {
+		log_error(sprintf(gettext('MBIM interface %s has no driver-provided IPv4 address and peer gateway.'), $realif));
+		return 1;
+	}
+
+	/* Preserve the standard dynamic-gateway router-file lifecycle. */
+	@file_put_contents("{$g['tmp_path']}/{$realif}_router", $info['gateway'] . "\n");
+	unlink_if_exists("{$g['tmp_path']}/{$realif}_router.last");
+	interface_mbim_write_state($realif, $info);
+	return 0;
+}
+
+/* Apply one non-routing umbctl setting. Values are shell-escaped and never logged. */
+function interface_mbim_apply_setting($umbctl, $realif, $setting, $value = null) {
+	$command = escapeshellarg($umbctl) . ' ' . escapeshellarg($realif) . ' ' . escapeshellarg($setting);
+	if ($value !== null) {
+		$command .= ' ' . escapeshellarg($value);
+	}
+	if (mwexec($command) != 0) {
+		log_error(sprintf(gettext('MBIM failed to apply %s on %s.'), $setting, $realif));
+		return false;
+	}
+	return true;
+}
+
+/* Read the driver-assigned point-to-point IPv4 local address and peer from
+ * ifconfig. umbctl is deliberately not used for routing/address discovery. */
+function interface_mbim_get_ipv4_info($realif) {
+	if (!preg_match('/^umb[0-9]+$/', $realif)) {
+		return [];
+	}
+
+	$output = [];
+	exec('/sbin/ifconfig ' . escapeshellarg($realif), $output);
+	$output = implode("\n", $output);
+	$ipv4 = '(?:25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})(?:\\.(?:25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})){3}';
+	if (preg_match('/\\binet\\s+(' . $ipv4 . ')\\s+-->\\s+(' . $ipv4 . ')/i', $output, $match) ||
+	    preg_match('/\\binet\\s+(' . $ipv4 . ').*?\\bdestination\\s+(' . $ipv4 . ')/is', $output, $match)) {
+		return ['address' => $match[1], 'gateway' => $match[2], 'subnet' => 32];
+	}
+
+	return [];
+}
+
+/* The modem driver can install the point-to-point address asynchronously after
+ * ifconfig up. Wait for a bounded period before reporting acquisition failure. */
+function interface_mbim_wait_for_ipv4($realif, $timeout = 30) {
+	$last = [];
+	for ($elapsed = 0; $elapsed < $timeout; $elapsed++) {
+		$last = interface_mbim_get_ipv4_info($realif);
+		if (is_ipaddrv4($last['address'] ?? '') && is_ipaddrv4($last['gateway'] ?? '')) {
+			return $last;
+		}
+		sleep(1);
+	}
+	return $last;
+}
+
+/* Reconcile a driver-managed MBIM address change without replaying modem
+ * settings or credentials. Called only after an MBIM IFNET runtime event. */
+function interface_mbim_reconcile($interface) {
+	global $g;
+
+	$realif = get_real_interface($interface);
+	if (!preg_match('/^umb[0-9]+$/', $realif) ||
+	    config_get_path("interfaces/{$interface}/ipaddr", '') != 'mbim') {
+		return false;
+	}
+
+	$lock = lock("mbimreconcile{$realif}", LOCK_EX);
+	$info = interface_mbim_get_ipv4_info($realif);
+	$oldinfo = interface_mbim_read_state($realif);
+	$changed = (($info['address'] ?? '') != ($oldinfo['address'] ?? '')) ||
+	    (($info['gateway'] ?? '') != ($oldinfo['gateway'] ?? '')) ||
+	    (!file_exists("{$g['tmp_path']}/{$realif}_router") &&
+	    is_ipaddrv4($info['gateway'] ?? ''));
+
+	if (!$changed) {
+		unlock($lock);
+		return false;
+	}
+
+	if (is_ipaddrv4($info['address'] ?? '') && is_ipaddrv4($info['gateway'] ?? '')) {
+		@file_put_contents("{$g['tmp_path']}/{$realif}_router", $info['gateway'] . "\n");
+		unlink_if_exists("{$g['tmp_path']}/{$realif}_router.last");
+		interface_mbim_write_state($realif, $info);
+		unlock($lock);
+		send_event("interface newip {$realif}");
+		return true;
+	}
+
+	/* Address loss must not leave a stale dynamic gateway in service. */
+	if (file_exists("{$g['tmp_path']}/{$realif}_router")) {
+		rename("{$g['tmp_path']}/{$realif}_router", "{$g['tmp_path']}/{$realif}_router.last");
+	}
+	unlink_if_exists(interface_mbim_state_path($realif));
+	unlock($lock);
+	setup_gateways_monitor();
+	system_routing_configure($interface);
+	filter_configure_sync();
+	return true;
+}
+
+function interface_mbim_state_path($realif) {
+	global $g;
+	return "{$g['tmp_path']}/{$realif}_mbim.state";
+}
+
+function interface_mbim_read_state($realif) {
+	$state = @file(interface_mbim_state_path($realif), FILE_IGNORE_NEW_LINES);
+	if (!is_array($state) || count($state) != 2) {
+		return [];
+	}
+	return ['address' => $state[0], 'gateway' => $state[1]];
+}
+
+function interface_mbim_write_state($realif, $info) {
+	if (!is_ipaddrv4($info['address'] ?? '') || !is_ipaddrv4($info['gateway'] ?? '')) {
+		return;
+	}
+	@file_put_contents(interface_mbim_state_path($realif),
+	    $info['address'] . "\n" . $info['gateway'] . "\n");
 }
 
 function interface_track6_configure($interface, $wancfg, $linkupevent = false) {
@@ -6681,6 +6888,7 @@ function get_interfaces_with_gateway() {
 			case "pptp":
 			case "l2tp":
 			case "ppp":
+			case "mbim":
 				$ints[$ifdescr] = $ifdescr;
 				break;
 			default:
@@ -6713,6 +6921,7 @@ function interface_has_gateway($friendly) {
 			case "pptp":
 			case "l2tp":
 			case "ppp":
+			case "mbim":
 				return true;
 				break;
 			default:

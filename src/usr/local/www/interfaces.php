@@ -268,11 +268,22 @@ array_set_path($pconfig, 'dhcp_plus', array_path_enabled($wancfg, '', 'dhcp_plus
 array_set_path($pconfig, 'descr', remove_bad_chars(array_get_path($wancfg, 'descr')));
 array_set_path($pconfig, 'enable', array_path_enabled($wancfg, ''));
 
+foreach (['apn', 'username', 'roaming'] as $mbimfield) {
+	array_set_path($pconfig, "mbim/{$mbimfield}", array_get_path($wancfg, "mbim/{$mbimfield}"));
+}
+foreach (['password', 'pin', 'puk'] as $mbimfield) {
+	array_set_path($pconfig, "mbim/{$mbimfield}",
+	    array_get_path($wancfg, "mbim/{$mbimfield}", '') !== '' ? DMYPWD : '');
+}
+
 switch (array_get_path($wancfg, 'ipaddr')) {
 	case "dhcp":
 		array_set_path($pconfig, 'type', 'dhcp');
 		array_set_path($pconfig, 'dhcpvlanenable', array_path_enabled($wancfg, '', 'dhcpvlanenable'));
 		array_set_path($pconfig, 'dhcpcvpt', array_get_path($wancfg, 'dhcpcvpt'));
+		break;
+	case "mbim":
+		array_set_path($pconfig, 'type', 'mbim');
 		break;
 	case "pppoe":
 	case "pptp":
@@ -647,6 +658,17 @@ if ($_POST['apply']) {
 				    (array_get_path($vip, 'interface') == $if)) {
 					$input_errors[] = gettext("This interface is referenced by IPv4 VIPs. Please delete these VIPs before setting the interface configuration type to 'none'.");
 				}
+			}
+			break;
+		case "mbim":
+			if (!preg_match('/^umb[0-9]+$/', $realifname)) {
+				$input_errors[] = gettext("MBIM can be used only with an umbN interface.");
+			}
+			if ($_POST['type6'] != 'none') {
+				$input_errors[] = gettext("MBIM interfaces support IPv4 only. Set IPv6 Configuration Type to None.");
+			}
+			if (!in_array($_POST['mbim_roaming'], ['', 'allow', 'deny'])) {
+				$input_errors[] = gettext("A valid MBIM roaming setting must be selected.");
 			}
 			break;
 		case "ppp":
@@ -1390,6 +1412,27 @@ if ($_POST['apply']) {
 					array_del_path($wancfg, 'dhcpcvpt');
 				}
 				break;
+			case "mbim":
+				array_set_path($wancfg, 'ipaddr', 'mbim');
+				foreach (['apn', 'username'] as $mbimfield) {
+					array_set_path($wancfg, "mbim/{$mbimfield}", $_POST["mbim_{$mbimfield}"]);
+				}
+				if ($_POST['mbim_roaming'] !== '') {
+					array_set_path($wancfg, 'mbim/roaming', $_POST['mbim_roaming']);
+				} else {
+					array_del_path($wancfg, 'mbim/roaming');
+				}
+				foreach (['password', 'pin', 'puk'] as $mbimfield) {
+					if ($_POST["mbim_{$mbimfield}"] != DMYPWD) {
+						if (($mbimfield == 'password') || ($_POST["mbim_{$mbimfield}"] !== '')) {
+							array_set_path($wancfg, "mbim/{$mbimfield}", base64_encode($_POST["mbim_{$mbimfield}"]));
+						} else {
+							array_del_path($wancfg, "mbim/{$mbimfield}");
+						}
+					}
+				}
+				array_del_path($wancfg, 'ipaddrv6');
+				break;
 			case "ppp":
 				array_set_path($a_ppps, "{$pppid}/ptpid", $_POST['ptpid']);
 				array_set_path($a_ppps, "{$pppid}/type", $_POST['type']);
@@ -1934,6 +1977,9 @@ $types4 = ["ppp" => gettext("PPP"), "pppoe" => gettext("PPPoE"), "pptp" => gette
 if (!in_array(array_get_path($pconfig, 'type'), ["ppp", "pppoe", "pptp", "l2tp"]) ||
     !array_intersect_key(explode(",", array_get_path($a_ppps, "{$pppid}/ports", "")), get_configured_interface_list_by_realif())) {
 	$types4 = array_merge(["none" => gettext("None"), "staticv4" => gettext("Static IPv4"), "dhcp" => gettext("DHCP")], $types4);
+	if (preg_match('/^umb[0-9]+$/', $realifname)) {
+		$types4["mbim"] = gettext("MBIM");
+	}
 }
 
 $types6 = ["none" => gettext("None"), "staticv6" => gettext("Static IPv6"), "dhcp6" => gettext("DHCP6"), "slaac" => gettext("SLAAC"), "6rd" => gettext("6rd Tunnel"), "6to4" => gettext("6to4 Tunnel"), "track6" => gettext("Track Interface")];
@@ -2113,6 +2159,50 @@ if (count($mediaopts_list) > 0) {
 				'WARNING: MUST be set to autoselect (automatically negotiate speed) unless the port this interface connects to has its speed and duplex forced.', '<br />');
 }
 
+$form->add($section);
+
+$section = new Form_Section('MBIM Configuration');
+$section->addClass('mbim');
+$section->addInput(new Form_Input(
+	'mbim_apn',
+	'APN',
+	'text',
+	array_get_path($pconfig, 'mbim/apn'),
+))->setHelp('Mobile network access point name. Leaving this blank clears the APN during full MBIM configuration.');
+$section->addInput(new Form_Input(
+	'mbim_username',
+	'Username',
+	'text',
+	array_get_path($pconfig, 'mbim/username'),
+))->setHelp('Mobile network authentication username. Leaving this blank clears the username during full MBIM configuration.');
+$section->addPassword(new Form_Input(
+	'mbim_password',
+	'Password',
+	'password',
+	array_get_path($pconfig, 'mbim/password'),
+), false)->setHelp('Mobile network authentication password. This is not the SIM PIN. Leave unchanged to preserve the stored value; clear the field to clear the password during full MBIM configuration.');
+$section->addPassword(new Form_Input(
+	'mbim_pin',
+	'PIN',
+	'password',
+	array_get_path($pconfig, 'mbim/pin'),
+), false)->setHelp('SIM PIN used to unlock the SIM when required. Leave unchanged to preserve the stored value.');
+$section->addPassword(new Form_Input(
+	'mbim_puk',
+	'PUK',
+	'password',
+	array_get_path($pconfig, 'mbim/puk'),
+), false)->setHelp('SIM recovery credential. When set, it is submitted once during the next full MBIM interface setup and then removed, whether it succeeds or fails. Incorrect PUK attempts can permanently block the SIM.');
+$section->addInput(new Form_Select(
+	'mbim_roaming',
+	'Roaming',
+	array_get_path($pconfig, 'mbim/roaming'),
+	['' => gettext('Do not change'), 'allow' => gettext('Allow'), 'deny' => gettext('Deny')]
+))->setHelp('Do not change leaves the modem roaming setting unchanged.');
+$section->addInput(new Form_StaticText(
+	'Addressing',
+	'Driver-managed IPv4. pfSense obtains the local address and peer gateway from ifconfig; DHCP and static IPv4 configuration are not used.'
+));
 $form->add($section);
 
 $section = new Form_Section('Static IPv4 Configuration');
@@ -3711,37 +3801,43 @@ events.push(function() {
 
 		switch (t) {
 			case "none": {
-				$('.dhcpadvanced, .staticv4, .dhcp, .pppoe, .pptp, .ppp').hide();
+				$('.mbim, .dhcpadvanced, .staticv4, .dhcp, .pppoe, .pptp, .ppp').hide();
 				break;
 			}
 			case "staticv4": {
-				$('.dhcpadvanced, .none, .dhcp').hide();
+				$('.mbim, .dhcpadvanced, .none, .dhcp').hide();
 				$('.pppoe, .pptp, .ppp').hide();
 				break;
 			}
 			case "dhcp": {
-				$('.dhcpadvanced, .none').hide();
+				$('.mbim, .dhcpadvanced, .none').hide();
 				$('.staticv4').hide();	// MYSTERY: This line makes the page very slow to load, but why? There is nothing special
 										//			about the staticv4 class
 				$('.pppoe, .pptp, .ppp').hide();
 				break;
 			}
+			case "mbim": {
+				$('.dhcpadvanced, .none, .staticv4, .dhcp, .pppoe, .pptp, .ppp').hide();
+					$('#type6').val('none');
+					updateTypeSix('none');
+				break;
+			}
 			case "ppp": {
-				$('.dhcpadvanced, .none, .staticv4, .dhcp, .pptp, .pppoe').hide();
+				$('.mbim, .dhcpadvanced, .none, .staticv4, .dhcp, .pptp, .pppoe').hide();
 				country_list();
 				break;
 			}
 			case "pppoe": {
-				$('.dhcpadvanced, .none, .staticv4, .dhcp, .pptp, .ppp').hide();
+				$('.mbim, .dhcpadvanced, .none, .staticv4, .dhcp, .pptp, .ppp').hide();
 				break;
 			}
 			case "l2tp": {
-				$('.dhcpadvanced, .none, .staticv4, .dhcp, .pppoe, .ppp').hide();
+				$('.mbim, .dhcpadvanced, .none, .staticv4, .dhcp, .pppoe, .ppp').hide();
 				$('.pptp, .l2tp_secret').show();
 				break;
 			}
 			case "pptp": {
-				$('.dhcpadvanced, .none, .staticv4, .dhcp, .pppoe, .ppp, .l2tp_secret').hide();
+				$('.mbim, .dhcpadvanced, .none, .staticv4, .dhcp, .pppoe, .ppp, .l2tp_secret').hide();
 				$('.pptp').show();
 				break;
 			}

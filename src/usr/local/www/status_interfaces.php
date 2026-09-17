@@ -150,6 +150,22 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 		<dl class="dl-horizontal">
 <?php
 		showDef(true, gettext("Status"), $ifinfo['enable'] ? $ifinfo['status'] : gettext('disabled'));
+		showDef($config['interfaces'][$ifdescr]['ipaddr'] == 'mbim', gettext('IPv4 Configuration Type'), gettext('MBIM'));
+		showDef($ifinfo['mbim_link'], gettext('MBIM'), $ifinfo['mbim_link']);
+		if ($config['interfaces'][$ifdescr]['ipaddr'] == 'mbim') {
+			$mbim_status = $ifinfo['mbim_status'];
+			showDef($mbim_status['state'] ?? '', gettext('MBIM Modem State'), $mbim_status['state'] ?? '');
+			showDef($mbim_status['registration'] ?? '', gettext('MBIM Registration'), $mbim_status['registration'] ?? '');
+			showDef($mbim_status['provider'] ?? '', gettext('MBIM Provider'), $mbim_status['provider'] ?? '');
+			showDef($mbim_status['dataclass'] ?? '', gettext('MBIM Data Class'), $mbim_status['dataclass'] ?? '');
+			showDef($mbim_status['signal'] ?? '', gettext('MBIM Signal'), $mbim_status['signal'] ?? '');
+			showDef($mbim_status['roaming'] ?? '', gettext('MBIM Roaming'), $mbim_status['roaming'] ?? '');
+			showDef($mbim_status['apn'] ?? '', gettext('MBIM APN'), $mbim_status['apn'] ?? '');
+			showDef($mbim_status['tx'] ?? '', gettext('MBIM Advertised TX'), $mbim_status['tx'] ?? '');
+			showDef($mbim_status['rx'] ?? '', gettext('MBIM Advertised RX'), $mbim_status['rx'] ?? '');
+			showDef($mbim_status['firmware'] ?? '', gettext('MBIM Firmware'), $mbim_status['firmware'] ?? '');
+			showDef($mbim_status['hardware'] ?? '', gettext('MBIM Hardware'), $mbim_status['hardware'] ?? '');
+		}
 		showDefBtn($ifinfo['dhcplink'], 'DHCP', $ifinfo['dhcplink'], $ifdescr, (($ifinfo['dhcplink'] == "up") ? gettext("Release") : gettext("Renew")) . " {$ifname}", $ifinfo['dhcplink'] == "up" ? $chkbox_relinquish_lease_v4 : '');
 		showDefBtn($ifinfo['dhcp6link'], 'DHCP6', $ifinfo['dhcp6link'], $ifdescr, (($ifinfo['dhcp6link'] == "up") ? gettext("Release") : gettext("Renew")) . " {$ifname}", $ifinfo['dhcp6link'] == "up" ? $chkbox_relinquish_lease_v6 : '');
 		showDefBtn($ifinfo['pppoelink'], 'PPPoE', $ifinfo['pppoelink'], $ifdescr, (($ifinfo['pppoelink'] == "up") ? gettext("Disconnect") : gettext("Connect")) . " {$ifname}", '');

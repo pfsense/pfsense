@@ -84,7 +84,10 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 
 	$interface_is_displayed = true;
 	$ifinfo = get_interface_info($ifdescr);
-	if ($ifinfo['pppoelink'] || $ifinfo['pptplink'] || $ifinfo['l2tplink']) {
+	if ($ifinfo['mbim_link']) {
+		/* Driver-managed mobile broadband interface. */
+		$typeicon = 'fa-solid fa-signal';
+	} else if ($ifinfo['pppoelink'] || $ifinfo['pptplink'] || $ifinfo['l2tplink']) {
 		/* PPP link (non-cell) - looks like a modem */
 		$typeicon = 'fa-regular fa-hard-drive';
 	} else if ($ifinfo['ppplink']) {

@@ -1286,6 +1286,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 			case "l2tp":
 			case "pptp":
 			case "ppp":
+			case "mbim":
 				$ctype = strtoupper($ifcfg['ipaddr']);
 				break;
 			default:

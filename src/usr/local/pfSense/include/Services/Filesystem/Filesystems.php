@@ -72,7 +72,9 @@ final class Filesystems {
 	}
 
 	public function getNonRootFilesystems(...$types) {
-		$types = (is_array($types[0])) ? $types[0] : $types;
+		/* These are variadic, so $types is empty when called with no
+		 * arguments. Guard the access or PHP emits an undefined key warning. */
+		$types = (isset($types[0]) && is_array($types[0])) ? $types[0] : $types;
 
 		return array_filter($this->getFilesystemsFlattened($types), function ($fs) {
 			return !$fs->isRoot();
@@ -80,7 +82,9 @@ final class Filesystems {
 	}
 
 	public function getMounts(...$types) {
-		$types = (is_array($types[0])) ? $types[0] : $types;
+		/* These are variadic, so $types is empty when called with no
+		 * arguments. Guard the access or PHP emits an undefined key warning. */
+		$types = (isset($types[0]) && is_array($types[0])) ? $types[0] : $types;
 
 		return array_map(function($fs) {
 			return $fs->getPath();
@@ -88,7 +92,9 @@ final class Filesystems {
 	}
 
 	public function getFilesystemsFlattened(...$types) {
-		$types = (is_array($types[0])) ? $types[0] : $types;
+		/* These are variadic, so $types is empty when called with no
+		 * arguments. Guard the access or PHP emits an undefined key warning. */
+		$types = (isset($types[0]) && is_array($types[0])) ? $types[0] : $types;
 
 		$filesystems = [];
 

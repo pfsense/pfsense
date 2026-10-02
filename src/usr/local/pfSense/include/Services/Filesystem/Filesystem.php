@@ -43,11 +43,24 @@ final class Filesystem {
 
 	public function getBasename() {
 		$basename = $this->getPath();
-		
+
+		if (!$this->hasParent()) {
+			return $basename;
+		}
+
 		$parent = $this->getParentPath();
 
 		if (Strings::startsWith($basename, $parent)) {
 			$basename = Strings::substring($basename, Strings::length($parent));
+		}
+
+		/*
+		 * The parent path stops at the separator, so what is left is the
+		 * separator itself followed by the name. Drop it, otherwise a nested
+		 * mount reports '/db' while a top level mount reports 'var'.
+		 */
+		if (Strings::startsWith($basename, '/')) {
+			$basename = Strings::substring($basename, 1);
 		}
 
 		return $basename;

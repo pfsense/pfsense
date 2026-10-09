@@ -4272,6 +4272,69 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 	return $src;
 }
 
+/*
+ * Return the member interfaces of an interface group,
+ * or null when the given interface is not an interface group.
+ */
+function filter_interface_group_members($interface) {
+	static $ifgroups = null;
+
+	if ($ifgroups === null) {
+		$ifgroups = [];
+		foreach (config_get_path('ifgroups/ifgroupentry', []) as $ifgen) {
+			$ifgroups[$ifgen['ifname']] = explode(' ', $ifgen['members'] ?? '');
+		}
+	}
+
+	return $ifgroups[$interface] ?? null;
+}
+
+/*
+ * Determine the reply-to interface and gateway for a rule bound to an
+ * interface group. Return the first group member whose gateway for the
+ * given protocol is online, as a [real interface, gateway address] pair,
+ * or [null, null] when no member gateway is online.
+ */
+function filter_interface_group_replyto($interface, $ipprotocol = "inet") {
+	static $gateways = null;
+	static $gateways_states = null;
+
+	$members = filter_interface_group_members($interface);
+	if (empty($members)) {
+		return [null, null];
+	}
+
+	if ($gateways === null) {
+		$gateways = get_gateways();
+		$gateways_states = return_gateways_status(true);
+	}
+
+	foreach ($members as $member) {
+		$realif = get_real_interface($member);
+		foreach ($gateways as $gwcfg) {
+			if (($gwcfg['interface'] ?? '') != $realif) {
+				continue;
+			}
+			if (($gateways_states[$gwcfg['name']]['status'] ?? '') != 'online') {
+				continue;
+			}
+			if ($ipprotocol == "inet6") {
+				$gw = $gwcfg['gatewayv6'] ?? null;
+				if (empty($gw) && (($gwcfg['ipprotocol'] ?? '') == 'inet6')) {
+					$gw = $gwcfg['gateway'] ?? null;
+				}
+			} else {
+				$gw = $gwcfg['gateway'] ?? null;
+			}
+			if (($ipprotocol == "inet6") ? is_ipaddrv6($gw) : is_ipaddrv4($gw)) {
+				return [$realif, $gw];
+			}
+		}
+	}
+
+	return [null, null];
+}
+
 function filter_generate_user_rule($rule) {
 	global $g, $FilterIflist, $GatewaysList, $vpns_list, $use_floating_states_for_ipsec;
 	global $dummynet_name_list, $vlanprio_values, $time_based_rules;
@@ -4452,16 +4515,24 @@ function filter_generate_user_rule($rule) {
 	update_filter_reload_status(sprintf(gettext("Setting up pass/block rules %s"), $rule['descr']));
 
 	/* do not process reply-to for gateway'd rules */
-	if (($type == "pass") && ($rule['gateway'] == "") && ($aline['direction'] <> "") && (interface_has_gateway($rule['interface']) || interface_has_gatewayv6($rule['interface'])) && !config_path_enabled('system','disablereplyto') && !isset($rule['disablereplyto'])) {
+	if (($type == "pass") && ($rule['gateway'] == "") && ($aline['direction'] <> "") && (interface_has_gateway($rule['interface']) || interface_has_gatewayv6($rule['interface']) || is_interface_group($rule['interface'])) && !config_path_enabled('system','disablereplyto') && !isset($rule['disablereplyto'])) {
 		if ($rule['ipprotocol'] == "inet6") {
+			$replyif = $ifcfg['ifv6'];
 			$rg = get_interface_gateway_v6($rule['interface']);
+			if (!is_ipaddrv6($rg)) {
+				list($replyif, $rg) = filter_interface_group_replyto($rule['interface'], "inet6");
+			}
 			if (is_ipaddrv6($rg)) {
-				$aline['reply'] = "reply-to ( {$ifcfg['ifv6']} {$rg} ) ";
+				$aline['reply'] = "reply-to ( {$replyif} {$rg} ) ";
 			}
 		} else {
+			$replyif = $ifcfg['if'];
 			$rg = get_interface_gateway($rule['interface']);
+			if (!is_ipaddrv4($rg)) {
+				list($replyif, $rg) = filter_interface_group_replyto($rule['interface'], "inet");
+			}
 			if (is_ipaddrv4($rg)) {
-				$aline['reply'] = "reply-to ( {$ifcfg['if']} {$rg} ) ";
+				$aline['reply'] = "reply-to ( {$replyif} {$rg} ) ";
 			}
 		}
 	}

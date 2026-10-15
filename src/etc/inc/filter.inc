@@ -4557,7 +4557,11 @@ function filter_generate_user_rule($rule) {
 		}
 	}
 	$aline['flags'] = "";
-	if ($rule['protocol'] == "tcp") {
+	/* pf only checks TCP flags on TCP packets, and pfctl attaches the
+	 * clause to the TCP half of protocol lists, so emit them for any
+	 * protocol that can match TCP. The explicit S/SA default below
+	 * remains tcp-only, keeping rules without the option unchanged. */
+	if (in_array($rule['protocol'], array("tcp", "tcp/udp", "any"))) {
 		if (isset($rule['tcpflags_any'])) {
 			$aline['flags'] = "flags any ";
 		} else if (!empty($rule['tcpflags2'])) {
@@ -4586,7 +4590,7 @@ function filter_generate_user_rule($rule) {
 				}
 			}
 			$aline['flags'] .= " ";
-		} else {
+		} else if ($rule['protocol'] == "tcp") {
 			$aline['flags'] = "flags S/SA ";
 		}
 	}

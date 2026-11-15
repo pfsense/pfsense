@@ -27,6 +27,7 @@
 	 * +====================================================+
 	 *  Services Supported:
 	 *    - All-Inkl (all-inkl.com)
+	 *    - Alviy (alviy.com)
 	 *    - Amazon Route 53 (aws.amazon.com)
 	 *    - Azure DNS (azure.microsoft.com)
 	 *    - City Network (citynetwork.se)
@@ -94,6 +95,7 @@
 	 *    - _debug()
 	 * +----------------------------------------------------+
 	 *  All-Inkl        - Last Tested: 07 March 2026
+	 *  Alviy           - Last Tested: 15 November 2026
 	 *  Amazon Route 53 - Last Tested: 04 February 2017
 	 *  Azure DNS       - Last Tested: 08 March 2018
 	 *  City Network    - Last Tested: 13 November 2013
@@ -461,6 +463,7 @@
 			} else {
 				switch ($this->_dnsService) {
 					case 'all-inkl':
+					case 'alviy':
 					case 'azure':
 					case 'azurev6':
 					case 'citynetwork':
@@ -1364,6 +1367,13 @@
 						$port = ":" . $this->_dnsPort;
 					}
 					curl_setopt($ch, CURLOPT_URL, $server . $port . '?hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP);
+					break;
+				case 'alviy':
+					/* see https://www.alviy.com/en/docs/update-api */
+					$needsIP = FALSE;
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
+					$server = "https://dynupdate.alviy.com/nic/update?hostname={$this->_dnsHost}&myip={$this->_dnsIP}";
+					curl_setopt($ch, CURLOPT_URL, $server);
 					break;
 				case 'all-inkl':
 					$needsIP = FALSE;
@@ -2989,6 +2999,27 @@
 						$successful_update = true;
 					} else if (preg_match('/badauth/i', $data)) {
 						$status = $status_intro . $error_str . gettext("User Authorization Failed");
+					} else {
+						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
+						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " " . $data, LOG_PREFIX_DDNS);
+						$this->_debug($data);
+					}
+					break;
+				case 'alviy':
+					if (preg_match('/^good/i', $data)) {
+						$status = $status_intro . $success_str . gettext("IP Address Changed Successfully!") . " (" . $this->_dnsIP . ")";
+						$successful_update = true;
+					} else if (preg_match('/^nochg/i', $data)) {
+						$status = $status_intro . $success_str . gettext("No Change In IP Address");
+						$successful_update = true;
+					} else if (preg_match('/^badauth/i', $data)) {
+						$status = $status_intro . $error_str . gettext("User Authorization Failed");
+					} else if (preg_match('/^notfqdn/i', $data)) {
+						$status = $status_intro . $error_str . gettext("Not A FQDN!");
+					} else if (preg_match('/^nohost/i', $data)) {
+						$status = $status_intro . $error_str . gettext("No such host");
+					} else if (preg_match('/^911/', $data)) {
+						$status = $status_intro . $error_str . gettext("Server side error");
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
 						logger(LOG_ERR, $status_intro . gettext("PAYLOAD:") . " " . $data, LOG_PREFIX_DDNS);

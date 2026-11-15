@@ -469,6 +469,7 @@ $section->addInput(new Form_Input(
 	$pconfig['username'],
 	['autocomplete' => 'new-password']
 ))->setHelp('Username is required for all providers except Cloudflare, Custom Entries, DigitalOcean, DNS Made Easy, FreeDNS (APIv1&2), FreeDNS-v6 (APIv1&2), Linode and Namecheap.%1$s' .
+			'Alviy: Enter the account email.%1$s' .
 			'Azure: Enter your Azure AD application ID%1$s' .
 			'Cloudflare: Enter email for Global API Key or (optionally) Zone ID for API token.%1$s' .
 			'Custom Entries: Username and Password represent HTTP Authentication username and passwords.%1$s' .
@@ -487,7 +488,8 @@ $section->addPassword(new Form_Input(
 	'Password',
 	'password',
 	$pconfig['password']
-))->setHelp('Azure: client secret of the AD application%1$s' .
+))->setHelp('Alviy: Enter the update token of the host.%1$s' .
+			'Azure: client secret of the AD application%1$s' .
 			'Cloudflare: Enter the Global API Key or API token with DNS edit permission on the provided zone.%1$s' .
 			'deSEC: Enter the API token.%1$s' .
 			'DigitalOcean: Enter API token%1$s' .
@@ -663,6 +665,7 @@ events.push(function() {
 				hideInput('zoneid', false);
 				hideInput('ttl', false);
 				break;
+			case "alviy":
 			case "domeneshop":
 			case "domeneshop-v6":
 			case "dreamhost":

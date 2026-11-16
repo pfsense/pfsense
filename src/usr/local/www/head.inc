@@ -537,7 +537,7 @@ if (are_notices_pending()) {
 					<li class="dropdown">
 						<a href="#" data-toggle="modal" data-target="#notices" role="button" aria-expanded="false">
 							<i class="fa-solid fa-bell text-danger" title="<?=gettext("Notices")?>"></i>
-							<span class="badge bg-danger"><?=count($notices)?></span>
+							<span class="badge bg-danger"><?=count(is_array($notices) ? $notices : [])?></span>
 						</a>
 					</li>
 				<?php

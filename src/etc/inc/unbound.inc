@@ -1120,11 +1120,22 @@ function unbound_acls_config($cfgsubdir = "") {
 
 // Generate hosts and reload services
 function unbound_hosts_generate() {
+	global $g;
+
+	$hosts_file = "{$g['unbound_chroot_path']}/host_entries.conf";
+	$before = file_exists($hosts_file) ? md5_file($hosts_file) : '';
+
 	// Generate our hosts file
 	unbound_add_host_entries();
 
-	// Reload our service to read the updates
-	unbound_control("reload");
+	/*
+	 * Reload only when the host entries changed. This runs on every
+	 * interface address refresh (rc.newwanip), and each reload briefly
+	 * stops DNS service and flushes the resolver cache.
+	 */
+	if (!file_exists($hosts_file) || (md5_file($hosts_file) !== $before)) {
+		unbound_control("reload");
+	}
 }
 
 // Array of valid unbound local zone types

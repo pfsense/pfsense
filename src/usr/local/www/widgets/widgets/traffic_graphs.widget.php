@@ -77,6 +77,13 @@ if ($_POST && $_POST['widget'] === __FILE__) {
 		$user_settings["widgets"]["traffic_graphs"]["filter"] = implode(',', $validNames);
 	}
 
+	/* Custom display order, stored as "if,if,..."; empty means the default interface order */
+	$order = array();
+	if (is_string($_POST['order'] ?? null)) {
+		$order = array_values(array_unique(array_intersect(explode(',', $_POST['order']), $validNames)));
+	}
+	$user_settings["widgets"]["traffic_graphs"]["order"] = implode(',', $order);
+
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Updated traffic graphs widget settings via dashboard."));
 	header("Location: /");
 	exit(0);
@@ -114,6 +121,21 @@ if (isset($user_settings['widgets']['traffic_graphs']['smoothfactor'])) {
 	$tg_smoothfactor = 0;
 }
 
+/*
+ * Interfaces in the custom order saved for this widget, if any. Interfaces
+ * not in that order (e.g. added later) follow in the default order, which
+ * honors System > General Setup > Interfaces Sort.
+ */
+$tg_ifdescrs = array();
+foreach (explode(',', $user_settings['widgets']['traffic_graphs']['order'] ?? '') as $ifdescr) {
+	if (array_key_exists($ifdescr, $ifdescrs)) {
+		$tg_ifdescrs[$ifdescr] = $ifdescrs[$ifdescr];
+	}
+}
+$tg_custom_order = !empty($tg_ifdescrs);
+$tg_ifdescrs += $ifdescrs;
+$tg_alphabetical = !empty($user_settings['webgui']['interfacessort']);
+
 $skip_tg_items = explode(",", $user_settings['widgets']['traffic_graphs']['filter']);
 $tg_displayed = false;
 $tg_displayed_ifs_array = [];
@@ -127,7 +149,7 @@ $tg_displayed_realifsarray = [];
 
 	<div id="traffic-chart-error" class="alert alert-danger" style="display: none;"></div>
 <?php
-	foreach ($ifdescrs as $ifdescr => $ifname) {
+	foreach ($tg_ifdescrs as $ifdescr => $ifname) {
 		if (in_array($ifdescr, $skip_tg_items)) {
 			continue;
 		}
@@ -232,17 +254,21 @@ $tg_displayed_realifsarray = [];
 					<table class="table table-striped table-hover table-condensed">
 						<thead>
 							<tr>
+								<th style="width: 1%;"></th>
 								<th><?=gettext("Interface")?></th>
 								<th><?=gettext("Show")?></th>
 							</tr>
 						</thead>
-						<tbody>
+						<tbody class="traffic-graph-order">
 	<?php
 					$idx = 0;
 
-					foreach ($ifdescrs as $ifdescr => $ifname):
+					$tg_default_index = array_flip(array_keys($ifdescrs));
+
+					foreach ($tg_ifdescrs as $ifdescr => $ifname):
 	?>
-							<tr>
+							<tr data-if="<?=htmlspecialchars($ifdescr)?>" data-default-index="<?=$tg_default_index[$ifdescr]?>">
+								<td><i class="fa-solid fa-grip-vertical traffic-graph-order-handle" style="cursor: grab;" title="<?=gettext('Drag to change the order of the graphs')?>"></i></td>
 								<td><?=$ifname?></td>
 								<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=$ifdescr?>" type="checkbox" <?=(!in_array($ifdescr, $skip_tg_items) ? 'checked':'')?>></td>
 							</tr>
@@ -251,6 +277,16 @@ $tg_displayed_realifsarray = [];
 	?>
 						</tbody>
 					</table>
+					<input type="hidden" name="order" value="<?=htmlspecialchars($tg_custom_order ? implode(',', array_keys($tg_ifdescrs)) : '')?>" />
+					<span class="help-block">
+						<?=gettext('Drag the rows to change the order of the graphs. Reset Order restores the default interface order.')?>
+						<button id="resettgorder" type="button" class="btn btn-xs btn-default"><?=gettext('Reset Order')?></button>
+					</span>
+<?php if ($tg_alphabetical): ?>
+					<div class="alert alert-info traffic-graph-order-alpha"<?=($tg_custom_order ? '' : ' style="display: none;"')?>>
+						<?=gettext('Interfaces are sorted alphabetically (Interfaces Sort in System > General Setup or User Settings). The order set here overrides it in this widget only.')?>
+					</div>
+<?php endif; ?>
 				</div>
 			</div>
 		</div>
@@ -290,6 +326,31 @@ events.push(function() {
 	graph_visibilitycheck();
 
 	set_widget_checkbox_events("#widget-<?=$widgetname?>_panel-footer [id^=show]", "showalltgitems");
+
+	// Drag the rows to set the order of the graphs
+	var tgFooter = $("#widget-<?=$widgetname?>_panel-footer");
+	var tgOrderBody = tgFooter.find("tbody.traffic-graph-order");
+
+	tgOrderBody.sortable({
+		handle: ".traffic-graph-order-handle",
+		axis: "y",
+		cursor: "grabbing",
+		update: function() {
+			tgFooter.find("input[name=order]").val(tgOrderBody.children("tr").map(function() {
+				return $(this).attr("data-if");
+			}).get().join(","));
+			tgFooter.find(".traffic-graph-order-alpha").show();
+		}
+	});
+
+	// Back to the default interface order
+	tgFooter.find("#resettgorder").on("click", function() {
+		tgOrderBody.children("tr").sort(function(a, b) {
+			return $(a).attr("data-default-index") - $(b).attr("data-default-index");
+		}).appendTo(tgOrderBody);
+		tgFooter.find("input[name=order]").val("");
+		tgFooter.find(".traffic-graph-order-alpha").hide();
+	});
 });
 //]]>
 </script>

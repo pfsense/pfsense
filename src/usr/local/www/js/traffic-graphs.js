@@ -166,7 +166,7 @@ function draw_graph(then) {
 						.useInteractiveGuideline(true)
 						.color(d3.scale.category10().range())
 						.rightAlignYAxis(true)
-						.margin({top: 0, left:25, bottom: 30, right: 45});
+						.margin({top: 0, left:25, bottom: 30, right: 65});
 
 			charts[value]
 				.x(function(d,i) { return d.x });
@@ -186,9 +186,19 @@ function draw_graph(then) {
 				.attr("font-size", 18)
 				.text(myData[value]['interfacename']);
 
+			// Y axis ticks with the unit: b/s for bits, B/s for bytes
+			var axisUnits = (size === 1) ? 'B/s' : 'b/s';
 			charts[value].yAxis
-		    	.tickFormat(d3.format('.2s'))
+		    	.tickFormat(function (d) {
+					return d3.format('.2s')(d) + axisUnits;
+				})
 		    	.showMaxMin(false);
+
+			// Optional minimum Y axis scale (in bits per second); the axis still grows beyond it
+			if (window.scales && window.scales[value] > 0) {
+				var minScale = window.scales[value] * size / 8;
+				charts[value].forceY(invert ? [-minScale, minScale] : [0, minScale]);
+			}
 
 			d3.select('#traffic-chart-' + value + ' svg')
 				.datum(myData[value])

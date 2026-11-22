@@ -39,6 +39,29 @@ if (ipsec_enabled()) {
 	$ifdescrs['enc0'] = "IPsec";
 }
 
+/* Preset minimum Y axis scales, in bits per second (typical link speeds). */
+$tg_scale_presets = array(
+	'100M' => gettext('100 Mbit/s (12.5 MB/s)'),
+	'1G' => gettext('1 Gbit/s (125 MB/s)'),
+	'2.5G' => gettext('2.5 Gbit/s (312.5 MB/s)'),
+	'10G' => gettext('10 Gbit/s (1.25 GB/s)'),
+);
+
+/*
+ * Convert a scale value such as "300M" or "2.5G" to bits per second.
+ * Returns false if the value is not valid.
+ */
+if (!function_exists('tg_scale_to_bits')) {
+	function tg_scale_to_bits($value) {
+		if (!preg_match('/^([0-9]+(\.[0-9]+)?)([KMG]?)$/i', trim($value), $matches)) {
+			return false;
+		}
+		$multipliers = array('' => 1, 'K' => 1000, 'M' => 1000000, 'G' => 1000000000);
+		$bits = (float)$matches[1] * $multipliers[strtoupper($matches[3])];
+		return ($bits > 0) ? $bits : false;
+	}
+}
+
 if ($_POST && $_POST['widget'] === __FILE__) {
 
 	if (!is_array($user_settings["widgets"]["traffic_graphs"])) {
@@ -77,6 +100,21 @@ if ($_POST && $_POST['widget'] === __FILE__) {
 		$user_settings["widgets"]["traffic_graphs"]["filter"] = implode(',', $validNames);
 	}
 
+	/* Per-interface minimum Y axis scale, stored as "if:value,if:value" */
+	$scales = array();
+	foreach ($validNames as $ifdescr) {
+		$scale = $_POST['scale'][$ifdescr] ?? 'auto';
+		if ($scale === 'custom') {
+			$scale = $_POST['scalecustom'][$ifdescr] ?? '';
+		}
+		$scale = is_string($scale) ? strtoupper(trim($scale)) : '';
+		/* "AUTO", empty and invalid values all mean automatic scaling */
+		if (tg_scale_to_bits($scale) !== false) {
+			$scales[] = $ifdescr . ':' . $scale;
+		}
+	}
+	$user_settings["widgets"]["traffic_graphs"]["scale"] = implode(',', $scales);
+
 	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Updated traffic graphs widget settings via dashboard."));
 	header("Location: /");
 	exit(0);
@@ -112,6 +150,15 @@ if (isset($user_settings['widgets']['traffic_graphs']['smoothfactor'])) {
 	$tg_smoothfactor = (int)$user_settings['widgets']['traffic_graphs']['smoothfactor'];
 } else {
 	$tg_smoothfactor = 0;
+}
+
+/* Per-interface minimum Y axis scale: interface => value (e.g. "1G") */
+$tg_scales = array();
+foreach (explode(',', $user_settings['widgets']['traffic_graphs']['scale'] ?? '') as $entry) {
+	list($scale_if, $scale_value) = array_pad(explode(':', $entry, 2), 2, '');
+	if (array_key_exists($scale_if, $ifdescrs) && (tg_scale_to_bits($scale_value) !== false)) {
+		$tg_scales[$scale_if] = $scale_value;
+	}
 }
 
 $skip_tg_items = explode(",", $user_settings['widgets']['traffic_graphs']['filter']);
@@ -234,6 +281,7 @@ $tg_displayed_realifsarray = [];
 							<tr>
 								<th><?=gettext("Interface")?></th>
 								<th><?=gettext("Show")?></th>
+								<th><?=gettext("Scale")?></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -241,16 +289,42 @@ $tg_displayed_realifsarray = [];
 					$idx = 0;
 
 					foreach ($ifdescrs as $ifdescr => $ifname):
+						$if_scale = $tg_scales[$ifdescr] ?? '';
+						$if_scale_custom = (!empty($if_scale) && !array_key_exists($if_scale, $tg_scale_presets));
 	?>
 							<tr>
 								<td><?=$ifname?></td>
 								<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=$ifdescr?>" type="checkbox" <?=(!in_array($ifdescr, $skip_tg_items) ? 'checked':'')?>></td>
+								<td>
+									<select class="form-control traffic-graph-scale" style="width: 100%;" name="scale[<?=htmlspecialchars($ifdescr)?>]">
+										<option value="auto"<?=(empty($if_scale) ? ' selected' : '')?>><?=gettext('Auto')?></option>
+	<?php
+						foreach ($tg_scale_presets as $preset => $preset_label):
+	?>
+										<option value="<?=htmlspecialchars($preset)?>"<?=(($if_scale === $preset) ? ' selected' : '')?>><?=htmlspecialchars($preset_label)?></option>
+	<?php
+						endforeach;
+	?>
+										<option value="custom"<?=($if_scale_custom ? ' selected' : '')?>><?=gettext('Custom')?></option>
+									</select>
+									<div class="traffic-graph-scale-custom-group"<?=($if_scale_custom ? '' : ' style="display: none;"')?>>
+										<div class="input-group">
+											<input type="text" class="form-control traffic-graph-scale-custom" style="width: 100%;" name="scalecustom[<?=htmlspecialchars($ifdescr)?>]"
+												value="<?=($if_scale_custom ? htmlspecialchars($if_scale) : '')?>" placeholder="300M"
+												pattern="[0-9]+(\.[0-9]+)?[KkMmGg]?" title="<?=gettext('Always bits per second, with an optional K, M or G suffix (e.g. 300M = 300 Mbit/s)')?>"
+												<?=($if_scale_custom ? '' : 'disabled')?> />
+											<span class="input-group-addon">bit/s</span>
+										</div>
+										<span class="help-block traffic-graph-scale-equiv"></span>
+									</div>
+								</td>
 							</tr>
 	<?php
 					endforeach;
 	?>
 						</tbody>
 					</table>
+					<span class="help-block"><?=gettext('Scale sets the minimum range of the graph Y axis. The axis still grows if the traffic exceeds it. Auto scales to the current traffic. Custom values are always in bits per second (K, M or G suffix), also when Unit Size is Bytes: e.g. 300M = 300 Mbit/s = 37.5 MB/s.')?></span>
 				</div>
 			</div>
 		</div>
@@ -283,6 +357,8 @@ events.push(function() {
 	window.invert = JSON.parse(<?=json_encode($tg_invert)?>);
 	window.size = <?=json_encode($tg_size)?>;
 	window.smoothing = <?=json_encode($tg_smoothfactor)?>;
+	// Minimum Y axis scale per interface, in bits per second
+	window.scales = <?=json_encode((object)array_map('tg_scale_to_bits', $tg_scales))?>;
 	window.interfaces = InterfaceString.split("|").filter(function(entry) { return entry.trim() != ''; });
 	window.realinterfaces = RealInterfaceString.split("|").filter(function(entry) { return entry.trim() != ''; });
 
@@ -290,6 +366,26 @@ events.push(function() {
 	graph_visibilitycheck();
 
 	set_widget_checkbox_events("#widget-<?=$widgetname?>_panel-footer [id^=show]", "showalltgitems");
+
+	// Only show the custom scale field when "Custom" is selected
+	$("#widget-<?=$widgetname?>_panel-footer .traffic-graph-scale").on("change", function() {
+		var custom = ($(this).val() === "custom");
+		var group = $(this).siblings(".traffic-graph-scale-custom-group");
+		group.toggle(custom);
+		group.find(".traffic-graph-scale-custom").prop("disabled", !custom);
+	});
+
+	// Show the custom scale (bits per second) also in bytes per second
+	$("#widget-<?=$widgetname?>_panel-footer .traffic-graph-scale-custom").on("input", function() {
+		var equiv = $(this).closest(".traffic-graph-scale-custom-group").find(".traffic-graph-scale-equiv");
+		var m = $.trim($(this).val()).match(/^([0-9]+(\.[0-9]+)?)([KMG]?)$/i);
+		if (!m) {
+			equiv.text("");
+			return;
+		}
+		var bits = parseFloat(m[1]) * {"": 1, "K": 1e3, "M": 1e6, "G": 1e9}[m[3].toUpperCase()];
+		equiv.text("= " + d3.format(".3s")(bits) + "bit/s = " + d3.format(".3s")(bits / 8) + "B/s");
+	}).trigger("input");
 });
 //]]>
 </script>
